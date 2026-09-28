@@ -42,8 +42,45 @@ There should be a substitution treatment tool for child SLPs that is open-source
 
 \subsection{Inputs and Outputs}
 
-\wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
-Use abstraction so that you can avoid details.}
+\subsubsection{Inputs}
+
+\textbf{Patient side} 
+
+\begin{itemize}
+    \item Patient's speech patterns: When a patient is in a session with specialist, they will be prompted to speak into a microphone that will send the data to the system for phonetic processing. 
+    \item Patient's login credentials: If a patient wants to view their progress outside of a session or do take-home exercises, they will need to access their data by logging into the system with their credentials.
+\end{itemize}
+
+\textbf{Specialist side} 
+
+\begin{itemize}
+    \item Specialist's login credentials: The specialist will need to be able to log in to the administration side of the system to access lessons and patient data. They will do so by logging in with their credentials. 
+    \item Specialist's Selection of Profession: The specialist selects what their profession is, as the system is uniquely tuned to a specialist's needs based on their selected profession (SLP, Accent Coach, Researcher, etc.). 
+    \item Patient Selection: The specialist will need to use the system to access any given patient's data to identify problems and track progress. 
+    \item Model Selection: The specialist will select the type of speech impediment that they want to work on with a patient to improve specific phonemes.
+\end{itemize}
+
+\textbf{Both Sides} 
+
+\begin{itemize}
+    \item Select unavailable phonemes: Some patients will be physically unable to use certain phonemes based on biological or neurological limitations. Thus, the specialist for in-person sessions and the patient for homework or out-of-clinic sessions will select which phonemes the patient cannot produce. 
+\end{itemize}
+
+\subsubsection{Outputs}
+
+\textbf{Both Sides} 
+
+\begin{itemize}
+    \item Phonemic speech analysis: During a session, after each exercise and the phonemic analysis is complete, the system will display the phonemes it perceived from the patient and compare it against the phonemes it expected to hear from the exercise. This information will be available to both the patient and specialist to track progress. 
+    \item Patient data and progress tracking: The system will be able to display the patient's progress on improving their pronunciation of phonemes. It will show all the areas the patient is excelling at and which areas they need to improve on. This data will be a simplified version of the overall metrics of success used by the system so patients can easily understand how they are progressing. This also helps to prevent hackers from harvesting all of the sensitive data from a compromised account. 
+    \item Suggested lessons for improvement: While the patient is in-session with the specialist or while they are at home, the system can recommend lessons for them to do to improve their phoneme pronunciation. The choice to use lessons recommended by the system is strictly up to the specialist and/or patient. 
+\end{itemize}
+
+\textbf{Specialist Side} 
+
+\begin{itemize}
+    \item Detailed metrics and data: The system will output the full range of data for specialists so that they can engage in a deeper analysis of a given patient's progress.
+\end{itemize}
 
 \subsection{Stakeholders}
 
