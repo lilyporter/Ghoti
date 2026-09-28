@@ -4,6 +4,8 @@
 \usepackage{tabularx}
 \usepackage{hyperref}
 
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
 \title{Development Plan\\\progname}
 
 \author{\authname}
@@ -62,24 +64,12 @@ at the root of our repository.
 
 \section{Team Meeting Plan}
 
-\wss{This section is for meetings between the team members, and meetings between 
-the team and their supervisor/advisor (as appropriate).}
+\indent In-person team meetings will be held weekly on Thursdays from 3:30pm to 4:20pm. The purpose of these meetings will be to discuss upcoming deliverables, progress updates, and potential blockers. They will also be used to consolidate any questions that team members may have for the instructional team and project supervisors.
 
-\wss{How often will the team meet? where? when?}
+\indent There will also be biweekly meetings held with the project supervisors on Fridays from 9:00am to 10:00am. They are planned to be in-person but may be shifted to virtual Microsoft Teams meetings based on availability. These will be used to ensure the project is in line with the advisors’ requirements, and to address any questions that the development team might have.
 
-\wss{If the meeting is a physical location (not virtual), out of an abundance of
-caution for safety reasons you shouldn't put the location online}
+\indent The meeting chair (Sarah Dorfman) will prepare an agenda for the main topics of discussion and distribute it to the team at least one day prior to any team meetings to give all members time to prepare. All members are encouraged to take notes during the meeting. After the meeting, the team will collectively assign action items to each other. If there is a supervisor meeting planned for that week, the team will also plan a corresponding agenda. 
 
-\wss{To help schedule meetings, you can use the lecture/tutorial time when we do 
-not have anything else scheduled.}
-
-\wss{How often will you meet with your supervisor/advisor?  when?  where?}
-
-\wss{Will meetings be virtual?  At least some meetings should likely be
-in-person.}
-
-\wss{How will the meetings be structured?  There should be a chair for all meetings.  
-There should be an agenda for all meetings.}
 
 \section{Team Communication Plan}
 
@@ -134,9 +124,17 @@ for deadlines.}
 
 \section{Proof of Concept Demonstration Plan}
 
-What is the main risk, or risks, for the success of your project?  What will you
-demonstrate during your proof of concept demonstration to convince yourself that
-you will be able to overcome this risk?
+At a high level, this application will listen to child speech, process it into its phonetic representation, and analyze this to give feedback to SLPs. The greatest risks associated with this lie in the intermediate audio processing stage:
+
+\begin{enumerate}
+  \item \textbf{Converting Child Speech To Phonetic Representation -} Since children are in a developmental phase, their speech patterns vary significantly when compared to adults. Therefore, it may be challenging to ensure an acceptable accuracy rate when converting child speech into phonetic representations.
+  \item \textbf{Ensuring An Acceptable Processing Time -} For this application to be viable in a clinical setting, it will need to give real time feedback to the SLP during an appointment on their computers. As per the project supervisors, existing child speech interpretation models are quite slow, so it may be difficult for this one to process the data fast enough to give the clinician feedback in less time than it would have taken for them to reach a deduction themself.
+\end{enumerate}
+
+\indent To ensure these risks can be overcome, a suitable training dataset must be found online. To ensure speech to phonetic conversion accuracy, there must be sufficient data to properly train the model. It is important to note that this data must be publicly available to comply with PHIPA patient confidentiality guidelines. 
+
+\indent Once this data is sourced, we will need to develop the actual model that takes child speech and converts it into a readable format with the corresponding phoneme representations. If this model meets the established accuracy benchmarks, it will be feasible to continue designing this application for pediatric speech purposes. Moreover, it is fair to assume that speech therapy offices will use typical office computers that are not equipped with powerful hardware. Therefore, it is necessary to show that the model can meet the benchmark processing time on a device of similar specifications.
+
 
 \section{Expected Technology}
 \section{Expected Technology}
@@ -218,40 +216,43 @@ We will review any generated code before including it in the application. We wil
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
-\wss{This section is about the use of AI to write this document, not your
-planned use of AI for your project.  You discuss that topic in one of the
-sections in the body of this report.}
+All writing was done by the team members by hand. All research and facts were obtained through academic sources, or by consulting the project supervisors unless explicitly stated below.
 
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+\begin{table}[hp]
+\caption{List of AI Tools Used} \label{TblRevisionHistory}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Tool Number} & \textbf{Name} & \textbf{Model} \\
+\midrule
+1 & Claude & Sonnet 5 \\
+2 & ChatGPT & GPT 5 Thinking Mini \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
-
-\wss{For each of the uses, identify which parts of the document were affected.}
-
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+\begin{table}[hp]
+\caption{Usage Details for All AI Tools Used} \label{TblRevisionHistory}
+\begin{tabularx}{\textwidth}{
+  >{\hsize=0.5\hsize}L
+  >{\hsize=0.5\hsize}L
+  >{\hsize=1\hsize}L
+}
+\toprule
+\textbf{Tool Number} & \textbf{Location} & \textbf{Details} \\
+\midrule
+1 & Bibliography & Used to insert a reference to the references.bib file. \\
+2 & Problem Statement and Goals; (1.3) Stakeholders & Instructed the AI to think from the perspective of a patient’s parent when assessing stakeholders: highlighted privacy concerns as another consideration for this stakeholder. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+As none of the AI usage was for factual content, verification was very simple. For tool 1, we simply verified the resulting citation for correctness in the final output. For tool 2, it was used as more of a brainstorming utility, so only unconsidered elements that made logical sense were included. 
 
 \newpage{}
 
