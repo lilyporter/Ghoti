@@ -59,11 +59,61 @@ Use abstraction so that you can avoid details.}
 is summarized as part of the developer plan.}
 
 \section{Goals}
+The overall objective of this project is to provide assistance to pediatric speech-language pathologists during their patient sessions. 
+This will be a software tool that can act as an in-session assistant to pediatric speech-language pathologists (SLPs) during speech 
+therapy sessions, helping them identify speech challenges quickly and tailor therapy more effectively. The system will be strictly 
+assistive, augmenting the clinician's expertise but not replacing their professional judgement.\\
+
+\noindent
+Listed below are the overall goals for this project:
+
+\begin{itemize}
+    \item Develop a web-based software tool that functions as an in-session assistant of pediatric SLPs.
+    \item Analyze real-time speech of a patient at the phonetic level to identify and flag speech substitution speech patterns, a common pediatric speech challenge where an expected phoneme is replaced by another.
+    \item Include an interactive interface for SLPs, allowing them to record and analyze speech during session, including insights and data visualizations on produced sounds and identified speech pattern challenges.
+    \item Include features and activities within the interface that the SLP can lead a patient through to help them improve on speech challenges during a session.
+\end{itemize}
+
+\noindent
+To achieve these goals there are two primary components:
+\begin{enumerate}
+    \item \textbf{Speech Analysis Model:}
+    The core technical component of the system. It will be responsible for processing audio input and extracting phonetic information from speech in real-time. The goals of this component are:
+    \begin{itemize}
+        \item Accept real-time audio input of a patient's speech during a therapy session.
+        \item Transcribe and classify the speech of a patient at the phonetic level.
+        \item Identify substitution speech patterns.
+        \item Operate with sufficient speed and accuracy to be useful during a live speech therapy session.
+    \end{itemize}
+
+    \item \textbf{SLP User Interface:}
+    The “assistant” component of the system, interacted with by the SLP. It will be responsible for visually representing analysis results and supporting the SLP's workflow during the session. The goals of this component are:
+    \begin{itemize}
+        \item Provide an interactive dashboard for the SLP to record a patient's speech in real-time.
+        \item Display data visualisations of the sounds produced, and flagged speech patterns.
+        \item Present session data in a way that supports the SLP's clinical process.
+        \item Offer guided activities and exercises that the SLP can provide to the patient during sessions to target a patient's specific speech challenges.
+        \item Display session tracking and patient progress data
+    \end{itemize}
+\end{enumerate}
+
 
 \section{Stretch Goals}
-
-\wss{Goals you hope to get to, but not necessary.  They are also helpful if the
-scope of the original project needs to be expanded.}
+The following are goals for possible expansion of the project after the main goals are achieved:
+\begin{itemize}
+    \item \textbf{Patient-Facing/Homework Interface:} An additional interface for patients, allowing then to complete at home practice activities to improve their speech. 
+        \begin{itemize}
+            \item Account for different types of users (SLP & patients).
+        \end{itemize}
+    \item \textbf{Mobile Application:} An Android/iOS application for patients to practice their speech and complete homework activities on a mobile device.
+    \item \textbf{Broader Speech Pattern Detection:} The detection of additional types of speech pattern challenges beyond just substitution.
+        \begin{itemize}
+            \item Cluster reduction and omisison patterns.
+            \item Distortion patterns.
+        \end{itemize}
+    \item \textbf{Additional Interfaces:} Develop interfaces for other uses of the underlying speech analysis model, such as an accent coach application.
+    \item \textbf{OS Application:} Adapting the web-based system into an application that can be run natively on different operation systems (ex: Windows, Linux, macOS).
+\end{itemize}
 
 \section{Custom Documents (CDs)}
 
