@@ -31,20 +31,14 @@ Date2 & Name(s) & Description of changes\\
 
 \section{Problem Statement}
 
-\wss{You should check your problem statement with the
-\href{https://smiths.github.io/capTemplate/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}}. 
-
-\wss{You can change the section headings, as long as you include the required
-information.}
-
 \subsection{Problem}
 
-\wss{What problem are you trying to solve?  Why is it important? Do not talk
-about how you will solve the problem, only what the problem is.  AI is rarely
-part of the problem.  The problem is ``what'' you want to do, not ``how'' you
-want to do it.  The problem statement should be written in a way that is
-understandable to a non-technical audience.}
+Around 440,000 Canadians deal with some kind of speech, language, or communication issue \cite{cdac2026statistics}; this includes 7-10\% of preschool children in Canada \cite{gaines2006earlyid}.
+A common speech impediment in children is substitution, which is when an expected phoneme is replaced by another (e.g. a child may pronounce “Rabbit” as “Wabbit”) \cite{asha2025ssd}.
+For detection of said issues, speech language pathologists (SLPs) and researchers have used various tools for analyzing speech and helping individuals improve.
+Current phonetic detection tools for researchers and SLPs are proprietary, not compliant with the Personal Health Information Protection Act (PHIPA), and/or poor in performance (e.g. speed and accuracy) \cite{supervisor2026initialcomm}.
+This means that available tools are insufficient for research and for treating substitution speech impediments in children.
+There should be a substitution treatment tool for child SLPs that is open-source, PHIPA-compliant, performant, and expandable to other professions (e.g. accent coaches) and other speech differences beyond execution.  
 
 \subsection{Inputs and Outputs}
 
@@ -89,17 +83,94 @@ understandable to a non-technical audience.}
 
 \subsection{Stakeholders}
 
+\subsubsection{Primary Stakeholders}
+\textbf{Speech Language Pathologists -} Speech Language Pathologists are the main user group for this application. Their job revolves around correcting speech disorders, so this tool would serve as their assistant during everyday activities. It may be used to assess speech patterns, and to discover what phonemes are being misspoken. They will be able to use the tool’s feedback to speed up and adjust treatment as necessary.
+\vspace{1.0em}
+
+\noindent\textbf{Patients -} Patients (primarily children) would interact with this application very often. Their improvement is directly tied to how accurately the application assesses their speaking when providing feedback to a clinician. Due to their young age, it is assumed that they have little digital literacy and education. This is a key consideration when designing an interface for them to complete homework, or when giving them feedback. 
+
+\subsubsection{Secondary Stakeholders}
+\textbf{Parents and Guardians -} Patient Guardians are not the main user group for this application but hold a large interest in how it performs. For them to trust that it is giving their dependent person good treatment, it needs to be accurate. It must also keep their personal data safe. Besides indirect concerns, they may be occasional users when tracking their child’s progress, or when assisting them with homework, making them an important consideration.
+
+\subsubsection{Tertiary Stakeholders}
+\textbf{Academia (Linguistics Students, Cognitive Science Researchers) -} There are several uses for this application in academia. This tool may be leveraged to extract and analyze pediatric speech to uncover hidden patterns during research. It may also be used as a tool for aspiring SLPs to reference when learning speech language pathology. 
+\vspace{1.0em}
+
+\noindent\textbf{Governments -} In Ontario, PHIPA protects patient confidentiality. Therefore, local governments would be concerned with how the application maintains patient data, to properly protect their privacy. 
+
+
 \subsection{Environment}
 
-\wss{Hardware and Software Environment for the users.  The developer environment
-is summarized as part of the developer plan.}
+\noindent\textbf{Hardware:}
+\begin{itemize}
+    \item PC (desktop or laptop, Specs to be determined)
+    \item Microphone (built-in or external)
+\end{itemize}
+
+\noindent\textbf{Software/Firmware:}
+\begin{itemize}
+    \item Web browser (Google Chrome or Edge)
+    \item Windows 10 and 11 Operating System
+    \item Any required drivers for microphone
+    \item Supports HTTPS connections
+\end{itemize}
 
 \section{Goals}
+The overall objective of this project is to provide assistance to pediatric speech-language pathologists during their patient sessions. 
+This will be a software tool that can act as an in-session assistant to pediatric speech-language pathologists (SLPs) during speech 
+therapy sessions, helping them identify speech challenges quickly and tailor therapy more effectively. The system will be strictly 
+assistive, augmenting the clinician's expertise but not replacing their professional judgement.\\
+
+\noindent
+Listed below are the overall goals for this project:
+
+\begin{itemize}
+    \item Develop a web-based software tool that functions as an in-session assistant of pediatric SLPs.
+    \item Analyze real-time speech of a patient at the phonetic level to identify and flag speech substitution speech patterns, a common pediatric speech challenge where an expected phoneme is replaced by another.
+    \item Include an interactive interface for SLPs, allowing them to record and analyze speech during session, including insights and data visualizations on produced sounds and identified speech pattern challenges.
+    \item Include features and activities within the interface that the SLP can lead a patient through to help them improve on speech challenges during a session.
+\end{itemize}
+
+\noindent
+To achieve these goals there are two primary components:
+\begin{enumerate}
+    \item \textbf{Speech Analysis Model:}
+    The core technical component of the system. It will be responsible for processing audio input and extracting phonetic information from speech in real-time. The goals of this component are:
+    \begin{itemize}
+        \item Accept real-time audio input of a patient's speech during a therapy session.
+        \item Transcribe and classify the speech of a patient at the phonetic level.
+        \item Identify substitution speech patterns.
+        \item Operate with sufficient speed and accuracy to be useful during a live speech therapy session.
+    \end{itemize}
+
+    \item \textbf{SLP User Interface:}
+    The “assistant” component of the system, interacted with by the SLP. It will be responsible for visually representing analysis results and supporting the SLP's workflow during the session. The goals of this component are:
+    \begin{itemize}
+        \item Provide an interactive dashboard for the SLP to record a patient's speech in real-time.
+        \item Display data visualisations of the sounds produced, and flagged speech patterns.
+        \item Present session data in a way that supports the SLP's clinical process.
+        \item Offer guided activities and exercises that the SLP can provide to the patient during sessions to target a patient's specific speech challenges.
+        \item Display session tracking and patient progress data
+    \end{itemize}
+\end{enumerate}
+
 
 \section{Stretch Goals}
-
-\wss{Goals you hope to get to, but not necessary.  They are also helpful if the
-scope of the original project needs to be expanded.}
+The following are goals for possible expansion of the project after the main goals are achieved:
+\begin{itemize}
+    \item \textbf{Patient-Facing/Homework Interface:} An additional interface for patients, allowing then to complete at home practice activities to improve their speech. 
+        \begin{itemize}
+            \item Account for different types of users (SLP \& patients).
+        \end{itemize}
+    \item \textbf{Mobile Application:} An Android/iOS application for patients to practice their speech and complete homework activities on a mobile device.
+    \item \textbf{Broader Speech Pattern Detection:} The detection of additional types of speech pattern challenges beyond just substitution.
+        \begin{itemize}
+            \item Cluster reduction and omisison patterns.
+            \item Distortion patterns.
+        \end{itemize}
+    \item \textbf{Additional Interfaces:} Develop interfaces for other uses of the underlying speech analysis model, such as an accent coach application.
+    \item \textbf{OS Application:} Adapting the web-based system into an application that can be run natively on different operation systems (ex: Windows, Linux, macOS).
+\end{itemize}
 
 \section{Custom Documents (CDs)}
 
@@ -119,17 +190,22 @@ instructor, can be modified over the course of the term.}
 
 \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
-\input{../Reflection.text}
-
 \begin{enumerate}
-    \item What went well while writing this deliverable? 
-    \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-    \item How did you and your team adjust the scope of your goals to ensure
+    \item \textbf{What went well while writing this deliverable?} \\
+    Before beginning the deliverable, the group discussed each of the required sections together and took detailed notes for each one. This helped with writing the deliverable because everyone in the group was on the same page and understood the approach we wanted to take. This allowed us to easily divide up the writing work and ensure that each section would be cohesive and unified. Additionally, the group set an internal deadline to complete the writing the day before the official deliverable due date. This helped keep us on track and accountable for our work.
+    \item \textbf{What pain points did you experience during this deliverable, and how
+    did you resolve them?}
+    Since this was the first deliverable and the group’s first time working with the LaTeX files in the repo template, there were a few initial challenges and technical difficulties with viewing the PDFs as they would be generated after editing the LaTeX files. We resolved this by communicating our challenges, helping each other, and trying different methods. 
+    Additionally, after the initial meeting on the deliverable, there was a little further debate on what features should count as goals vs stretch goals and what the PoC should encompass. This stalled the writing of those respective sections while the group engaged in further discussion to come to a consensus. 
+    \item \textbf{How did you and your team adjust the scope of your goals to ensure
     they are suitable for a Capstone project (not overly ambitious but also of
-    appropriate complexity for a senior design project)?
+    appropriate complexity for a senior design project)?}
+    After discussing our project idea with our supervisors, Daniel Pape and Lyn Turkstra (subject matter experts in SLP and speech analysis), we were able to narrow our scope for our PoC model. We came to understand that speech challenges encompasses several different categories and it would likely be difficult to target each one. This led us to narrow the scope to addressing only one subtype of speech challenge (substitutions), with other types as stretch goals.
+    Additionally, we had ideas for multiple types of interfaces that could use our model (an SLP interface, a patient interface, an accent coach interface, etc). We ultimately decided to narrow our scope to focus on the SLP interface, the most important option given our overall project goal: assist speech language pathologists during speech therapy sessions. The other types of interfaces were relegated to stretch goals.
+
 \end{enumerate}  
+
+\bibliographystyle{IEEEtran}
+\bibliography{../../refs/References}
 
 \end{document}
