@@ -31,20 +31,14 @@ Date2 & Name(s) & Description of changes\\
 
 \section{Problem Statement}
 
-\wss{You should check your problem statement with the
-\href{https://smiths.github.io/capTemplate/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}}. 
-
-\wss{You can change the section headings, as long as you include the required
-information.}
-
 \subsection{Problem}
 
-\wss{What problem are you trying to solve?  Why is it important? Do not talk
-about how you will solve the problem, only what the problem is.  AI is rarely
-part of the problem.  The problem is ``what'' you want to do, not ``how'' you
-want to do it.  The problem statement should be written in a way that is
-understandable to a non-technical audience.}
+Around 440,000 Canadians deal with some kind of speech, language, or communication issue \cite{cdac2026statistics}; this includes 7-10\% of preschool children in Canada \cite{gaines2006earlyid}.
+A common speech impediment in children is substitution, which is when an expected phoneme is replaced by another (e.g. a child may pronounce “Rabbit” as “Wabbit”) \cite{asha2025ssd}.
+For detection of said issues, speech language pathologists (SLPs) and researchers have used various tools for analyzing speech and helping individuals improve.
+Current phonetic detection tools for researchers and SLPs are proprietary, not compliant with the Personal Health Information Protection Act (PHIPA), and/or poor in performance (e.g. speed and accuracy) \cite{supervisor2026initialcomm}.
+This means that available tools are insufficient for research and for treating substitution speech impediments in children.
+There should be a substitution treatment tool for child SLPs that is open-source, PHIPA-compliant, performant, and expandable to other professions (e.g. accent coaches) and other speech differences beyond execution.  
 
 \subsection{Inputs and Outputs}
 
@@ -55,8 +49,19 @@ Use abstraction so that you can avoid details.}
 
 \subsection{Environment}
 
-\wss{Hardware and Software Environment for the users.  The developer environment
-is summarized as part of the developer plan.}
+\noindent\textbf{Hardware:}
+\begin{itemize}
+    \item PC (desktop or laptop, Specs to be determined)
+    \item Microphone (built-in or external)
+\end{itemize}
+
+\noindent\textbf{Software/Firmware:}
+\begin{itemize}
+    \item Web browser (Google Chrome or Edge)
+    \item Windows 10 and 11 Operating System
+    \item Any required drivers for microphone
+    \item Supports HTTPS connections
+\end{itemize}
 
 \section{Goals}
 The overall objective of this project is to provide assistance to pediatric speech-language pathologists during their patient sessions. 
@@ -147,5 +152,8 @@ instructor, can be modified over the course of the term.}
     Additionally, we had ideas for multiple types of interfaces that could use our model (an SLP interface, a patient interface, an accent coach interface, etc). We ultimately decided to narrow our scope to focus on the SLP interface, the most important option given our overall project goal: assist speech language pathologists during speech therapy sessions. The other types of interfaces were relegated to stretch goals.
 
 \end{enumerate}  
+
+\bibliographystyle{IEEEtran}
+\bibliography{../../refs/References}
 
 \end{document}
