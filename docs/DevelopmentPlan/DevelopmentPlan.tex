@@ -2,6 +2,8 @@
 
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{hyperref}
+
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 
 \title{Development Plan\\\progname}
@@ -55,8 +57,10 @@ required to sign the ``Intellectual Property Guide Acknowledgement.''}
 
 \section{Copyright License}
 
-\wss{What copyright license is your team adopting.  Point to the license in your
-repo.}
+Our team is adopting the GNU General Public License (GPL).
+The license is available in the
+\href{https://github.com/lilyporter/Ghoti/blob/main/LICENSE}{LICENSE file}
+at the root of our repository.
 
 \section{Team Meeting Plan}
 
@@ -113,45 +117,76 @@ At a high level, this application will listen to child speech, process it into i
 
 
 \section{Expected Technology}
+\section{Expected Technology}
 
-\wss{What programming language or languages do you expect to use?  What external
-libraries?  What frameworks?  What technologies.  Are there major components of
-the implementation that you expect you will implement, despite the existence of
-libraries that provide the required functionality.  For projects with machine
-learning, will you use pre-trained models, or be training your own model?  }
-
-\wss{The implementation decisions can, and likely will, change over the course
-of the project.  The initial documentation should be written in an abstract way;
-it should be agnostic of the implementation choices, unless the implementation
-choices are project constraints.  However, recording our initial thoughts on
-implementation helps understand the challenge level and feasibility of a
-project.  It may also help with early identification of areas where project
-members will need to augment their training.}
-
-Topics to discuss include the following:
+\subsection{Languages and Constraints}
 
 \begin{itemize}
-\item Specific programming language
-\item Specific libraries
-\item Pre-trained models
-\item Specific linter tool (if appropriate)
-\item Specific unit testing framework
-\item Investigation of code coverage measuring tools
-\item Specific plans for Continuous Integration (CI), or an explanation that CI
-  is not being done
-\item Specific performance measuring tools (like Valgrind), if
-  appropriate
-\item Tools you will likely be using?
+\item \textbf{Python}: speech processing, model evaluation and training, and application backend.
+\item \textbf{JavaScript:} user interface.
+\item \textbf{SQL:} data storage and access control.
+\item \textbf{Git, GitHub, and GitHub Projects:} course requirements and will be used for version control, issue tracking, code review, and planning.
+\item The application is web-based so it will run on devices that a typical clinic would have, i.e. a desktop.
 \end{itemize}
 
-\wss{git, GitHub and GitHub projects should be part of your technology.}
+\subsection{Libraries and Frameworks}
+
+\begin{itemize}
+\item \textbf{Backend}: an Python web framework (e.g., FastAPI)
+  with data validation (e.g., Pydantic).
+\item \textbf{Frontend}: a JavaScript framework (e.g., React), an API to capture audio from the browser.
+\item \textbf{Data}: a relational database (e.g., PostgreSQL) with row-level access control, hosted or self-hosted. 
+\item \textbf{Speech and machine learning}: PyTorch, the Hugging Face
+  Transformers library, and standard audio-processing libraries.
+\end{itemize}
+
+\subsection{Pre-trained Models and Training}
+
+\begin{itemize}
+\item We expect to start from pre-trained speech models (e.g., wav2vec2) and existing phone recognizers, to train a model, if the existing solutions are found to not be good enough.
+\item Training data will be publicly available child-speech corpora with phonetic annotations
+\item Both existing commercial and open-source models are evaluated and are a fallback if a trained model does not meet the agreed targets
+\end{itemize}
+
+\paragraph{Components we expect to implement ourselves.}
+\begin{itemize}
+\item comparison of recognized phones against the target sound
+\item an evaluation harness for accuracy, speed, and regression testing
+\item the application: practice interface, curriculum, and clinician dashboard.
+\end{itemize}
+
+\subsection{Development Tooling}
+
+\begin{itemize}
+\item \textbf{Linting and formatting}: Ruff for Python; Prettier for JavaScript.
+\item \textbf{Unit testing}: pytest for Python; Vitest for JavaScript.
+\item \textbf{Continuous Integration}: Pull requests must have a reviewer; branch protection blocking tests that fail; unit testing to prevent breaking the application on code that compiles on merge;
+\end{itemize}
+
+\subsection{Performance Measurement}
+
+\begin{itemize}
+\item \textbf{Accuracy}: phone error rate against reference transcriptions;
+  precision and recall of substitution detection per target sound; agreement
+  with speech-language pathologist annotations.
+\item \textbf{Speed}: real-time factor (processing time divided by audio
+  duration) and end-to-end latency, measure at each model's size to map the accuracy-versus-latency tradeoff.
+\item \textbf{Regression testing}: a fixed held-out evaluation set is re-run after every training run or model change, and a change is accepted only if results stay within agreed thresholds.
+\end{itemize}
+
+\subsection{Areas Requiring Additional Training}
+
+\begin{itemize}
+\item Phonetics and speech sound disorders, with our SLP advisor.
+\item Fine-tuning and evaluating speech models.
+\item Database access-control design.
+\end{itemize}
 
 \section{Use of AI and LLMs}
 
-\wss{This section is a continuation of the previous section.  The role of LLMs
-in your project as important enough to warrant their own section.  
-How will your team be using LLMs for code and documentation development?  
-What tools will you be using?  How will you verify the output of your LLMs?}
+Our team will use LLMs to support brainstorming, application development, and documentation. Tools such as Claude and ChatGPT may be used to explore design approaches, explain concepts, and  write code. In the coding process, agents will also be implemented to improve workflow and follow best practices. Team members will make and take responsibility for all project decisions and submitted work.
+
+We will review any generated code before including it in the application. We will check that it meets the project requirements, follows our design, and works as intended by running relevant builds, checks, and tests. Any output that cannot be verified or does not meet these checks will be revised or discarded.
 
 \section{Coding Standard}
 
@@ -203,17 +238,33 @@ As none of the AI usage was for factual content, verification was very simple. F
 
 \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
 \input{../Reflection.text}
 
 \begin{enumerate}
     \item Why is it important to create a development plan prior to starting the
-    project?
+    project? \\ \\
+    Much of the lost time in any project, especially a group project, is due to disorganization and poor coordination.
+    Developing that organizational framework ensures that the team is on track to complete the project in a timely manner.
+    The value of development planning rather than jumping straight into the code, is ensuring that more of the thinking is done sooner.
+    The later work is instead coordinated implementation. Communication is one of the most challenging parts of engineering.
+    We can ensure that we all know our expectations of the project, and we can resolve miscommunication early on.
     \item In your opinion, what are the advantages and disadvantages of using
-    CI/CD?
+    CI/CD? \\ \\
+    CI/CD automates much of the menial labour in software development.
+    This lets the team focus on more critical aspects of the work instead of getting bogged down by the friction of testing and deployment.
+    It is also a significant time saver.
+    Many mistakes, which may be missed by human reviewers, will be caught by the CI/CD pipeline.
+    This means reviewers can focus on architectural and design details as opposed to spending time on trivial things, such as naming conventions. \\
+    On the other hand, the main disadvantage of implementing CI/CD is the initial time spent setting it up.
+    This is especially true for us, since none of us have implemented CI/CD in our own projects, even though we may have worked in codebases that had CI/CD pipelines during our co-ops.
+    Spending too much time on the perfect CI/CD pipeline is time lost on the features of the project. 
     \item What disagreements did your group have in this deliverable, if any,
-    and how did you resolve them?
+    and how did you resolve them? \\ \\
+    We had some disagreements on the Expected Technology section, specifically about the use of Cloud-based and web solutions for our project.
+    This project will likely require storing and analyzing the user's medical data, which means we need to consider the ethics and security of our solution.
+    Any web-based application would require considering cybersecurity, and any Cloud-based databases would require detailed inspections of the provider's security and privacy policies.
+    However, these approaches would significantly ease the technical development of our project, allowing us to focus on meeting our goals.
+    We had to spend some time considering the trade-offs of each approach and come to a compromise to move on to other aspects.
 \end{enumerate}
 
 \newpage{}
