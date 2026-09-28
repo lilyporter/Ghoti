@@ -85,10 +85,9 @@ jobs:
       # texlive-full is avoided deliberately; it is far larger than needed.
       # pandoc drives the Markdown -> PDF rule in the Makefile.
       - name: Install TeX Live and pandoc
-          run: |
+        run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends texlive-base texlive-binaries texlive-latex-extra texlive-science texlive-fonts-extra texlive-fonts-recommended texlive-latex-recommended lmodern pandoc
-      
       #- name: Install TeX Live and pandoc
        # uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
        # with:
