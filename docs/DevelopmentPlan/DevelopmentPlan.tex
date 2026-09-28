@@ -89,9 +89,10 @@ likely change throughout the year.}
 
 \section{Workflow Plan}
 
-Stakeholders and developers will work closely together on creating this project. Thus, using a workflow that simplifies the development cycle, allows for rapid feedback from stakeholders, and allows for quick iterations on the product is crucial. The quicker developers are allowed to iterate, the faster they can tune the product to stakeholder needs. 
+Stakeholders and developers will work closely together on creating this project. Thus, it is cruicial to use a workflow that simplifies the development cycle, allows for rapid feedback from stakeholders, and allows for quick iterations on the product. The quicker developers are allowed to iterate, the faster they can tune the product to stakeholder needs. 
 
-The workflow selected for this project is the GitHub workflow due to its simplicity and efficiency. The GitHub workflow instructs that each feature branch will be merged directly into the main branch, and product releases will come from the main branch. Overhead branches are not required for the GitHub workflow, which minimizes the amount of branch management a developer has to do. Production releases can be created quickly after each feature branch is merged, thus allowing for rapid feedback from stakeholders and allowing developers to make quick, iterative changes from said feedback. 
+The workflow selected for this project is the GitHub workflow due to its simplicity and efficiency. The GitHub workflow dictates that each feature branch will be merged directly into the main branch, and product releases will come from the main branch. Overhead branches are not required for the GitHub workflow, minimizing the amount of branch management a developer has to do. Production releases can be created quickly after each feature branch is merged, thus allowing for rapid feedback from stakeholders and allowing developers to make quick, iterative changes to make stakeholders happy. 
+
 For traceability, GitHub issues created with GitHub Projects will be used to track each feature. A developer will assign themselves to an issue on the project board and create a feature branch to work on it. Once a feature branch is ready to be merged into the main branch, the developer assigned to the issue will create a pull request. For each issue, at least one other team member must review it before approval is given to merge the associated feature branch into the main branch. Once the feature branch is merged, the developer assigned to the issue must close it and set its status to "done." Preferably, each pull request should contain a maximum of 500 changes to lines of code to minimize the workload on reviewers for each individual pull request. 
 
 Lastly, GitHub Actions will be used to create a pipeline for continuous integration and continuous development. An automatic runner for format checking, unit testing, and vulnerability checking will be part of the pipeline. Since the project is using a model that requires training and/or fine-tuning, benchmark testing, regression testing, and model latency checks will also need to be added to the pipeline to ensure thresholds for the product are met. Other checks may be added to the pipeline as needed.
@@ -285,10 +286,11 @@ Each team member should bring the attitude of wanting the team to succeed in the
 
 The team will use tentative deadlines to keep each other on track for team deliverables. During team meetings, we will discuss current progress, roadblocks, and upcoming deadlines to ensure everyone is on the same page with the work they have been assigned. A team member who is confused about the work expected from them should immediately reach out to the group for clarification. Team wins should be recognized throughout the capstone project's development, and shoutouts should be given to team members who are doing well in their work. If there are team members who are performing below expectations, the team should come together to address the issues hindering them. If necessary, a plan should be made for the team member that outlines steps for improvement. Should a team member fail to meet two deadlines for project deliverables, frequent or daily check-ins will be required to keep them on track and monitor their progress. Should failures to meet project deliverables continue, discussions with the Dr. Smith will be arranged for next steps. 
  
-Attendance will be taken at each scheduled team meeting and will be measured for metrics. Below 80% attendance to meetings, team members will be flagged after each meeting, below 60% team discussions will occur and improvement plans might be created. Below 50%, a meeting with the TA will be arranged. Below 30%, a meeting with Dr. Smith will be arranged. 
+Attendance will be taken at each scheduled team meeting and will be measured for metrics. Below 80\% attendance to meetings, team members will be flagged after each meeting, below 60\% team discussions will occur and improvement plans might be created. Below 50\%, a meeting with the TA will be arranged. Below 30\%, a meeting with Dr. Smith will be arranged. 
  
-The team will divide work equally as it relates to GitHub issues. If everyone is doing their assigned share of GitHub issues, it will be considered as the work equally shared. If it turns out there is an unequal balance of work between assigned GitHub issues, the team will reconvene to redistribute tasks.  
-Should the team meet targets early we all go out for lunch 
+The team will divide work equally as it relates to GitHub issues. If everyone is doing their assigned share of GitHub issues, it will be considered as the work being equally shared. If the team finds out that there is an unfair balance of work given to a team member, the team will reconvene to redistribute tasks.  
+\
+Should the team meet targets early we will all celebrate by going out for lunch. 
 
 \subsubsection*{Team Building}
 
@@ -297,7 +299,7 @@ The team will go out for a trivia night or a similar team-building activity at l
 \subsubsection*{Decision Making} 
 
 \begin{itemize}
-  \item Individual decisions: Should decisions need to be made at a lower level, at least one to two other people should discuss available options and come to a consensus. If a consensus can't be reached, escalate to the whole team, where a majority vote will result in a decision 
+  \item Individual decisions: Should decisions need to be made at a lower level, at least one to two other people should discuss available options and come to a consensus. If a consensus can't be reached, escalate to the whole team, where a majority vote will result in a decision being made.
   \item Team decisions: These should be immediately handled at the team level and will be sorted out with a majority vote resulting in a decision being made. 
   \item Any team member not present at a meeting where a decision is made should be notified of the decision and given the opportunity to provide feedback. If the team members involved in the decision feel that the feedback is warranted, they will reconvene to discuss the feedback and make a final decision.
 \end{itemize}
