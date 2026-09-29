@@ -38,10 +38,6 @@ The following document outlines the development plan for the \textbf{Ghoti} caps
 details including, confidentiality, IP, team member information and communication protocols. It also includes project technical plans and 
 standards, including the Proof of Concept design, expected technologies and details on AI usage.
 
-\wss{Additional information on the development plan can be found in the
-\href{https://gitlab.cas.mcmaster.ca/courses/capstone/-/blob/main/Lectures/L02b_POCAndDevPlan/POCAndDevPlan.pdf?ref_type=heads}
-{lecture slides}.}
-
 \section{Confidential Information?}
 During development, there is no confidential information being used. Machine learning training data will be gathered from publicly 
 available resources. However, when the product is in use by patients, their data will be private medical data. This means that the 
@@ -143,7 +139,6 @@ At a high level, this application will listen to child speech, process it into i
 
 
 \section{Expected Technology}
-\section{Expected Technology}
 
 \subsection{Languages and Constraints}
 
@@ -216,7 +211,15 @@ We will review any generated code before including it in the application. We wil
 
 \section{Coding Standard}
 
-\wss{What coding standard will you adopt?}
+\begin{itemize}
+\item \textbf{Python}: PEP 8, enforced with Ruff for linting and formatting
+\item \textbf{JavaScript}: the Airbnb JavaScript Style Guide, enforced with Prettier.
+\item \textbf{Commits and pull requests}: descriptive commit messages, one
+  pull request per feature or fix, and at least one reviewer approval before
+  merging to the main branch.
+\item These standards are enforced automatically through GitHub Actions on
+  every pull request; a failing lint or format check blocks merging.
+\end{itemize}
 
 \newpage{}
 
