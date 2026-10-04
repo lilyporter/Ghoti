@@ -101,10 +101,23 @@ have a primary area of focus, these roles are not fixed and may evolve as the pr
 
 Stakeholders and developers will work closely together on creating this project. Thus, it is cruicial to use a workflow that simplifies the development cycle, allows for rapid feedback from stakeholders, and allows for quick iterations on the product. The quicker developers are allowed to iterate, the faster they can tune the product to stakeholder needs. 
 
+\subsection{GitHub Workflow}
 The workflow selected for this project is the GitHub workflow due to its simplicity and efficiency. The GitHub workflow dictates that each feature branch will be merged directly into the main branch, and product releases will come from the main branch. Overhead branches are not required for the GitHub workflow, minimizing the amount of branch management a developer has to do. Production releases can be created quickly after each feature branch is merged, thus allowing for rapid feedback from stakeholders and allowing developers to make quick, iterative changes to make stakeholders happy. 
 
-For traceability, GitHub issues created with GitHub Projects will be used to track each feature. A developer will assign themselves to an issue on the project board and create a feature branch to work on it. Once a feature branch is ready to be merged into the main branch, the developer assigned to the issue will create a pull request. For each issue, at least one other team member must review it before approval is given to merge the associated feature branch into the main branch. Once the feature branch is merged, the developer assigned to the issue must close it and set its status to "done." Preferably, each pull request should contain a maximum of 500 changes to lines of code to minimize the workload on reviewers for each individual pull request. 
+\subsection{GitHub Issues and Pull Requests}
+For traceability, GitHub issues created with GitHub Projects will be used to track each feature. The steps for a developer handling an issue is as follows:
 
+\begin{enumerate}
+  \item The developer assigns themselves to an issue on the project board.
+  \item The developer creates a feature branch to work on it.
+  \item The developer works on the feature branch until the work is complete.
+  \item The developer will create a pull request once a feature branch is ready to be merged into the main branch (Preferably, each pull request should contain a maximum of 500 changes to lines of code to minimize the workload on reviewers for each individual pull request).
+  \item At least one other team member reviews the pull request and provides feedback or approves the pull request.
+  \item The developer works makes any changes requested by the reviewer and updates the pull request OR merges the feature branch into the main branch.
+  \item The developer assigned to the issue must close it and set its status to "done." 
+\end{enumerate}
+
+\subsection{Continuous Integration and Continuous Development (CI/CD)}
 Lastly, GitHub Actions will be used to create a pipeline for continuous integration and continuous development. An automatic runner for format checking, unit testing, and vulnerability checking will be part of the pipeline. Since the project is using a model that requires training and/or fine-tuning, benchmark testing, regression testing, and model latency checks will also need to be added to the pipeline to ensure thresholds for the product are met. Other checks may be added to the pipeline as needed.
 
 \section{Project Decomposition and Scheduling}
