@@ -140,7 +140,13 @@ System (configuration) \\
 
 \section{Critical Assumptions}
 
-\item 
+\item The patient never intentionally errs or mispronounces phonemes.
+\item The user of the software is always a trained SLP.
+\item The user is utilizing a hardware/operating system that is identified as compatible.
+\item The user is operating in Ontario and hosting sessions within reasonable working hours (no later than 12 am or earlier than 6 am).
+\item The user has the basic knowledge of how to use web-based software.
+\item The user does not make diagnoses without additional verification outside of the software.
+
 
 \wss{These assumptions that are made about the software or system.  You should
 minimize the number of assumptions that remove potential hazards.  For instance,
@@ -163,7 +169,7 @@ this potential failure mode.}
 }
 Failure Mode & Causes & Effects & Detection & Recommendations \\
 Phonemic identification model misclassifies patient speech \newline (false positive or negative) & 
-• External noise reduces quality of the audio \newline • Unique vocal patterns or accents of the patient cause incorrect phoneme to be identified \newline • Patient purposely mispronounces a sentence (malicious actor) \newline • Technical issues with the microphone \newline • Updates to model could cause regression and diminishing of accuracy for the patient's specific speech sound disorder (SSD) & 
+• External noise reduces quality of the audio \newline • Unique vocal patterns or accents of the patient cause incorrect phoneme to be identified \newline • Technical issues with the microphone \newline • Updates to model could cause regression and diminishing of accuracy for the patient's specific speech sound disorder (SSD) & 
 • Patient's treatment data contains errors, misrepresenting their actual progress & 
 • Notify clinician of noisy data \newline • Notify clinician of large gaps in variance \newline • Flag illogical identified phonemes (Phonemes from a language a patient does not know, phonemes with vastly different characteristics than the expected phoneme) & 
 • Allow the patient to try again \newline • Use aggregate data for progress tracking \newline • Display the model's confidence in the phoneme it identified \newline • Display recommendation to limit noise \newline • Allow for microphone test at the beginning of a session and ensure the quality is sufficient to get audio clips from a patient \newline • Allow clinician to test the model by pronouncing the correct phoneme \\
