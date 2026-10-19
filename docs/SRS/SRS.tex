@@ -1117,43 +1117,37 @@ be covered in the Verification and Validation document.}
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
   \textbf{Performance}
       \item Phonemic estimation results must be presented in less than 10 seconds for a short sentence.
-      This is because 10 seconds is the limit for sustaining a user's attention for in a human-computer dialogue before they will want to perform other tasks \cite{software_response_times}.
+      \textbf{Rationale: }This is because 10 seconds is the limit for sustaining a user's attention for in a human-computer dialogue before they will want to perform other tasks \cite{software_response_times}.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-      \item The SLP must be able to fully navigate the software within one hour of use. We expect that it will take some time to become accustomed to the software, but we do not want to expect it to be a time sink.
-      \item The SLP cannot delete critical data without a confirmation or the ability to backtrack within 72 hours. This provides a safety net for the SLP to prevent accidental deletion of critical data.
-      \item The time spent using the software tool during and outside of the session should be less than the time spent using equivalent manual tools. This is inherently a tool that is meant for efficiency and any loss in efficiency is counterproductive.
-      \item The child cannot access the rest of the system beyond the gamified experience. This is another safety net to ensure that the child cannot access data without the supervision of the SLP.
-      \item The child must be able to understand how to play the game within 8 minutes of use. Children have limited attention spans, and since our age range is 4-6, the lower bound of 8 minutes for a 4 year old was selected according to research \cite{child_attention_stats}.
-      \item The game is enjoyable to at least 80\% of children surveyed. We expect that the game may not be enjoyable to everyone but as long as the majority of children do, it is a success.
-      \item At least 80\% of children surveyed would want to play the game again. Similarly, this is to ensure that they continue interacting with the game without needed a parent's excessive prompting.
-      \item The game is aesthetically pleasing to at least 80\% of children surveyed. We anticipate that the game being visually appealing will help with engagement and enjoyment.
+      \item The SLP must be able to fully navigate the software within one hour of use. \textbf{Rationale: }We expect that it will take some time to become accustomed to the software, but we do not want to expect it to be a time sink.
+      \item The SLP cannot delete critical data without a confirmation or the ability to backtrack within 72 hours. \textbf{Rationale: }This provides a safety net for the SLP to prevent accidental deletion of critical data.
+      \item The time spent using the software tool during and outside of the session should be less than the time spent using equivalent manual tools. \textbf{Rationale: }This is inherently a tool that is meant for efficiency and any loss in efficiency is counterproductive.
+      \item The child cannot access the rest of the system beyond the gamified experience. \textbf{Rationale: }This is another safety net to ensure that the child cannot access data without the supervision of the SLP.
+      \item The child must be able to understand how to play the game within 8 minutes of use. \textbf{Rationale: }Children have limited attention spans, and since our age range is 4-6, the lower bound of 8 minutes for a 4 year old was selected according to research \cite{child_attention_stats}.
+      \item The game is enjoyable to at least 80\% of children surveyed. \textbf{Rationale: }We expect that the game may not be enjoyable to everyone but as long as the majority of children do, it is a success.
+      \item At least 80\% of children surveyed would want to play the game again. \textbf{Rationale: }Similarly, this is to ensure that they continue interacting with the game without needed a parent's excessive prompting.
+      \item The game is aesthetically pleasing to at least 80\% of children surveyed. \textbf{Rationale: }We anticipate that the game being visually appealing will help with engagement and enjoyment.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
   \textbf{Maintainability}
-      \item The software should be modular to allow extenstion to interfaces for other professions (e.g. accent coach, language teachers). We anticipate the value of extending the software, and a modular design facilitates this.
-      \item The software should be modular to allow extenstion to other speech differences under SODA. We anticipate the value of extending the software, and a modular design facilitates this.
-      \item Build and deployment of a patch should take less than 30 minutes. This is to ensure that the software is updated in a timely manner, ideally before the next session with a child for critical bug fixes.
+      \item The software should be modular to allow extenstion to interfaces for other professions (e.g. accent coach, language teachers). \textbf{Rationale: }We anticipate the value of extending the software, and a modular design facilitates this.
+      \item The software should be modular to allow extenstion to other speech differences under SODA. \textbf{Rationale: }We anticipate the value of extending the software, and a modular design facilitates this.
+      \item Build and deployment of a patch should take less than 30 minutes. \textbf{Rationale: }This is to ensure that the software is updated in a timely manner, ideally before the next session with a child for critical bug fixes.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
   \textbf{Portability}
-      \item Web-based application should work on Windows, MacOS, iOS, and Android OS. Although this is a web-based application, basic OS compatibility still needs to be ensured on common platforms.
-      \item Web-based application should work on Chrome, Firefox, Safari, and Edge browsers. This covers some of the most commonly used browsers, including default ones such as Safari on MacOS and Edge on Windows.
-      \item Web-based application should work on desktop, tablet, and laptop devices. The majority of the SLPs will likely use one of these devices, with the most common being iPads (tablets) \cite{supervisor2026initialcomm}.
-      \item Game should work on tablet and mobile devices. It is anticipated that the children will use tablets or their parent's mobile devices.
-      \item Game should work on iOS and Android OS devices. These are two of the most common tablet/mobile operating systems.
+      \item Web-based application should work on Windows, MacOS, iOS, and Android OS. \textbf{Rationale: }Although this is a web-based application, basic OS compatibility still needs to be ensured on common platforms.
+      \item Web-based application should work on Chrome, Firefox, Safari, and Edge browsers. \textbf{Rationale: }This covers some of the most commonly used browsers, including default ones such as Safari on MacOS and Edge on Windows.
+      \item Web-based application should work on desktop, tablet, and laptop devices. \textbf{Rationale: }The majority of the SLPs will likely use one of these devices, with the most common being iPads (tablets) \cite{supervisor2026initialcomm}.
+      \item Game should work on tablet and mobile devices. \textbf{Rationale: }It is anticipated that the children will use tablets or their parent's mobile devices.
+      \item Game should work on iOS and Android OS devices. \textbf{Rationale: }These are two of the most common tablet/mobile operating systems.
 
 
 \item Other NFRs that might be discussed include verifiability,
   understandability and reusability.
 
 \end{itemize}
-
-\subsection{Rationale}
-
-\plt{Provide a rationale for the decisions made in the documentation.  Rationale
-should be provided for scope decisions, modelling decisions, assumptions and
-typical values.}
 
 \section{Likely Changes}    
 
