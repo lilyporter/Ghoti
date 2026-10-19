@@ -75,11 +75,68 @@ Doing this will minimize risk and potential loss from unaddressed hazards.
 
 \section{System Boundaries and Components}
 
-\wss{Dividing the system into components will help you brainstorm the hazards.
-You shouldn't do a full design of the components, just get a feel for the major
-ones.  For projects that involve hardware, the components will typically include
-each individual piece of hardware.  If your software will have a database, or an
-important library, these are also potential components.}
+
+\section{System Boundaries and Components}
+
+\begin{table}[htbp]
+\centering
+\caption{System Components and Boundaries}
+\label{tab:system-components}
+\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth}X p{0.23\textwidth}@{}}
+\toprule
+\textbf{Component} & \textbf{Description} & \textbf{Boundary} \\
+\midrule
+
+Microphone and Browser &
+Captures the child's speech through a microphone and runs the client application on a tablet, laptop, or desktop computer. &
+Environment (hardware and software outside system control) \\
+
+\addlinespace
+
+Audio Capture &
+Records the audio for each attempt and transmits it to the backend. &
+System (client-side) \\
+
+\addlinespace
+
+Speech Model &
+Converts the recorded audio of an attempt into a sequence of phonemes, each with an associated confidence value. &
+System \\
+
+\addlinespace
+
+Comparison Engine &
+Compares recognized phonemes against the target word's expected phonemes and acceptable variants, identifies predefined substitutions, and classifies the attempt. &
+System \\
+
+\addlinespace
+
+Backend API &
+Coordinates system components, enforces access rules, and provides results to the dashboard. &
+System \\
+
+\addlinespace
+
+Database &
+Stores patient records, session history, SLP inputs, and audit logs, while maintaining separation between patient identity and clinical data. &
+System (configuration and schema) \\
+
+\addlinespace
+
+SLP Dashboard &
+Allows SLPs to configure and control sessions, enter inputs and overrides, and view results and visualizations. &
+System (client-side) \\
+
+\addlinespace
+
+Authentication &
+Verifies user identities and restricts access to patient data according to user permissions. &
+System (configuration) \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
 
 \section{Critical Assumptions}
 
