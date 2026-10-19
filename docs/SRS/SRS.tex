@@ -260,24 +260,26 @@ heat is transferred in
 \plt{Add any other abbreviations or acronyms that you add}
 
 \subsection{Mathematical Notation}
+
+Let \textit{x} represent the expected phoneme that the child is trying to produce.\\
+Let \textit{y} represent the phoneme estimated by the machine learning classification based on what the child actually produced.\\
+  \begin{equation}
+    features(phoneme) = p;   p \in ( {-1,0,1} )^n
+  \end{equation}
+\noindent Note: \textit{p} is a representation of \textit{n} phonological features of the phoneme.\\ \\
+\noindent Extract the phonological features of the expected and estimated phoneme:
 \begin{equation}
-
-  let x represent the expected phoneme that the child is trying to produce
-  
-  let y represent the phoneme estimated by the machine learning classification based on what the child actually produced
-
-  define function features(phoneme) = p; p belongs to {-1,0,1}^n, p is a representation of n phonological features of the phoneme
-
-  extract the phonological features of the 
   A = features(x)
-  B = features(y)
-
-  C = A-B
-
-  
-
-  
 \end{equation}
+\begin{equation}
+  B = features(y)
+\end{equation}
+\noindent Compare using Manhattan Distance to represent the magnitude of the error \cite{manhattan_distance}:
+\begin{equation}
+  d_m(A,B) = \sum_{i=0}^{n} |A_i - B_i|
+\end{equation}
+
+This final value will be what we use to estimate the error in the childs pronunciation.
 
 \plt{This section is optional, but should be included for projects that make use
   of notation to convey mathematical information.  For instance, if typographic
