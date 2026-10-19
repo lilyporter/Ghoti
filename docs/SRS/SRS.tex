@@ -343,71 +343,55 @@ heat is transferred in
 
 \section{Introduction}
 
-\plt{The introduction section is written to introduce the problem.  It starts
-  general and focuses on the problem domain. The general advice is to start with
-a paragraph or two that describes the problem, followed by a ``roadmap''
-paragraph.  A roadmap orients the reader by telling them what sub-sections to
-expect in the Introduction section.}
+A child’s phonemic inventory (the sounds they are able to make) typically stabilizes by ages 5-6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}, but this is not the case for many. In Ontario, roughly 1 in 10 children need extra help developing their speech and language skills \textcolor{red}{[ONTARIO SLP FACTS]}. Receiving proper treatment has proven to improve their self esteem, ability to socialize, and readiness for school \textcolor{red}{[ONTARIO SLP FACTS]}. The job of an SLP is to provide this treatment: they assess a child’s speech, fluency, and articulation, and provide corresponding strategies to overcome their concerns.
+
+The product “Pronounced Fish” is an assistive tool intended for SLPs to streamline their workflow, and offer complementary insights to assist with their consultations. This Software Requirements Specification (SRS) highlights all functionalities and expectations that guide the application’s design. The current section describes the purpose of this document, project scope decisions, characteristics of the intended reader for the SRS, and a roadmap describing the topics covered by each section of the document.
 
 \subsection{Purpose of Document}
-
-\plt{This section summarizes the purpose of the SRS document.  It does not focus
-  on the problem itself.  The problem is described in the ``Problem
-  Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
-  in the context of the project itself, not in the context of this course.
-  Although the ``purpose'' of the document is to get a grade, you should not
-  mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
-  section will be similar between projects.  The purpose of the document is the
-  purpose of the SRS, including communication, planning for the design stage,
-  etc.}
+The SRS will provide the formal requirements specification that any iteration of the product must adhere to. It compiles functional and non-functional requirements elicited from SLPs, children, and other relevant user groups that will guide the core development of this application. It will also outline some elements that are likely and unlikely to change through renditions of the product due to varying scope decisions, stakeholder needs, and user goals. A full list of goals and stakeholders can be found in the \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/ProblemStatementAndGoals/ProblemStatement.pdf}{Problem Statement and Goals Document}.
 
 \subsection{Scope of Requirements} 
 
-\plt{Modelling the real world requires simplification.  The full complexity of
-  the actual physics, chemistry, biology is too much for existing models, and
-  for existing computational solution techniques.  Rather than say what is in
-  the scope, it is usually easier to say what is not.  You can think of it as
-  the scope is initially everything, and then it is constrained to create the
-  actual scope.  For instance, the problem can be restricted to 2 dimensions, or
-  it can ignore the effect of temperature (or pressure) on the material
-  properties, etc.}  
+Pediatric speech is very complicated because children are still learning how to coordinate their breath, lips, and brain to make certain sounds. This means it is normal for them to make mistakes around this age. By age 5, these features have generally stabilized so if a child is still making errors around this time, it suggests a need for speech therapy. Therefore, the product narrows down the target user space to children aged 5-6. 
 
-\plt{The scope section is related to the assumptions section
-  (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
-  at the same level of abstraction.  The scope is at a high level.  The focus is
-  on the ``big picture'' assumptions.  The assumptions section lists, and
-  describes, all of the assumptions.}
+Speech errors can be narrowed down to one of four categories as per the SODA framework. This product focuses on addressing substitution errors: mistakes where children replace consonant sounds with the wrong one. For instance, pronouncing the word “rabbit” as “wabbit” substitutes the “r” for a “w”. 
 
-\plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
+Another factor that complicates analysis of a child's speech is their accent. Accents are tuned to pronounce certain sounds in certain ways, causing significant deviations between youth from different geographical regions. Therefore, the user space has been further narrowed down to handle Monolingual North American speakers.
+
+This means that the scope has been constrained to address substitution speech errors for monolingual, North American English speakers aged between 5-6. 
+
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
-\plt{This section summarizes the skills and knowledge of the readers of the
-  SRS.  It does NOT have the same purpose as the ``User Characteristics''
-  section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
-  people that will read, review and maintain the SRS.  They are the people that
-  will conceivably design the software that is intended to meet the
-  requirements.  The user, on the other hand, is the person that uses the
-  software that is built.  They may never read this SRS document.  Of course,
-  the same person could be a ``user'' and an ``intended reader.''}
-
-\plt{The intended reader characteristics should be written as unambiguously and
-  as specifically as possible.  Rather than say, the user should have an
-  understanding of physics, say what kind of physics and at what level.  For
-  instance, is high school physics adequate, or should the reader have had a
-  graduate course on advanced quantum mechanics?}
+This document acts as the bridge between the actual application and the project developers. The reader is expected to have the equivalent software design understanding of a McMaster University Level 3 Software Engineering student. They must have a first year engineering level understanding of linear algebra and vector difference. This is important to understand the accuracy and comparisons of different speech sounds. A very basic understanding of linguistics terminology is also needed. They must know what a phoneme is, have an idea of some common speech sound errors (i.e. SODA), and understand the purpose of an SLP. 
 
 \subsection{Organization of Document}
 
-\plt{This section provides a roadmap of the SRS document.  It will help the
-  reader orient themselves.  It will provide direction that will help them
-  select which sections they want to read, and in what order.  This section will
-  be similar between project.}
+The document is organized as per the following template [\citet{SmithAndLai2005, SmithEtAl2007, SmithAndKoothoor2016}]:
 
-\plt{Include a reference to the template (\citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}) you are using in the documentation in the Organization of
-  the Document section.}
-  
+\begin{itemize}
+    \item \textbf{Section 1:} Contains reference material starting with a table of units, symbols, abbreviations, and mathematical notation.
+
+    \item \textbf{Section 2:} The current section introduces the problem, purpose of the SRS, scope of the document, and characteristics of the intended reader.
+
+    \item \textbf{Section 3:} Provides a high level description of the system context including its inputs, outputs, and the interfaces between it and its environment. These system characteristics are tied to those of the intended user, and the system’s constraints.
+
+    \item \textbf{Section 4:} Highlights the overarching \textbf{\href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/ProblemStatementAndGoals/ProblemStatement.pdf}{problem statement and goals}}. It then expands on any modelling decisions, scope decisions, and assumptions used to shape the solution space.
+
+    \item \textbf{Section 5:} Outlines all functional and non-functional requirements the system must abide by, and the rationale for including them.
+
+    \item \textbf{Section 6:} Describes any likely changes that are expected to be made in future iterations of the software. These changes will add or enhance preexisting requirements.
+
+    \item \textbf{Section 7:} Describes any elements of the software that are unlikely to change.
+
+    \item \textbf{Section 8:} Maps traceability matrices that connect related requirements, assumptions, and constraints.
+
+    \item \textbf{Section 9:} Describes the order in which the requirements will be implemented during the development phase.
+
+    \item \textbf{References:} Citations for any referenced materials within the document.
+
+    \item \textbf{Appendix:} Contains a group reflection on the developmental process of this document.
+\end{itemize}  
 
 \section{General System Description}
 
@@ -657,7 +641,22 @@ understand.}
 
 \subsubsection{Scope Decisions}
 
-\plt{This section is optional.}
+The following decisions are made to narrow down the scope of the project:
+
+\begin{itemize}
+    \item \textbf{SD1}: The target demographic will be children aged 5--6.\\
+    \textbf{Rationale:} A child’s phonemic inventory (the sounds they are able to speak) typically stabilizes by ages 5--6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}. If a child has speech development issues at this point, they are referred to an SLP, making this a logical age range to choose. There is a lot more variation in speech at younger ages which may be normal, so younger age ranges are unrealistic to analyze for a capstone.
+
+    \item \textbf{SD2}: The children will be monolingual speakers with a North-American accent.\\
+    \textbf{Rationale:} Speech recognition tools struggle with recognizing mistakes in bilingual people or with accented speech \textcolor{red}{[BIAS WITH ACCENTED SPEECH]}. These speakers incorrectly get flagged as having speech disorders more often due to a lack of training data available for them \textcolor{red}{[BIAS WITH ACCENTED SPEECH]}. This means a general all-encompassing speech analysis model is unrealistic, and the project must focus on a space with sufficient training data to work from.
+
+    \item \textbf{SD3}: The detected speech errors will be limited to consonant substitution errors.\\
+    \textbf{Rationale:} There are four main types of speech errors as per the SODA framework, and addressing them all is a significant task. For this capstone, the main issues targeted are consonant substitution errors as they are the most common \textcolor{red}{[COMMON SPEECH ERRORS]} and are unaffected by dialects, accents, and ways of speaking. This makes them feasible to target.
+
+    \item \textbf{SD4}: Supported devices will be limited to iPadOS, AndroidOS, Windows desktops, and Macs.\\
+    \textbf{Rationale:} When eliciting requirements with SLPs, the majority of them stated to use iPads to supplement their sessions. It is unrealistic to develop a native application for each and every operating system within the capstone timeline, so the most common platforms will be picked.
+\end{itemize}
+
 \subsubsection{Modelling Decisions}
 
 \plt{This section is optional.}
@@ -1152,11 +1151,27 @@ typical values.}
 
 \section{Likely Changes}    
 
-\noindent \begin{itemize}
+Below is a list of requirements that are likely to change. The provided rationale will explain whether this is due to a scope decision, stretch goal, or other factor. 
+\begin{itemize}
+    \item \textbf{LC1}: The speech analysis model shall identify omission, distortion and addition phonetic articulation errors as described in the SODA framework.\\
+    \textbf{Rationale:} Due to scope requirements, speech error detection has been limited to just substitution errors for this project. Ideally, this will be changed to analyze all forms of errors.\\
+    \textbf{Related Assumption(s):} A5, A6
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] \plt{Give
-    the likely changes, with a reference to the related assumption (aref), as appropriate.}
+    \item \textbf{LC2}: The speech analysis model will fairly accommodate accents originating from regions outside North America. Fair implies the model will recognize errors at a comparable accuracy (+/- 5\% relative to the North American accent) for speakers of any accent.\\
+    \textbf{Rationale:} Due to scope requirements, the child’s accent has been limited to just Monolingual North American speakers. English speakers are very diverse, and there must be adequate support for users from all backgrounds.\\
+    \textbf{Related Assumption(s):} A2
 
+    \item \textbf{LC3}: The system shall provide an interface for an SLP to assign homework to their patients.\\
+    \textbf{Rationale:} The first iteration of the system will provide an interface for an SLP-led session in the clinic. A stretch goal is to allow patients to complete homework at home, but this is not a core feature, so it is a likely change.\\
+    \textbf{Related Assumption(s):} A7
+
+    \item \textbf{LC4}: The system shall highlight errors for children of all age ranges based on the standardized speech sound development chart.\\
+    \textbf{Rationale:} Due to scope requirements, the target child age has been restricted to ages 5--6. Speech errors may occur at any age, and even for adults. Therefore, more flexibility will be crucial in future iterations of the product.\\
+    \textbf{Related Assumption(s):} A2
+
+    \item \textbf{LC5}: The system will support being locally hosted on Windows and Mac operating systems. The system will have compatible mobile apps for iOS and Android OS. The system will be supported in Safari and Google Chrome browsers.\\
+    \textbf{Rationale:} SLPs may conduct their sessions using iPad, tablet, or computer microphones, so all platforms must be supported. They also deal with confidential patient health information, so web-based solutions may not be trusted.\\
+    \textbf{Related Assumption(s):} A11
 \end{itemize}
 
 \section{Unlikely Changes}    
