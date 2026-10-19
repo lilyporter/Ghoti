@@ -3,6 +3,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{tabularray}
 
 \hypersetup{
     colorlinks=true,       % false: boxed links; true: colored links
@@ -51,24 +52,91 @@ Date2 & Name(s) & Description of changes\\
 
 \pagenumbering{arabic}
 
-\wss{You are free to modify this template.}
-
 \section{Introduction}
 
-\wss{You can include your definition of what a hazard is here.}
+This document covers the hazard analysis for the Ghoti project, a web-based software assistant for speech-language pathologist (SLPs) 
+during sessions. The system captures and analyses a child’s speech in real-time, and flags it for substitution errors. Results are 
+presented to the SLP through a dashboard interface and data visualizations. The system also offers in-session exercises to support 
+the SLP in coaching a patient on speech challenges. It is strictly assistive and does not replace the professional judgement of the 
+SLP. 
+This document defines hazard as a property or condition in the system together with a condition in the environment that has the 
+potential to cause harm or loss. 
+The purpose of this document is to identify the hazards of the system, so mitigation strategies and safety requirements can be 
+derived. 
 
 \section{Scope and Purpose of Hazard Analysis}
 
-\wss{You should say what \textbf{loss} could be incurred because of the
-hazards.}
+This hazard analysis addresses the major hazards that could negatively impact the Ghoti project. This includes hazards with 
+speech/audio capture, speech analysis, and interfaces. The analysis will cover the various risks such as with patient data handling, 
+data privacy, accuracy, and performance. The losses that could result from the hazards include violations of PHIPA, privacy breaches, inaccurate analysis of speech and presentation of data, and loss of stakeholder trust.
+The purpose of this hazard analysis is early identification of any risks that could affect the key components of the system. 
+Identifying these risks will inform the creation of mitigation strategies and proper safety and security requirements. 
+Doing this will minimize risk and potential loss from unaddressed hazards. 
 
 \section{System Boundaries and Components}
 
-\wss{Dividing the system into components will help you brainstorm the hazards.
-You shouldn't do a full design of the components, just get a feel for the major
-ones.  For projects that involve hardware, the components will typically include
-each individual piece of hardware.  If your software will have a database, or an
-important library, these are also potential components.}
+
+\section{System Boundaries and Components}
+
+\begin{table}[htbp]
+\centering
+\caption{System Components and Boundaries}
+\label{tab:system-components}
+\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth}X p{0.23\textwidth}@{}}
+\toprule
+\textbf{Component} & \textbf{Description} & \textbf{Boundary} \\
+\midrule
+
+Microphone and Browser &
+Captures the child's speech through a microphone and runs the client application on a tablet, laptop, or desktop computer. &
+Environment (hardware and software outside system control) \\
+
+\addlinespace
+
+Audio Capture &
+Records the audio for each attempt and transmits it to the backend. &
+System (client-side) \\
+
+\addlinespace
+
+Speech Model &
+Converts the recorded audio of an attempt into a sequence of phonemes, each with an associated confidence value. &
+System \\
+
+\addlinespace
+
+Comparison Engine &
+Compares recognized phonemes against the target word's expected phonemes and acceptable variants, identifies predefined substitutions, and classifies the attempt. &
+System \\
+
+\addlinespace
+
+Backend API &
+Coordinates system components, enforces access rules, and provides results to the dashboard. &
+System \\
+
+\addlinespace
+
+Database &
+Stores patient records, session history, SLP inputs, and audit logs, while maintaining separation between patient identity and clinical data. &
+System (configuration and schema) \\
+
+\addlinespace
+
+SLP Dashboard &
+Allows SLPs to configure and control sessions, enter inputs and overrides, and view results and visualizations. &
+System (client-side) \\
+
+\addlinespace
+
+Authentication &
+Verifies user identities and restricts access to patient data according to user permissions. &
+System (configuration) \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
 
 \section{Critical Assumptions}
 
@@ -79,14 +147,62 @@ this potential failure mode.}
 
 \section{Failure Mode and Effect Analysis}
 
-\wss{Include your FMEA table here. This is the most important part of this document.}
-\wss{The safety requirements in the table do not have to have the prefix SR.
-The most important thing is to show traceability to your SRS. You might trace to
-requirements you have already written, or you might need to add new
-requirements.}
-\wss{If no safety requirement can be devised, other mitigation strategies can be
-entered in the table, including strategies involving providing additional
-documentation, and/or test cases.}
+\fontsize{7}{9}\selectfont
+\begin{longtblr}[
+    caption = {Failure Mode and Effects Analysis},
+    label = {tab:fmea},
+]{
+    width = \linewidth, 
+    colspec = {X[1,l] X[1,l] X[1,l] X[1.1,l] X[1.6,l]},
+    row{1}  = {font=\bfseries},
+    hlines, 
+    vlines,
+    rowhead = 1, % Automatically repeats the header row on every new page
+}
+Failure Mode & Causes & Effects & Detection & Recommendations \\
+Phonemic identification model misclassifies patient speech \newline (false positive or negative) & 
+• External noise reduces quality of the audio \newline • Unique vocal patterns or accents of the patient cause incorrect phoneme to be identified \newline • Patient purposely mispronounces a sentence (malicious actor) \newline • Technical issues with the microphone \newline • Updates to model could cause regression and diminishing of accuracy for the patient's specific speech sound disorder (SSD) & 
+• Patient's treatment data contains errors, misrepresenting their actual progress & 
+• Notify clinician of noisy data \newline • Notify clinician of large gaps in variance \newline • Flag illogical identified phonemes (Phonemes from a language a patient does not know, phonemes with vastly different characteristics than the expected phoneme) & 
+• Allow the patient to try again \newline • Use aggregate data for progress tracking \newline • Display the model's confidence in the phoneme it identified \newline • Display recommendation to limit noise \newline • Allow for microphone test at the beginning of a session and ensure the quality is sufficient to get audio clips from a patient \newline • Allow clinician to test the model by pronouncing the correct phoneme \\
+Performance too slow for a live session & 
+• The device where the phonemic analysis occurs is congested or busy \newline • Wi-Fi/connection issues like an unstable connection or congested network can cause high latency \newline • Sessions that use a client-side device may run older or slower specs, causing computation times to be extremely slow & 
+• Valuable time lost in session waiting for a response from the application \newline • Frustration from SLP and patient for extending a session and wasting time & 
+• Measure the time between the start of an audio analysis and its end. Note large time intervals above a given threshold & 
+• For server-side computation methods, scale the number of servers used based on number of customers \newline • For server-side computation methods, if latency is too high, switch to using client-side device for computation \newline • Alert clinician or patient during a session that the connection is slow/unstable \\
+Data breach exposes patient information & 
+• Malicious actors \newline • Data backup to an insecure location & 
+• Software violates PHIPA guidelines \newline • Sensitive medical data from a patient can be taken advantage of & 
+• Monitoring tools for the deep or dark web where sensitive information could be sold \newline • Logs of data access to check whenever the data has been viewed & 
+• Software flags any suspicious transactions in the database \newline • Multiple data backups such that if one data storage location is exposed, it can be isolated and no data will be lost \\
+Race conditions in database access and/or modification & 
+• Multiple clinicians access or edit the database at the same time & 
+• Recently input patient data could be lost & 
+• Timestamps for database viewing or modification are extremely close together & 
+• Suspend the execution of a database action (e.g. view, modify) while a transaction is in progress (transactions include editing database elements, adding database elements, or removing database elements) \\
+Authentication or access control failure &
+• Forgotten username or password \newline Connection cannot be made to authentication server &
+• Clinician or patient is unable to use the application &
+• System detects multiple failed logins &
+• Implement forgotten username or password system \newline • Check connection to authentication server \newline Provide contact information to authentication server support \\
+Data is corrupted or lost &
+• Data storage hardware is damaged \newline • Software glitch corrupts data \newline • Software attacks that encrypt data (e.g. Ransomware Scheme) &
+• Patient data and overall progress is lost &
+• Check connections to all data storage devices \newline • Software tool to check for encrypted or inaccessible data &
+• Regularly backup data to multiple different data storage devices, if one should be compromised or lost, others will still be available \newline • Check health of data storage devices frequently, should one be experiencing signs of a potential failure, set up plans for replacement \\
+Replacement of a clinician's judgement &
+• Clinician believes everything the phonemic identification model says at face value \newline • Parents or guardians of patient trust the application and model over clinician &
+• Model is not always accurate or correct which could be providing false information to the patient. This can cause issues in their development if they believe when they are/are not speaking correctly, the opposite is true. &
+• Decline in patient's overall performance \newline • Minimal to no corrections given to the model &
+• Software consistently reminds clinicians and patients that machine learning models are not always perfectly accurate and can be wrong \newline • Check corrections given to the model for inconsistencies and frequency of corrections \\
+Patient is frustrated with using the software to do lessons &
+• Patient struggles to pronounce a phoneme or complete a lesson \newline • Each patient responds differently based on what kind of feedback they receive to improve (e.g. encouragement, straightforward, etc.) \newline • Patient finds the software boring to use &
+• Patient is unwilling to engage with the software, making treatment using it less effective & 
+• In-session discomfort, annoyance, or anger \newline • Refusal to do lessons \newline • Detect limited improvements to progress & 
+• Ask for patient feedback on improving elements of the application \newline • Allow for choice of feedback type that works well for the patient \\
+\end{longtblr}
+\fontsize{10}{12}\selectfont
+
 
 \section{Safety and Security Requirements}
 

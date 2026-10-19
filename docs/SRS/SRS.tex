@@ -488,157 +488,6 @@ automotive hazard analyses.}
 
 \section{Specific System Description}
 
-This section first presents the problem description, which gives a high-level
-view of the problem to be solved.  This is followed by the solution characteristics
-specification, which presents the assumptions, theories, definitions and finally
-the instance models.  \plt{Add any project specific details that are relevant
-  for the section overview.}
-
-\subsection{Problem Description} \label{Sec_pd}
-
-\progname{} is intended to solve ... \plt{What problem does your program solve?
-The description here should be in the problem space, not the solution space.}
-
-\subsubsection{Terminology and  Definitions}
-
-\plt{This section is expressed in words, not with equations.  It provide the
-  meaning of the different words and phrases used in the domain of the problem.
-The terminology is used to introduce concepts from the world outside of the
-mathematical model  The terminology provides a real world connection to give the
-mathematical model meaning.}
-
-This subsection provides a list of terms that are used in the subsequent
-sections and their meaning, with the purpose of reducing ambiguity and making it
-easier to correctly understand the requirements:
-
-\begin{itemize}
-
-\item 
-
-\end{itemize}
-
-\subsubsection{Physical System Description} \label{sec_phySystDescrip}
-
-\plt{The purpose of this section is to clearly and unambiguously state the
-  physical system that is to be modelled. Effective problem solving requires a
-  logical and organized approach. The statements on the physical system to be
-  studied should cover enough information to solve the problem. The physical
-  description involves element identification, where elements are defined as
-  independent and separable items of the physical system. Some example elements
-  include acceleration due to gravity, the mass of an object, and the size and
-  shape of an object. Each element should be identified and labelled, with their
-  interesting properties specified clearly. The physical description can also
-  include interactions of the elements, such as the following: i) the
-  interactions between the elements and their physical environment; ii) the
-  interactions between elements; and, iii) the initial or boundary conditions.}
-
-\plt{The elements of the physical system do not have to correspond to an actual
-physical entity.  They can be conceptual.  This is particularly important when
-the documentation is for a numerical method. }
-
-The physical system of \progname{}, as shown in Figure~?,
-includes the following elements:
-
-\begin{itemize}
-
-\item[PS1:] 
-
-\item[PS2:] ...
-
-\end{itemize}
-
-\plt{A figure here makes sense for most SRS documents}
-
-% \begin{figure}[h!]
-% \begin{center}
-% %\rotatebox{-90}
-% {
-%  \includegraphics[width=0.5\textwidth]{<FigureName>}
-% }
-% \caption{\label{<Label>} <Caption>}
-% \end{center}
-% \end{figure}
-
-\subsubsection{Goal Statements}
-
-\plt{The goal statements refine the ``Problem Description''
-  (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
-  consideration should achieve. Goals provide criteria for sufficient
-  completeness of a requirements specification and for requirements
-  pertinence. Goals will be refined in Section “Instanced Models”
-  (Section~\ref{sec_instance}). Large and complex goals should be decomposed
-  into smaller sub-goals.  The goals are written abstractly, with a minimal
-  amount of technical language.  They should be understandable by non-domain
-  experts.}
-
-\noindent Given the \plt{inputs}, the goal statements are:
-
-\begin{itemize}
-
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
-    sentence description of the goal.  There may be more than one.  Each Goal
-    should have a meaningful label.}
-
-\end{itemize}
-
-\subsection{Solution Characteristics Specification}
-
-\plt{This section specifies the information in the solution domain of the system
-  to be developed. This section is intended to express what is required in
-  such a way that analysts and stakeholders get a clear picture, and the
-  latter will accept it. The purpose of this section is to reduce the problem
-  into one expressed in mathematical terms. Mathematical expertise is used to
-  extract the essentials from the underlying physical description of the
-  problem, and to collect and substantiate all physical data pertinent to the
-  problem.}
-
-\plt{This section presents the solution characteristics by successively refining
-  models.  It starts with the abstract/general Theoretical Models (TMs) and
-  refines them to the concrete/specific Instance Models (IMs).  If necessary
-  there are intermediate refinements to General Definitions (GDs).  All of these
-  refinements can potentially use Assumptions (A) and Data Definitions (DD).
-  TMs are refined to create new models, that are called GMs or IMs. DDs are not
-  refined; they are just used. GDs and IMs are derived, or refined, from other
-  models. DDs are not derived; they are just given. TMs are also just given, but
-  they are refined, not used.  If a potential DD includes a derivation, then
-  that means it is refining other models, which would make it a GD or an IM.}
-
-\plt{The above makes a distinction between ``refined'' and ``used.'' A model is
-  refined to another model if it is changed by the refinement. When we change a
-  general 3D equation to a 2D equation, we are making a refinement, by applying
-  the assumption that the third dimension does not matter. If we use a
-  definition, like the definition of density, we aren't refining, or changing
-  that definition, we are just using it.}
-
-\plt{The same information can be a TM in one problem and a DD in another.  It is
-  about how the information is used.  In one problem the definition of
-  acceleration can be a TM, in another it would be a DD.}
-
-\plt{There is repetition between the information given in the different chunks
-  (TM, GDs etc) with other information in the document.  For instance, the
-  meaning of the symbols, the units etc are repeated.  This is so that the
-  chunks can stand on their own when being read by a reviewer/user.  It also
-  facilitates reuse of the models in a different context.}
-
-\noindent \plt{The relationships between the parts of the document are show in
-  the following figure.  In this diagram ``may ref'' has the same role as
-  ``uses'' above.  The figure adds ``Likely Changes,'' which are able to
-  reference (use) Assumptions.}
-
-\begin{figure}[H]
-  \includegraphics[scale=0.9]{RelationsBetweenTM_GD_IM_DD_A.pdf}
-\end{figure}
-
-The instance models that govern \progname{} are presented in
-Subsection~\ref{sec_instance}.  The information to understand the meaning of the
-instance models and their derivation is also presented, so that the instance
-models can be verified.
-
-\subsubsection{Types}
-
-\plt{This section is optional. Defining types can make the document easier to
-understand.}
-
 \subsubsection{Scope Decisions}
 
 The following decisions are made to narrow down the scope of the project:
@@ -657,401 +506,52 @@ The following decisions are made to narrow down the scope of the project:
     \textbf{Rationale:} When eliciting requirements with SLPs, the majority of them stated to use iPads to supplement their sessions. It is unrealistic to develop a native application for each and every operating system within the capstone timeline, so the most common platforms will be picked.
 \end{itemize}
 
-\subsubsection{Modelling Decisions}
-
-\plt{This section is optional.}
-
-\subsubsection{Assumptions} \label{sec_assumpt}
-
-\plt{The assumptions are a refinement of the scope.  The scope is general, where
-  the assumptions are specific.  All assumptions should be listed, even those
-  that domain experts know so well that they are rarely (if ever) written down.}
-\plt{The document should not take for granted that the reader knows which
-  assumptions have been made. In the case of unusual assumptions, it is
-  recommended that the documentation either include, or point to, an explanation
-  and justification for the assumption.} 
-\plt{If it helps with the organization and understandability, the assumptions
-can be presented as sub sections.  The following sub-sections are options:
-background theory assumptions, helper theory assumptions, generic theory
-assumptions, problem specific assumptions, and rationale assumptions}
-
-This section simplifies the original problem and helps in developing the
-theoretical model by filling in the missing information for the physical system.
-The numbers given in the square brackets refer to the theoretical model [TM],
-general definition [GD], data definition [DD], instance model [IM], or likely
-change [LC], in which the respective assumption is used.
+\subsubsection{Assumptions}
 
 \begin{itemize}
-
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
-  \plt{Short description of each assumption.  Each assumption
-    should have a meaningful label.  Use cross-references to identify the
-    appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
-    etc.  Each assumption should be atomic - that is, there should not be an
-    explicit (or implicit) ``and'' in the text of an assumption.}
-
+\item \textbf{A1: Single-word attempts.} Each attempt consists of a single spoken target word.
+\item \textbf{A2: Speaker population.} Each speaker is a monolingual North American English-speaking child aged 4--6.
+\item \textbf{A3: Expected phoneme sequence.} Each target word is drawn from a standardized word set and has a predefined expected phoneme sequence $T = (t_1, \ldots, t_n)$.
+\item \textbf{A4: Acceptable pronunciation variants.} Each target word has a finite, predefined set of acceptable phoneme variants $V_i$ at each position $i$, where $t_i \in V_i$.
+  \begin{itemize}
+  \item These sets are established in consultation with an SLP advisor to account for acceptable pronunciation variation.
+  \end{itemize}
+\item \textbf{A5: Substitution errors.} Each substitution error involves replacing exactly one expected phoneme with a different phoneme at the same position.
+\item \textbf{A6: Sequence length mismatch.} Any difference between the recognized phoneme sequence length and the expected length $n$ is assumed to indicate at least one omission or addition.
+\item \textbf{A7: SLP supervision.} Each session is conducted under the direct supervision of an SLP.
+\item \textbf{A8: Unintentional pronunciation errors.} All pronunciation errors made by the speaker are assumed to be unintentional.
+\item \textbf{A9: Recording conditions.} Each recording contains speech from only one speaker and is captured in a quiet environment with minimal background noise.
+\item \textbf{A10: Calibrated phoneme confidence.} The recognizer's per-phoneme posterior probabilities are assumed to be calibrated, such that predicted confidence values correspond to observed frequencies of correct recognition.
+\item \textbf{A11: Session devices.} SLPs are assumed to conduct sessions using an iPad, Android tablet, or computer equipped with a microphone and a modern web browser.
 \end{itemize}
 
-\subsubsection{Theoretical Models}\label{sec_theoretical}
+\subsubsection{Theoretical Models}
 
-\plt{Theoretical models are sets of abstract mathematical equations or axioms
-  for solving the problem described in Section ``Physical System Description''
-  (Section~\ref{sec_phySystDescrip}). Examples of theoretical models are
-  physical laws, constitutive equations, relevant conversion factors, etc.}
+\begin{itemize}
+\item \textbf{TM1: Phoneme recognition.} $R(x) = (P, \mathbf{c})$, where $x$ is the recorded audio, $P = (p_1, \ldots, p_m)$ is the recognized phoneme sequence, and $\mathbf{c} = (c_1, \ldots, c_m)$ are per-phoneme posteriors with $c_j \in [0, 1]$.
+  \begin{itemize}
+  \item Abstract mapping from audio to phonemes with confidence.
+  \end{itemize}
+\item \textbf{TM2: Phoneme sequence comparison.} Given $T$ (expected) and $P$ (recognized) with $|P| = n$, pair $t_i$ with $p_i$ for $i = 1, \ldots, n$.
+  \begin{itemize}
+  \item Positional comparison is sufficient for substitutions, which are the only errors in scope.
+  \end{itemize}
+\end{itemize}
 
-\plt{Optionally the theory section could be divided into subsections to provide
-more structure and improve understandability and reusability.  Potential
-subsections include the following: Context theories, background theories, helper
-theories, generic theories, problem specific theories, final theories and
-rationale theories.}
+\subsubsection{General Definitions}
 
-This section focuses on the general equations and laws that \progname{} is based
-on.  \plt{Modify the examples below for your problem, and add additional models
-  as appropriate.}
+\begin{itemize}
+\item \textbf{GD1: Substitution at position $i$.} $s_i = 1$ if $p_i \notin V_i$ and $(t_i \rightarrow p_i) \in L$, otherwise $s_i = 0$, where $L$ is the predetermined list of substitution errors.
+\end{itemize}
 
-~\newline
+\subsubsection{Data Definitions}
 
-\noindent
-\deftheory
-% #2 refname of theory
-{TM:COE}
-% #3 label
-{Conservation of thermal energy}
-% #4 equation
-{
-  $-{\bf \nabla \cdot q} + g$ = $\rho C \frac{\partial T}{\partial t}$
-}
-% #5 description
-{
-  The above equation gives the conservation of energy for transient heat transfer in a material
-  of specific heat capacity $C$ (\si{\joule\per\kilogram\per\celsius}) and density $\rho$ 
-  (\si{\kilogram\per\cubic\metre}), where $\bf q$ is the thermal flux vector (\si{\watt\per\square\metre}),
-  $g$ is the volumetric heat generation
-  (\si{\watt\per\cubic\metre}), $T$ is the temperature
-  (\si{\celsius}),  $t$ is time (\si{\second}), and $\nabla$ is
-  the gradient operator.  For this equation to apply, other forms
-  of energy, such as mechanical energy, are assumed to be negligible in the
-  system (\aref{A_OnlyThermalEnergy}).  In general, the material properties ($\rho$ and $C$) depend on temperature.
-}
-% #6 Notes
-{
-None.
-}
-% #7 Source
-{
-  \url{http://www.efunda.com/formulae/heat_transfer/conduction/overview_cond.cfm}
-}
-% #8 Referenced by
-{
-  \dref{ROCT}
-}
-% #9 Preconditions
-{
-None
-}
-% #1 derivation - not applicable by default
-{}
-
-\plt{``Ref.\ By'' is used repeatedly with the different types of information.
-  This stands for Referenced By.  It means that the models, definitions and
-  assumptions listed reference the current model, definition or assumption.
-  This information is given for traceability.  Ref. By provides a pointer in the
-  opposite direction to what we commonly do.  You still need to have a reference
-  in the other direction pointing to the current model, definition or
-  assumption.  As an example, if TM1 is referenced by GD2, that means that GD2 will
-  explicitly include a reference to TM1.}
-
-~\newline
-
-\subsubsection{General Definitions}\label{sec_gendef}
-
-\plt{General Definitions (GDs) are a refinement of one or more TMs, and/or of
-  other GDs.  The GDs are less abstract than the TMs.  Generally the reduction
-  in abstraction is possible through invoking (using/referencing) Assumptions.
-  For instance, the TM could be Newton's Law of Cooling stated abstracting.  The
-  GD could take the general law and apply it to get a 1D equation.}
-
-This section collects the laws and equations that will be used in building the
-instance models.
-
-\plt{Some projects may not have any content for this section, but the section
-  heading should be kept.}  \plt{Modify the examples below for your problem, and
-  add additional definitions as appropriate.}
-
-~\newline
-
-\noindent
-\begin{minipage}{\textwidth}
-\renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-\hline
-\rowcolor[gray]{0.9}
-Number& GD\refstepcounter{defnum}\thedefnum \label{NL}\\
-\hline
-Label &\bf Newton's law of cooling \\
-\hline
-% Units&$MLt^{-3}T^0$\\
-% \hline
-SI Units&\si{\watt\per\square\metre}\\
-\hline
-Equation&$ q(t) = h \Delta T(t)$  \\
-\hline
-Description &
-Newton's law of cooling describes convective cooling from a surface.  The law is
-stated as: the rate of heat loss from a body is proportional to the difference
-in temperatures between the body and its surroundings.
-\\
-& $q(t)$ is the thermal flux (\si{\watt\per\square\metre}).\\
-& $h$ is the heat transfer coefficient, assumed independent of $T$ (\aref{A_hcoeff})
-	(\si{\watt\per\square\metre\per\celsius}).\\
-&$\Delta T(t)$= $T(t) - T_{\text{env}}(t)$ is the time-dependent thermal gradient
-between the environment and the object (\si{\celsius}).
-\\
-\hline
-  Source & Citation here \\
-  \hline
-  Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
-  \hline
-\end{tabular}
-\end{minipage}\\
-
-\subsubsection*{Detailed derivation of simplified rate of change of temperature}
-
-\plt{This may be necessary when the necessary information does not fit in the
-  description field.}
-\plt{Derivations are important for justifying a given GD.  You want it to be
-  clear where the equation came from.}
-
-\subsubsection{Data Definitions}\label{sec_datadef}
-
-\plt{The Data Definitions are definitions of symbols and equations that are
-  given for the problem.  They are not derived; they are simply used by other
-  models.  For instance, if a problem depends on density, there may be a data
-  definition for the equation defining density.  The DDs are given information
-  that you can use in your other modules.}
-
-\plt{All Data Definitions should be used (referenced) by at least one other
-  model.}
-
-This section collects and defines all the data needed to build the instance
-models. The dimension of each quantity is also given.  \plt{Modify the examples
-  below for your problem, and add additional definitions as appropriate.}
-
-~\newline
-
-\noindent
-\begin{minipage}{\textwidth}
-\renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-\hline
-\rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\\
-\hline
-Label& \bf Heat flux out of coil\\
-\hline
-Symbol &$q_C$\\
-\hline
-% Units& $Mt^{-3}$\\
-% \hline
-  SI Units & \si{\watt\per\square\metre}\\
-  \hline
-  Equation&$q_C(t) = h_C (T_C - T_W(t))$, over area $A_C$\\
-  \hline
-  Description & 
-                $T_C$ is the temperature of the coil (\si{\celsius}).  $T_W$ is the temperature of the water (\si{\celsius}).  
-                The heat flux out of the coil, $q_C$ (\si{\watt\per\square\metre}), is found by
-                assuming that Newton's Law of Cooling applies (\aref{A_Newt_coil}).  This law (\dref{NL}) is used on the 
-                surface of the coil, which has area $A_C$ (\si{\square\metre}) and heat 
-                transfer coefficient $h_C$ (\si{\watt\per\square\metre\per\celsius}).  This equation
-                assumes that the temperature of the coil is constant over time (\aref{A_tcoil}) and that it does not vary along the length
-                of the coil (\aref{A_tlcoil}).
-  \\
-  \hline
-  Sources& Citation here \\
-  \hline
-  Ref.\ By & \iref{ewat}\\
-  \hline
-\end{tabular}
-\end{minipage}\\
-
-\subsubsection{Data Types}\label{sec_datatypes}
-
-\plt{This section is optional.  In many scientific computing programs it isn't
-  necessary, since the inputs and outpus are straightforward types, like reals,
-  integers, and sequences of reals and integers.  However, for some problems it
-  is very helpful to capture the type information.}
-
-\plt{The data types are not derived; they are simply stated and used by other
-  models.}
-
-\plt{All data types must be used by at least one of the models.}
-
-\plt{For the mathematical notation for expressing types, the recommendation is
-  to use the notation of~\citet{HoffmanAndStrooper1995}.}
-
-This section collects and defines all the data types needed to document the
-models. \plt{Modify the examples below for your problem, and add additional
-  definitions as appropriate.}
-
-~\newline
-
-\noindent
-\begin{minipage}{\textwidth}
-\renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-  \hline
-  \rowcolor[gray]{0.9}
-  Type Name & Name for Type\\
-  \hline
-  Type Def & mathematical definition of the type\\
-  \hline
-  Description & description here
-  \\
-  \hline
-  Sources & Citation here, if the type is borrowed from another source\\
-  \hline
-\end{tabular}
-\end{minipage}\\
-
-\subsubsection{Instance Models} \label{sec_instance}    
-
-\plt{The motivation for this section is to reduce the problem defined in
-  ``Physical System Description'' (Section~\ref{sec_phySystDescrip}) to one
-  expressed in mathematical terms. The IMs are built by refining the TMs and/or
-  GDs.  This section should remain abstract.  The SRS should specify the
-  requirements without considering the implementation.}
-
-This section transforms the problem defined in Section~\ref{Sec_pd} into 
-one which is expressed in mathematical terms. It uses concrete symbols defined 
-in Section~\ref{sec_datadef} to replace the abstract symbols in the models 
-identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
-
-The goals \plt{reference your goals} are solved by \plt{reference your instance
-  models}.  \plt{other details, with cross-references where appropriate.}
-\plt{Modify the examples below for your problem, and add additional models as
-  appropriate.}
-
-~\newline
-
-%Instance Model 1
-
-\noindent
-\begin{minipage}{\textwidth}
-\renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-  \hline
-  \rowcolor[gray]{0.9}
-  Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\\
-  \hline
-  Label& \bf Energy balance on water to find $T_W$\\
-  \hline
-  Input&$m_W$, $C_W$, $h_C$, $A_C$, $h_P$, $A_P$, $t_\text{final}$, $T_C$, 
-  $T_\text{init}$, $T_P(t)$ from \iref{epcm}\\
-  & The input is constrained so that $T_\text{init} \leq T_C$ (\aref{A_charge})\\
-  \hline
-  Output&$T_W(t)$, $0\leq t \leq t_\text{final}$, such that\\
-  &$\frac{dT_W}{dt} = \frac{1}{\tau_W}[(T_C - T_W(t)) + {\eta}(T_P(t) - T_W(t))]$,\\
-  &$T_W(0) = T_P(0) = T_\text{init}$ (\aref{A_InitTemp}) and $T_P(t)$ from \iref{epcm} \\
-  \hline
-  Description&$T_W$ is the water temperature (\si{\celsius}).\\
-  &$T_P$ is the PCM temperature (\si{\celsius}).\\
-  &$T_C$ is the coil temperature (\si{\celsius}).\\
-  &$\tau_W = \frac{m_W C_W}{h_C A_C}$ is a constant (\si{\second}).\\
-  &$\eta = \frac{h_P A_P}{h_C A_C}$ is a constant (dimensionless).\\
-  & The above equation applies as long as the water is in liquid form,
-  $0<T_W<100^o\text{C}$, where $0^o\text{C}$ and $100^o\text{C}$ are the melting
-  and boiling points of water, respectively (\aref{A_OpRange}, \aref{A_Pressure}).
-  \\
-  \hline
-  Sources& Citation here \\
-  \hline
-  Ref.\ By & \iref{epcm}\\
-  \hline
-\end{tabular}
-\end{minipage}\\
-
-%~\newline
-
-\subsubsection*{Derivation of ...}
-
-\plt{The derivation shows how the IM is derived from the TMs/GDs.  In cases
-  where the derivation cannot be described under the Description field, it will
-  be necessary to include this subsection.}
-
-\subsubsection{Input Data Constraints} \label{sec_DataConstraints}    
-
-Table~\ref{TblInputVar} shows the data constraints on the input output
-variables.  The column for physical constraints gives the physical limitations
-on the range of values that can be taken by the variable.  The column for
-software constraints restricts the range of inputs to reasonable values.  The
-software constraints will be helpful in the design stage for picking suitable
-algorithms.  The constraints are conservative, to give the user of the model the
-flexibility to experiment with unusual situations.  The column of typical values
-is intended to provide a feel for a common scenario.  The uncertainty column
-provides an estimate of the confidence with which the physical quantities can be
-measured.  This information would be part of the input if one were performing an
-uncertainty quantification exercise.
-
-The specification parameters in Table~\ref{TblInputVar} are listed in
-Table~\ref{TblSpecParams}.
-
-\begin{table}[!h]
-  \caption{Input Variables} \label{TblInputVar}
-  \renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l l l c} 
-  \toprule
-  \textbf{Var} & \textbf{Physical Constraints} & \textbf{Software Constraints} &
-                             \textbf{Typical Value} & \textbf{Uncertainty}\\
-  \midrule 
-  $L$ & $L > 0$ & $L_{\text{min}} \leq L \leq L_{\text{max}}$ & 1.5 \si[per-mode=symbol] {\metre} & 10\%
-  \\
-  \bottomrule
-\end{longtable*}
-\end{table}
-
-\noindent 
-\begin{description}
-\item[(*)] \plt{you might need to add some notes or clarifications}
-\end{description}
-
-\begin{table}[!h]
-\caption{Specification Parameter Values} \label{TblSpecParams}
-\renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l} 
-  \toprule
-  \textbf{Var} & \textbf{Value} \\
-  \midrule 
-  $L_\text{min}$ & 0.1 \si{\metre}\\
-  \bottomrule
-\end{longtable*}
-\end{table}
-
-\subsubsection{Properties of a Correct Solution} \label{sec_CorrectSolution}
-
-\noindent
-A correct solution must exhibit \plt{fill in the details}.  \plt{These
-  properties are in addition to the stated requirements.  There is no need to
-  repeat the requirements here.  These additional properties may not exist for
-  every problem.  Examples include conservation laws (like conservation of
-  energy or mass) and known constraints on outputs, which are usually summarized
-  in tabular form.  A sample table is shown in Table~\ref{TblOutputVar}}
-
-\begin{table}[!h]
-\caption{Output Variables} \label{TblOutputVar}
-\renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l} 
-  \toprule
-  \textbf{Var} & \textbf{Physical Constraints} \\
-  \midrule 
-  $T_W$ & $T_\text{init} \leq T_W \leq T_C$ (by~\aref{A_charge})
-  \\
-  \bottomrule
-\end{longtable*}
-\end{table}
-
-\plt{This section is not for test cases or techniques for verification and
-  validation.  Those topics will be addressed in the Verification and Validation
-  plan.}
+\begin{itemize}
+\item \textbf{DD1: Word position.} $\mathrm{pos}(i)$ is \textit{beginning} if $i = 1$; \textit{end} if $i = n$; otherwise \textit{middle}.
+  \begin{itemize}
+  \item Used to report where in the word each substitution occurs.
+  \end{itemize}
+\end{itemize}
 
 \section{Requirements}
 
@@ -1064,25 +564,54 @@ qualities that the software is expected to exhibit.
 
 \subsection{Functional Requirements}
 
-\noindent \begin{itemize}
+\subsubsection{Audio Capture Requirements}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] \plt{Requirements
-    for the inputs that are supplied by the user.  This information has to be
-    explicit.}
+\noindent\begin{itemize}
+\item \textbf{FR-AC1:} The system shall capture the patient's spoken response as audio for each attempt. \\\textbf{Rationale:} Every analysis result is derived from the recording of an attempt.
+\item \textbf{FR-AC2:} The system shall use captured audio only to analyze the attempt it was captured for. \\\textbf{Rationale:} The system is scoped to data analysis only. Limiting the use of children's audio reduces privacy exposure under PHIPA.
+\item \textbf{FR-AC3:} The system shall flag to the SLP any recording that fails the usability limits (noise, clipping, duration). \\\textbf{Rationale:} Noisy or malformed audio is a main cause of misclassification, so the SLP must know when a result may be unreliable.
+\end{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:] \plt{It isn't
-    always required, but often echoing the inputs as part of the output is a
-    good idea.}
+\subsubsection{Session Management Requirements}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:] \plt{Calculation
-    related requirements.}
+\begin{itemize}
+\item \textbf{FR-SM1:} The system shall allow the SLP to set up a session by selecting a patient, one or more target phonemes, and target items. \\\textbf{Rationale:} Target phonemes and items define what is practised and what the analysis compares against. Selectable phonemes are limited to those covered by the predetermined substitution list (FR-SA1).
+\item \textbf{FR-SM2:} The system shall allow the SLP to start, repeat, skip and end each attempt, and to end the session. \\\textbf{Rationale:} The SLP supervises the session and controls its pace.
+\item \textbf{FR-SM3:} The system shall allow the SLP to record, for each attempt, whether the target was produced independently, after a semantic cue, or after repetition. \\\textbf{Rationale:} The amount of support a patient needs is a clinical indicator of progress and is tracked across sessions.
+\item \textbf{FR-SM4:} The system shall allow the SLP to override the system's classification of any attempt. \\\textbf{Rationale:} The system's output is assistive and not diagnostic, so the SLP's clinical judgement takes precedence.
+\end{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
-  \plt{Verification related requirements.}
+\subsubsection{Speech Analysis Requirements}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \plt{Output related
-    requirements.}
+\begin{itemize}
+\item \textbf{FR-SA1:} The system shall identify, from the captured audio of each attempt, substitutions from a predetermined list of common substitution errors, reporting the expected phoneme, the produced phoneme, and the word position. \\\textbf{Rationale:} Substitutions are the only error type in scope for the proof of concept, and accuracy is only validated for the listed errors. Word position supports the position-based visualization.
+\item \textbf{FR-SA2:} The system shall not identify a substitution when the produced phoneme matches any acceptable variant defined for the target item. \\\textbf{Rationale:} Accepted North American English pronunciation varies by dialect, and treating those variants as errors would produce false substitutions.
+\item \textbf{FR-SA3:} The system shall report a confidence value with each result and shall classify an attempt as ``unclassifiable'' when confidence is below the confidence threshold determined by the validation study. \\\textbf{Rationale:} The SLP can weigh uncertain results, and the system avoids forcing a classification on poor input, which reduces over-reliance on the tool.
+\end{itemize}
 
+\subsubsection{Audio Capture Requirements}
+
+\begin{itemize}
+\item \textbf{FR-AC1:} The system shall capture the patient's spoken response as audio for each attempt. \\\textbf{Rationale:} Every analysis result is derived from the recording of an attempt.
+\item \textbf{FR-AC2:} The system shall use captured audio only to analyze the attempt it was captured for. \\\textbf{Rationale:} The system is scoped to data analysis only. Limiting the use of children's audio reduces privacy exposure under PHIPA.
+\item \textbf{FR-AC3:} The system shall flag to the SLP any recording that fails the usability limits (noise, clipping, duration). \\\textbf{Rationale:} Noisy or malformed audio is a main cause of misclassification, so the SLP must know when a result may be unreliable.
+\end{itemize}
+
+\subsubsection{Session Management Requirements}
+
+\begin{itemize}
+\item \textbf{FR-SM1:} The system shall allow the SLP to set up a session by selecting a patient, one or more target phonemes, and target items. \\\textbf{Rationale:} Target phonemes and items define what is practised and what the analysis compares against. Selectable phonemes are limited to those covered by the predetermined substitution list (FR-SA1).
+\item \textbf{FR-SM2:} The system shall allow the SLP to start, repeat, skip and end each attempt, and to end the session. \\\textbf{Rationale:} The SLP supervises the session and controls its pace.
+\item \textbf{FR-SM3:} The system shall allow the SLP to record, for each attempt, whether the target was produced independently, after a semantic cue, or after repetition. \\\textbf{Rationale:} The amount of support a patient needs is a clinical indicator of progress and is tracked across sessions.
+\item \textbf{FR-SM4:} The system shall allow the SLP to override the system's classification of any attempt. \\\textbf{Rationale:} The system's output is assistive and not diagnostic, so the SLP's clinical judgement takes precedence.
+\end{itemize}
+
+\subsubsection{Speech Analysis Requirements}
+
+\begin{itemize}
+\item \textbf{FR-SA1:} The system shall identify, from the captured audio of each attempt, substitutions from a predetermined list of common substitution errors, reporting the expected phoneme, the produced phoneme, and the word position. \\\textbf{Rationale:} Substitutions are the only error type in scope for the proof of concept, and accuracy is only validated for the listed errors. Word position supports the position-based visualization.
+\item \textbf{FR-SA2:} The system shall not identify a substitution when the produced phoneme matches any acceptable variant defined for the target item. \\\textbf{Rationale:} Accepted North American English pronunciation varies by dialect, and treating those variants as errors would produce false substitutions.
+\item \textbf{FR-SA3:} The system shall report a confidence value with each result and shall classify an attempt as ``unclassifiable'' when confidence is below the confidence threshold determined by the validation study. \\\textbf{Rationale:} The SLP can weigh uncertain results, and the system avoids forcing a classification on poor input, which reduces over-reliance on the tool.
 \end{itemize}
 
 \plt{Every IM should map to at least one requirement, but not every requirement
@@ -1110,44 +639,37 @@ be covered in the Verification and Validation document.}
 \noindent \begin{itemize}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  \textbf{Accuracy} \plt{Characterize the accuracy by giving the context/use for
-    the software.  Maybe something like, ``The accuracy of the computed
-    solutions should meet the level needed for $<$engineering or scientific
-    application$>$.  The level of accuracy achieved by \progname{} shall be
-    described following the procedure given in Section~X of the Verification and
-    Validation Plan.''  A link to the VnV plan would be a nice extra.}
+  \textbf{Accuracy}
+
+
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
+  \textbf{Performance}
+      \item Phonemic estimation results must be presented in less than 10 seconds for a short sentence.
+      \textbf{Rationale: }This is because 10 seconds is the limit for sustaining a user's attention for in a human-computer dialogue before they will want to perform other tasks \cite{software_response_times}.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-  \plt{Characterize the usability by giving the context/use for the software.
-    You should likely reference the user characteristics section.  The level of
-    usability achieved by the software shall be described following the
-    procedure given in Section~X of the Verification and Validation Plan.  A
-    link to the VnV plan would be a nice extra.}
+      \item The SLP must be able to fully navigate the software within one hour of use. \textbf{Rationale: }We expect that it will take some time to become accustomed to the software, but we do not want to expect it to be a time sink.
+      \item The SLP cannot delete critical data without a confirmation or the ability to backtrack within 72 hours. \textbf{Rationale: }This provides a safety net for the SLP to prevent accidental deletion of critical data.
+      \item The time spent using the software tool during and outside of the session should be less than the time spent using equivalent manual tools. \textbf{Rationale: }This is inherently a tool that is meant for efficiency and any loss in efficiency is counterproductive.
+      \item The child cannot access the rest of the system beyond the gamified experience. \textbf{Rationale: }This is another safety net to ensure that the child cannot access data without the supervision of the SLP.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
-  \textbf{Maintainability} \plt{The effort required to make any of the likely
-    changes listed for \progname{} should be less than FRACTION of the original
-    development time.  FRACTION is then a symbolic constant that can be defined
-    at the end of the report.}
+  \textbf{Maintainability}
+      \item The software should be modular to allow extenstion to interfaces for other professions (e.g. accent coach, language teachers). \textbf{Rationale: }We anticipate the value of extending the software, and a modular design facilitates this.
+      \item The software should be modular to allow extenstion to other speech differences under SODA. \textbf{Rationale: }We anticipate the value of extending the software, and a modular design facilitates this.
+      \item Build and deployment of a patch should take less than 30 minutes. \textbf{Rationale: }This is to ensure that the software is updated in a timely manner, ideally before the next session with a child for critical bug fixes.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
-  \textbf{Portability} \plt{This NFR is easier to write than the others.  The
-    systems that \progname{} should run on should be listed here.  When possible
-    the specific versions of the potential operating environments should be
-    given.  To make the NFR verifiable a statement could be made that the tests
-    from a given section of the VnV plan can be successfully run on all of the
-    possible operating environments.}
+  \textbf{Portability}
+      \item Web-based application should work on Windows, MacOS, iOS, and Android OS. \textbf{Rationale: }Although this is a web-based application, basic OS compatibility still needs to be ensured on common platforms.
+      \item Web-based application should work on Chrome, Firefox, Safari, and Edge browsers. \textbf{Rationale: }This covers some of the most commonly used browsers, including default ones such as Safari on MacOS and Edge on Windows.
+      \item Web-based application should work on desktop, tablet, and laptop devices. \textbf{Rationale: }The majority of the SLPs will likely use one of these devices, with the most common being iPads (tablets) \cite{supervisor2026initialcomm}.
+
 
 \item Other NFRs that might be discussed include verifiability,
   understandability and reusability.
 
 \end{itemize}
-
-\subsection{Rationale}
-
-\plt{Provide a rationale for the decisions made in the documentation.  Rationale
-should be provided for scope decisions, modelling decisions, assumptions and
-typical values.}
 
 \section{Likely Changes}    
 
@@ -1325,6 +847,25 @@ instance models, requirements, and data constraints on each other.
 % \end{figure}
 
 \section{Development Plan}
+\textbf{Proof of Concept:}
+For the proof of concept we will focus on implementing the phonemic analysis for substitution erros and some APIs to expose the data statistics to the rest of the system.
+We intend to do accuracy and performance testing in this phase to ensure the phonemic analysis meets those non-functional requirements.
+\textbf{Phase 1:}
+This is the phase that will be presented at the Capstone Expo.
+The interfaces should be complete for an SLP with a login, data visualization, lesson planning tools, progress tracking for the patients, and a game for the patients.
+The backend should have a modular design, and a database. The database will be real but will not be clinically ready as it will be a free Cloud service.
+Some basic security measures, such as two-factor authentication, will be put in place to protect patient data.
+The system should work in every selected browser, operating system, and device.
+\textbf{Phase 2:}
+Additional phonemic analysis will be implemented for other types of errors in SODA. The interface will be expanded to support data analysis and progress tracking for these errors as well as specialized games.
+\textbf{Phase 3:}
+Security, privacy, and PHIPPA/medical requirements will be met in this phase.
+This is through proper agreements with Cloud services or the implementation of locally hosted services.
+Additional security measures will be implemented to ensure cybersecurity and the protection of malicious actors accessing sensitive data.
+This is the phase that ensures that the software is fully ready for clinical deployment and use.
+\textbf{Phase 4 and on:}
+This is the phase where the software will be further into a line of software products for various professions and applications.
+Additional phonemic analysis may be required for this to detect speech differences that do not fall under SODA such as prosody.
 
 \plt{This section is optional.  It is used to explain the plan for developing
   the software.  In particular, this section gives a list of the order in which
@@ -1401,5 +942,8 @@ graduate attribute of Lifelong Learning.
 \input{../Reflection.text}
 
 \input{../SRS_Reflection.text}
+
+\bibliographystyle{IEEEtran}
+\bibliography{../../refs/References}
 
 \end{document}
