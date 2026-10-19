@@ -504,96 +504,69 @@ automotive hazard analyses.}
 
 \section{Specific System Description}
 
-This section first presents the problem description, which gives a high-level
-view of the problem to be solved.  This is followed by the solution characteristics
-specification, which presents the assumptions, theories, definitions and finally
-the instance models.  \plt{Add any project specific details that are relevant
-  for the section overview.}
-
 \subsection{Problem Description} \label{Sec_pd}
 
-\progname{} is intended to solve ... \plt{What problem does your program solve?
-The description here should be in the problem space, not the solution space.}
+PronouncedFish is intended to solve the problem of identifying speech sound errors in young children during speech therapy sessions. 
+Around 440,000 Canadians live with a speech, language, or communication disorder [Lily1], 
+including 7-10\% of preschool children [Lily2]. 
+There are several types of speech sound errors that sessions with an SLP can help with. Identifying errors, and tracking whether 
+they improve over time, is a core part of an SLP's work with a patient.
+
+Current tools speech analysis tools that support SLPs are limited. According to the project supervisors, some tools do not perform 
+well with both speed and accuracy, especially on children's voices. Additionally, current tools and models are not tailored to 
+provide real-time and interpretable analysis to an SLP during a speech therapy session. 
 
 \subsubsection{Terminology and  Definitions}
-
-\plt{This section is expressed in words, not with equations.  It provide the
-  meaning of the different words and phrases used in the domain of the problem.
-The terminology is used to introduce concepts from the world outside of the
-mathematical model  The terminology provides a real world connection to give the
-mathematical model meaning.}
-
-This subsection provides a list of terms that are used in the subsequent
-sections and their meaning, with the purpose of reducing ambiguity and making it
-easier to correctly understand the requirements:
-
+The following section describes the key terms and definitions used throughout the SRS documentation. 
 \begin{itemize}
 
-\item 
+\item \textbf{Language:}
+\item \textbf{Speech:}
+\item \textbf{Audio:}
+\item \textbf{Substitution Error:}
+\item \textbf{Phoneme:}
+\item \textbf{Phone:}
+\item \textbf{Session:}
 
 \end{itemize}
 
 \subsubsection{Physical System Description} \label{sec_phySystDescrip}
 
-\plt{The purpose of this section is to clearly and unambiguously state the
-  physical system that is to be modelled. Effective problem solving requires a
-  logical and organized approach. The statements on the physical system to be
-  studied should cover enough information to solve the problem. The physical
-  description involves element identification, where elements are defined as
-  independent and separable items of the physical system. Some example elements
-  include acceleration due to gravity, the mass of an object, and the size and
-  shape of an object. Each element should be identified and labelled, with their
-  interesting properties specified clearly. The physical description can also
-  include interactions of the elements, such as the following: i) the
-  interactions between the elements and their physical environment; ii) the
-  interactions between elements; and, iii) the initial or boundary conditions.}
-
-\plt{The elements of the physical system do not have to correspond to an actual
-physical entity.  They can be conceptual.  This is particularly important when
-the documentation is for a numerical method. }
-
-The physical system of \progname{}, as shown in Figure~?,
-includes the following elements:
+PronouncedFish is a software system, but it is used within a physical setting. The physical setting for the software is a pediatric 
+speech therapy session run by an SLP. 
+The elements of the system's setting are described below.
 
 \begin{itemize}
 
-\item[PS1:] 
-
-\item[PS2:] ...
+\item[PS1:] The SLP
+\item Runs and supervises the therapy session.
+\item[PS2:] The patient (children aged 4-6) 
+\item Attends the therapy session, receiving cues and direction from the SLP, using the aid provided by PronouncedFish.
+\item[PS3:] Clinic computer and technology
+\item Runs the PronouncedFish software, takes input from the SLP and patient.
 
 \end{itemize}
 
-\plt{A figure here makes sense for most SRS documents}
-
-% \begin{figure}[h!]
-% \begin{center}
-% %\rotatebox{-90}
-% {
-%  \includegraphics[width=0.5\textwidth]{<FigureName>}
-% }
-% \caption{\label{<Label>} <Caption>}
-% \end{center}
-% \end{figure}
+\begin{figure}[h!]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.5\textwidth]{GhotiPSD.png}
+}
+\caption{\label{<Label>} Physical System Description}
+\end{center}
+\end{figure}
 
 \subsubsection{Goal Statements}
 
-\plt{The goal statements refine the ``Problem Description''
-  (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
-  consideration should achieve. Goals provide criteria for sufficient
-  completeness of a requirements specification and for requirements
-  pertinence. Goals will be refined in Section “Instanced Models”
-  (Section~\ref{sec_instance}). Large and complex goals should be decomposed
-  into smaller sub-goals.  The goals are written abstractly, with a minimal
-  amount of technical language.  They should be understandable by non-domain
-  experts.}
-
-\noindent Given the \plt{inputs}, the goal statements are:
+\noindent For PronoucedFish, the goal statements are:
 
 \begin{itemize}
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
-    sentence description of the goal.  There may be more than one.  Each Goal
-    should have a meaningful label.}
+\item GS1: Identify the substitution errors in a child's production of a practice item.
+\item GS2: Present the SLP with the results, including how the produced sounds differ from the expected sounds.
+\item GS3: Track a patient's performance on target sounds across sessions.
+\item GS4: Support the SLP in conducting practice with the child (prompts, item selection).
 
 \end{itemize}
 

@@ -1,11 +1,30 @@
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
+  \item What went well while writing this deliverable? \\
+  \textbf{Before beginning the deliverable, the group discussed each of the required
+sections together and took detailed notes for each one. This helped with
+writing the deliverable because everyone in the group was on the same
+page and understood the approach we wanted to take. This allowed us to
+easily divide up the writing work and ensure that each section would be
+cohesive and unified. Additionally, the group set an internal deadline to
+complete the writing the day before the official deliverable due date. This
+helped keep us on track and accountable for our work. Additionally, we were able to make some improvmenets on the group's workflow 
+from deliverable 1 and address some pain points experienced for that one.}
   \item What pain points did you experience during this deliverable, and how did
-  you resolve them?
+  you resolve them? \\
+\textbf{Like with the last deliverable, our group had to deal with some technical difficulties. For example, several team members 
+ran into difficulties with GitHub and merge conflicts. We were able to resolve these by working together and using pull requests. 
+We also had some challenges with finding and chooseing the appropriate templates for each deliverable, as guidance on this was 
+spread across several locations and requirements weren't always clear. We resolved this by sticking to the SRS checklist and askign 
+for clarification where we were unsure. }
   \item How many of your requirements were inspired by speaking to your
-  client(s) or their proxies (e.g. your peers, stakeholders, potential users)?
+  client(s) or their proxies (e.g. your peers, stakeholders, potential users)? \\
+\textbf{Many of the requirements were inspired by conversations with our supervisors. Their input was really valuable in refining 
+our scope and identifying what would actually be useful to an SLP during a session.}
   \item Which of the courses you have taken, or are currently taking, will help
   your team to be successful with your capstone project.
+\textbf{Our Human Computer Interfaces course will help us design an interface that supports the SLP's workflow and that is usable 
+for young children. Our Requirements Engineering course has helped us write clear requirements and will continue to help us trace 
+them through the project. Our Software Architecture course will help us with the structure of the system and design decisions.}
   \item What knowledge and skills will the team collectively need to acquire to
   successfully complete this capstone project?  Examples of possible knowledge
   to acquire include domain specific knowledge from the domain of your
@@ -13,8 +32,16 @@
   computer science knowledge.  Skills may be related to technology, or writing,
   or presentation, or team management, etc.  You should look to identify at
   least one item for each team member.
+\textbf{The team will need to acquire the following knowledge and skills:\\ Phonetics and child speech challenges, speech 
+analysis models, evaluaiton of speech analysis accuracy, healthcare privacy and secure data handling, and audio capture. 
+The team will split these 5 skills areas amongst each other.}
   \item For each of the knowledge areas and skills identified in the previous
   question, what are at least two approaches to acquiring the knowledge or
   mastering the skill?  Of the identified approaches, which will each team
   member pursue, and why did they make this choice?
+\textbf{For phonetics and child speech challenges, we will ask our supervisors for details on the international pheonetic alphabet 
+and research introductory phoentics information. For speech analysis models, we will work with existing models and documentation to
+build our knowledge and research other projects that have been done on speech analysis. For evaluation of speech analysis accuracy, 
+we will study existing benchmarks for the models and run our own tests using them. For healthcare privacy, we will read 
+documentation on PHIPA regulations and consult our supervisors. For audio capture, we will test mockups and consult with our supervisors.}
 \end{enumerate}
