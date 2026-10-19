@@ -1119,11 +1119,16 @@ be covered in the Verification and Validation document.}
     Validation Plan.''  A link to the VnV plan would be a nice extra.}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-  \plt{Characterize the usability by giving the context/use for the software.
-    You should likely reference the user characteristics section.  The level of
-    usability achieved by the software shall be described following the
-    procedure given in Section~X of the Verification and Validation Plan.  A
-    link to the VnV plan would be a nice extra.}
+      \item The SLP must be able to fully navigate the software within one hour of use.
+      \item After 5 hours of use, the SLP makes 2 or fewer mistakes per hour of use.
+      \item The SLP cannot delete critical data without a confirmation or the ability to backtrack within 72 hours.
+      \item The time spent using the software tool during the session should be less than the time spent using equivalent manual tools.
+      \item The time spent using the software tool outside of session should be less than time spent using equivalent manual tools.
+      \item The child cannot access the rest of the system beyond the gamified experience.
+      \item The child must be able to understand how to play the game within 8 minutes of use \cite{child_attention_stats}.
+      \item The game is enjoyable to at least 80\% of children surveyed.
+      \item At least 80\% of children surveyed would want to play the game again.
+      \item The game is aesthetically pleasing to at least 80\% of children surveyed.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
   \textbf{Maintainability} \plt{The effort required to make any of the likely
@@ -1386,5 +1391,8 @@ graduate attribute of Lifelong Learning.
 \input{../Reflection.text}
 
 \input{../SRS_Reflection.text}
+
+\bibliographystyle{IEEEtran}
+\bibliography{../../refs/References}
 
 \end{document}
