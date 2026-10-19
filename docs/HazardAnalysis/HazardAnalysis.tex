@@ -206,13 +206,41 @@ Patient is frustrated with using the software to do lessons &
 
 \section{Safety and Security Requirements}
 
-\wss{Newly discovered requirements.  These should also be added to the SRS.  (A
-rationale design process how and why to fake it.)}
+The following security, safety, and reliability requirements were drawn as a result of the hazard analysis process:
+
+\begin{itemize}
+\item \textbf{FR-HA1}: The system shall prompt the user when noisy (less than 15 dB) microphone inputs are passed in, and allow them to retry that input.\\
+\textbf{Rationale:} The system should not take in corrupted data as it will degrade the quality of the results and misrepresent a patient’s standing. A safer alternative is to prompt the user of the error, reject the data, and offer a retry option when the issue is resolved. 15 dB is the standard signal to noise ratio aimed for a clear microphone signal \textcolor{red}{[ACCEPTABLE MIC NOISE]}.
+
+\item \textbf{FR-HA2}: The system must back up all patient progress data and analytics at the end of each session. It must alert the user if the backup fails.\\
+\textbf{Rationale:} In the event of a data breach, patient data is not lost.
+
+\item \textbf{FR-HA3}: The speech engine must provide a confidence percentage for each phoneme deduction it reaches. (have a FR to connect this to)\\
+\textbf{Rationale:} Upon some speech analysis, the results must be kept transparent so the SLP is confident to accept them. This way they can leverage their professional judgement to reject incorrect deductions and consider high confidence ones.
+
+\item \textbf{FR-HA4}: The system must alert the user when WiFi connection becomes unstable. It must provide an offline version which records patient audio for when the WiFi recovers.\\
+\textbf{Rationale:} If the network connection becomes unstable, the connection to any processing server may drop and the analysis system may become inactive. The SLP needs to know of this so they could take alternative measures instead of randomly finding out their session was not tracked. A metric for unstable will depend on the user’s hardware specifications and the server specifications.
+
+\item \textbf{FR-HA5}: The system must be able to transfer from online to offline mode at all times. The transfer cannot be blocked by network or interface malfunctions.\\
+\textbf{Rationale:} If the network connection drops, the system cannot freeze and must fail gracefully. This way, the session may continue with limited functionality while still allowing the SLP to save speech files, and access the interface.
+
+\item \textbf{FR-HA6}: The system must have two factor authentication and a password recovery system in place.
+
+\item \textbf{FR-HA7}: The system must preface all deductions and analytics with an acknowledgement that they may be incorrect and may only be accepted under the discretion of an SLP.\\
+\textbf{Rationale:} The tool is purely assistive and software may not be 100\% correct. Therefore this disclosure is necessary to ensure users do not try to replace the judgement of SLPs with this.
+
+\item \textbf{FR-HA8}: Prior to authorizing any audio recordings, a one-time confirmation code sent to the patient’s trusted device at the start of the session must be entered into the SLP interface.\\
+\textbf{Rationale:} This serves as a method of consent for the clinic to record the patient during this session. It indirectly verifies that the SLP has their interface open to the correct patient as well.
+
+\item \textbf{FR-HA9}: The system shall maintain an audit trail detailing the user, action, and time of all data accesses and manipulations.\\
+\textbf{Rationale:} It is important to keep a traceable log of all user and system actions in the event of errors, data breaches or other undesired events.
+\end{itemize}
 
 \section{Roadmap}
 
-\wss{Which safety requirements will be implemented as part of the capstone timeline?
-Which requirements will be implemented in the future?}
+Requirements 1, 3, 7 will be integrated within the capstone timeline. The core of the product is its speech analysis ability, so filtering inputs for noisy data is crucial. It is important to be transparent about the validity of a claim, which is why each deduction must be supported by a confidence level. This way an SLP can make a more informed judgement rather than blindly trusting the software. Full disclosure is needed at all times to ensure it does not impede the professional judgement of an SLP. 
+
+The remaining requirements specify necessary security and reliability mechanisms that must be in place before the product is released. Elements like authentication and redundancy are especially crucial for real life clinic scenarios, but do not enhance the value of the project as a capstone. Instead, time is better spent enhancing the SLP interface of the system, and focusing on the speech analysis. 
 
 \newpage{}
 
