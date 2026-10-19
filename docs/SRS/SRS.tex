@@ -343,7 +343,7 @@ heat is transferred in
 
 \section{Introduction}
 
-A child’s phonemic inventory (the sounds they are able to make) typically stabilizes by ages 5-6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}, but this is not the case for many. In Ontario, roughly 1 in 10 children need extra help developing their speech and language skills \textcolor{red}{[ONTARIO SLP FACTS]}. Receiving proper treatment has proven to improve their self esteem, ability to socialize, and readiness for school \textcolor{red}{[ONTARIO SLP FACTS]}. The job of an SLP is to provide this treatment: they assess a child’s speech, fluency, and articulation, and provide corresponding strategies to overcome their concerns.
+A child’s phonemic inventory (the sounds they are able to make) typically stabilizes by ages 4-6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}, but this is not the case for many. In Ontario, roughly 1 in 10 children need extra help developing their speech and language skills \textcolor{red}{[ONTARIO SLP FACTS]}. Receiving proper treatment has proven to improve their self esteem, ability to socialize, and readiness for school \textcolor{red}{[ONTARIO SLP FACTS]}. The job of an SLP is to provide this treatment: they assess a child’s speech, fluency, and articulation, and provide corresponding strategies to overcome their concerns.
 
 The product “Pronounced Fish” is an assistive tool intended for SLPs to streamline their workflow, and offer complementary insights to assist with their consultations. This Software Requirements Specification (SRS) highlights all functionalities and expectations that guide the application’s design. The current section describes the purpose of this document, project scope decisions, characteristics of the intended reader for the SRS, and a roadmap describing the topics covered by each section of the document.
 
@@ -352,13 +352,13 @@ The SRS will provide the formal requirements specification that any iteration of
 
 \subsection{Scope of Requirements} 
 
-Pediatric speech is very complicated because children are still learning how to coordinate their breath, lips, and brain to make certain sounds. This means it is normal for them to make mistakes around this age. By age 5, these features have generally stabilized so if a child is still making errors around this time, it suggests a need for speech therapy. Therefore, the product narrows down the target user space to children aged 5-6. 
+Pediatric speech is very complicated because children are still learning how to coordinate their breath, lips, and brain to make certain sounds. This means it is normal for them to make mistakes around this age. By age 5, these features have generally stabilized so if a child is still making errors around this time, it suggests a need for speech therapy. Therefore, the product narrows down the target user space to children aged 4-6. 
 
 Speech errors can be narrowed down to one of four categories as per the SODA framework. This product focuses on addressing substitution errors: mistakes where children replace consonant sounds with the wrong one. For instance, pronouncing the word “rabbit” as “wabbit” substitutes the “r” for a “w”. 
 
 Another factor that complicates analysis of a child's speech is their accent. Accents are tuned to pronounce certain sounds in certain ways, causing significant deviations between youth from different geographical regions. Therefore, the user space has been further narrowed down to handle Monolingual North American speakers.
 
-This means that the scope has been constrained to address substitution speech errors for monolingual, North American English speakers aged between 5-6. 
+This means that the scope has been constrained to address substitution speech errors for monolingual, North American English speakers aged between 4-6. 
 
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
@@ -644,8 +644,8 @@ understand.}
 The following decisions are made to narrow down the scope of the project:
 
 \begin{itemize}
-    \item \textbf{SD1}: The target demographic will be children aged 5--6.\\
-    \textbf{Rationale:} A child’s phonemic inventory (the sounds they are able to speak) typically stabilizes by ages 5--6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}. If a child has speech development issues at this point, they are referred to an SLP, making this a logical age range to choose. There is a lot more variation in speech at younger ages which may be normal, so younger age ranges are unrealistic to analyze for a capstone.
+    \item \textbf{SD1}: The target demographic will be children aged 4-6.\\
+    \textbf{Rationale:} A child’s phonemic inventory (the sounds they are able to speak) typically stabilizes by ages 4-6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}. If a child has speech development issues at this point, they are referred to an SLP, making this a logical age range to choose. There is a lot more variation in speech at younger ages which may be normal, so younger age ranges are unrealistic to analyze for a capstone.
 
     \item \textbf{SD2}: The children will be monolingual speakers with a North-American accent.\\
     \textbf{Rationale:} Speech recognition tools struggle with recognizing mistakes in bilingual people or with accented speech \textcolor{red}{[BIAS WITH ACCENTED SPEECH]}. These speakers incorrectly get flagged as having speech disorders more often due to a lack of training data available for them \textcolor{red}{[BIAS WITH ACCENTED SPEECH]}. This means a general all-encompassing speech analysis model is unrealistic, and the project must focus on a space with sufficient training data to work from.
@@ -1166,7 +1166,7 @@ Below is a list of requirements that are likely to change. The provided rational
     \textbf{Related Assumption(s):} A7
 
     \item \textbf{LC4}: The system shall highlight errors for children of all age ranges based on the standardized speech sound development chart.\\
-    \textbf{Rationale:} Due to scope requirements, the target child age has been restricted to ages 5--6. Speech errors may occur at any age, and even for adults. Therefore, more flexibility will be crucial in future iterations of the product.\\
+    \textbf{Rationale:} Due to scope requirements, the target child age has been restricted to ages 4-6. Speech errors may occur at any age, and even for adults. Therefore, more flexibility will be crucial in future iterations of the product.\\
     \textbf{Related Assumption(s):} A2
 
     \item \textbf{LC5}: The system will support being locally hosted on Windows and Mac operating systems. The system will have compatible mobile apps for iOS and Android OS. The system will be supported in Safari and Google Chrome browsers.\\
