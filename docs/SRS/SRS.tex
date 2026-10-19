@@ -1111,12 +1111,12 @@ be covered in the Verification and Validation document.}
 \noindent \begin{itemize}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  \textbf{Accuracy} \plt{Characterize the accuracy by giving the context/use for
-    the software.  Maybe something like, ``The accuracy of the computed
-    solutions should meet the level needed for $<$engineering or scientific
-    application$>$.  The level of accuracy achieved by \progname{} shall be
-    described following the procedure given in Section~X of the Verification and
-    Validation Plan.''  A link to the VnV plan would be a nice extra.}
+  \textbf{Accuracy}
+
+
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
+  \textbf{Performance}
+      \item Phonemic estimation results must be presented in less than 10 seconds for a short sentence \cite{software_response_times}.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
       \item The SLP must be able to fully navigate the software within one hour of use.
@@ -1131,18 +1131,17 @@ be covered in the Verification and Validation document.}
       \item The game is aesthetically pleasing to at least 80\% of children surveyed.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
-  \textbf{Maintainability} \plt{The effort required to make any of the likely
-    changes listed for \progname{} should be less than FRACTION of the original
-    development time.  FRACTION is then a symbolic constant that can be defined
-    at the end of the report.}
-
+  \textbf{Maintainability}
+      \item The software should be modular to allow extenstion to interfaces for other professions (e.g. accent coach, language teachers).
+      \item The software should be modular to allow extenstion to other speech differences under SODA.
+      \item Build and deployment of a patch should take less than 30 minutes.
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
-  \textbf{Portability} \plt{This NFR is easier to write than the others.  The
-    systems that \progname{} should run on should be listed here.  When possible
-    the specific versions of the potential operating environments should be
-    given.  To make the NFR verifiable a statement could be made that the tests
-    from a given section of the VnV plan can be successfully run on all of the
-    possible operating environments.}
+  \textbf{Portability}
+      \item Web-based application should work on Windows, MacOS, iOS, and Android OS.
+      \item Web-based application should work on Chrome, Firefox, Safari, and Edge browsers.
+      \item Web-based application should work on desktop, tablet, and laptop devices.
+      \item Game should work on iOS and Android OS devices.
+      \item Game should work on tablet and mobile devices.
 
 \item Other NFRs that might be discussed include verifiability,
   understandability and reusability.
