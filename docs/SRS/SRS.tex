@@ -422,17 +422,7 @@ The document is organized as per the following template [\citet{SmithAndLai2005,
 
 This section provides general information about the system.  It identifies the
 interfaces between the system and its environment, describes the user
-characteristics and lists the system constraints.  \plt{This text can likely be
-  borrowed verbatim.}
-
-\plt{The purpose of this section is to provide general information about the
-  system so the specific requirements in the next section will be easier to
-  understand. The general system description section is designed to be
-  changeable independent of changes to the functional requirements documented in
-  the specific system description. The general system description provides a
-  context for a family of related models.  The general description can stay the
-  same, while specific details are changed between family members.}
-
+characteristics and lists the system constraints.  
 \subsection{System Context}
 
 \subsubsection{System Diagram}
@@ -662,9 +652,6 @@ The following decisions are made to narrow down the scope of the project:
 
 \section{Requirements}
 
-\plt{The requirements refine the goal statement.  They will make heavy use of
-  references to the instance models.}
-
 This section provides the functional requirements, the business tasks that the
 software is expected to complete, and the nonfunctional requirements, the
 qualities that the software is expected to exhibit.
@@ -770,8 +757,8 @@ qualities that the software is expected to exhibit.
 \subsection{Nonfunctional Requirements}
     \subsubsection{Accuracy Requirements}
     \begin{itemize}
-        \item \textbf{NFR-ACU1:} The accuracy of the system for identifying phonemes will be 87\% which will be measured against the analysis and judgement of one or more speech language pathologists (SLPs).\\
-        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range. \cite{nihSpeechLanguagePathologists}
+        \item \textbf{NFR-ACCU1:} The accuracy of the system for identifying phonemes will be 87\% which will be measured against the analysis and judgement of one or more speech language pathologists (SLPs).\\
+        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range \cite{auto_english_pron}.    
     \end{itemize}
 
     \subsubsection{Performance Requirements}
@@ -1192,8 +1179,6 @@ Additional phonemic analysis may be required for this to detect speech differenc
 \newpage{}
 \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
 The information in this section will be used to evaluate the team members on the
 graduate attribute of Lifelong Learning.  
 
@@ -1201,7 +1186,5 @@ graduate attribute of Lifelong Learning.
 
 \input{../SRS_Reflection.text}
 
-\bibliographystyle{IEEEtran}
-\bibliography{../../refs/References}
 
 \end{document}
