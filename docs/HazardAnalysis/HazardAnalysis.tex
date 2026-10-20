@@ -210,7 +210,7 @@ The following security, safety, and reliability requirements were drawn as a res
 
 \begin{itemize}
 \item \textbf{FR-HA1}: The system shall prompt the user when noisy (less than 15 dB) microphone inputs are passed in, and allow them to retry that input.\\
-\textbf{Rationale:} The system should not take in corrupted data as it will degrade the quality of the results and misrepresent a patient’s standing. A safer alternative is to prompt the user of the error, reject the data, and offer a retry option when the issue is resolved. 15 dB is the standard signal to noise ratio aimed for a clear microphone signal \textcolor{red}{[ACCEPTABLE MIC NOISE]}.
+\textbf{Rationale:} The system should not take in corrupted data as it will degrade the quality of the results and misrepresent a patient’s standing. A safer alternative is to prompt the user of the error, reject the data, and offer a retry option when the issue is resolved. 15 dB is the standard signal to noise ratio aimed for a clear microphone signal \cite{mic_noise}.
 
 \item \textbf{FR-HA2}: The system must back up all patient progress data and analytics at the end of each session. It must alert the user if the backup fails.\\
 \textbf{Rationale:} In the event of a data breach, patient data is not lost.

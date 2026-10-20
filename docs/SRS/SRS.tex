@@ -352,7 +352,7 @@ heat is transferred in
 
 \section{Introduction}
 
-A child’s phonemic inventory (the sounds they are able to make) typically stabilizes by ages 4-6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}, but this is not the case for many. In Ontario, roughly 1 in 10 children need extra help developing their speech and language skills \textcolor{red}{[ONTARIO SLP FACTS]}. Receiving proper treatment has proven to improve their self esteem, ability to socialize, and readiness for school \textcolor{red}{[ONTARIO SLP FACTS]}. The job of an SLP is to provide this treatment: they assess a child’s speech, fluency, and articulation, and provide corresponding strategies to overcome their concerns.
+A child’s phonemic inventory (the sounds they are able to make) typically stabilizes by ages 4-6 \cite{kid_sense_dev}, but this is not the case for many. In Ontario, roughly 1 in 10 children need extra help developing their speech and language skills \cite{ontario_slp_facts}. Receiving proper treatment has proven to improve their self esteem, ability to socialize, and readiness for school \cite{ontario_slp_facts}. The job of an SLP is to provide this treatment: they assess a child’s speech, fluency, and articulation, and provide corresponding strategies to overcome their concerns.
 
 The product “Pronounced Fish” is an assistive tool intended for SLPs to streamline their workflow, and offer complementary insights to assist with their consultations. This Software Requirements Specification (SRS) highlights all functionalities and expectations that guide the application’s design. The current section describes the purpose of this document, project scope decisions, characteristics of the intended reader for the SRS, and a roadmap describing the topics covered by each section of the document.
 
@@ -530,8 +530,8 @@ The software will typically be used in medical applications for treating patient
 \subsection{Problem Description} \label{Sec_pd}
 
 PronouncedFish is intended to solve the problem of identifying speech sound errors in young children during speech therapy sessions. 
-Around 440,000 Canadians live with a speech, language, or communication disorder [Lily1], 
-including 7-10\% of preschool children [Lily2]. 
+Around 440,000 Canadians live with a speech, language, or communication disorder \cite{cdac2026statistics}, 
+including 7-10\% of preschool children \cite{gaines2006earlyid}. 
 There are several types of speech sound errors that sessions with an SLP can help with. Identifying errors, and tracking whether 
 they improve over time, is a core part of an SLP's work with a patient.
 
@@ -585,13 +585,13 @@ The following decisions are made to narrow down the scope of the project:
 
 \begin{itemize}
     \item \textbf{SD1}: The target demographic will be children aged 4-6.\\
-    \textbf{Rationale:} A child’s phonemic inventory (the sounds they are able to speak) typically stabilizes by ages 4-6 \textcolor{red}{[SPEECH SOUND DEVELOPMENT CHART]}. If a child has speech development issues at this point, they are referred to an SLP, making this a logical age range to choose. There is a lot more variation in speech at younger ages which may be normal, so younger age ranges are unrealistic to analyze for a capstone.
+    \textbf{Rationale:} A child’s phonemic inventory (the sounds they are able to speak) typically stabilizes by ages 4-6 \cite{kid_sense_dev}. If a child has speech development issues at this point, they are referred to an SLP, making this a logical age range to choose. There is a lot more variation in speech at younger ages which may be normal, so younger age ranges are unrealistic to analyze for a capstone.
 
     \item \textbf{SD2}: The children will be monolingual speakers with a North-American accent.\\
-    \textbf{Rationale:} Speech recognition tools struggle with recognizing mistakes in bilingual people or with accented speech \textcolor{red}{[BIAS WITH ACCENTED SPEECH]}. These speakers incorrectly get flagged as having speech disorders more often due to a lack of training data available for them \textcolor{red}{[BIAS WITH ACCENTED SPEECH]}. This means a general all-encompassing speech analysis model is unrealistic, and the project must focus on a space with sufficient training data to work from.
+    \textbf{Rationale:} Speech recognition tools struggle with recognizing mistakes in bilingual people or with accented speech \cite{bias_accented_speech}. These speakers incorrectly get flagged as having speech disorders more often due to a lack of training data available for them \cite{bias_accented_speech}. This means a general all-encompassing speech analysis model is unrealistic, and the project must focus on a space with sufficient training data to work from.
 
     \item \textbf{SD3}: The detected speech errors will be limited to consonant substitution errors.\\
-    \textbf{Rationale:} There are four main types of speech errors as per the SODA framework, and addressing them all is a significant task. For this capstone, the main issues targeted are consonant substitution errors as they are the most common \textcolor{red}{[COMMON SPEECH ERRORS]} and are unaffected by dialects, accents, and ways of speaking. This makes them feasible to target.
+    \textbf{Rationale:} There are four main types of speech errors as per the SODA framework, and addressing them all is a significant task. For this capstone, the main issues targeted are consonant substitution errors as they are the most common \cite{common_speech_errors} and are unaffected by dialects, accents, and ways of speaking. This makes them feasible to target.
 
     \item \textbf{SD4}: Supported devices will be limited to iPadOS, AndroidOS, Windows desktops, and Macs.\\
     \textbf{Rationale:} When eliciting requirements with SLPs, the majority of them stated to use iPads to supplement their sessions. It is unrealistic to develop a native application for each and every operating system within the capstone timeline, so the most common platforms will be picked.
