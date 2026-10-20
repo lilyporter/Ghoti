@@ -873,11 +873,16 @@ Below is a list of requirements that are likely to change. The provided rational
 
 \section{Unlikely Changes}    
 
-\noindent \begin{itemize}
+\begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] \plt{Give
-    the unlikely changes.  The design can assume that the changes listed will
-    not occur.}
+    \item \textbf{UC1:} The system will shift its focus to working with adults instead of children.\\
+    \textbf{Rationale:} The goal of PronouncedFish is to help children with SSDs in the early stages of their phoneme-pronouncing journey. Switching to working with adults will require different models for phonemic identification and different datasets to train them to be effective.
+    \item \textbf{UC2:} The system will change its guidelines from PHIPA to something else.\\
+    \textbf{Rationale:} Since Ontarian SLPs mostly work with PHIPA, using a different guideline would be counterproductive and unrepresentative of the target SLP user base. The guidelines should only change if new laws are enacted that supersede PHIPA.
+    \item \textbf{UC3:} The system will shift its focus away from English speakers.\\
+    \textbf{Rationale:} Whilst in theory possible for PronouncedFish to work with languages other than English, members of the team and the supervisors primarily work with English speaking patients, thus the models and system should be fine-tuned to work with English speakers.
+    \item \textbf{UC4:} The system will use generative AI to create lesson plans.\\
+    \textbf{Rationale:} SLPs are the experts when it comes to knowing what a patient needs to treat their SSDs. While this feature is possible to implement, Ghoti entrusts the responsibility of creating new lesson plans with the SLPs due to their expertise. 
 
 \end{itemize}
 
