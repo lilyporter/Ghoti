@@ -137,7 +137,7 @@
 
 \begin{document}
 
-\title{Software Requirements Specification for \progname: subtitle describing software} 
+\title{Software Requirements Specification for \progname: PronoucedFish (Ghoti)} 
 \author{\authname}
 \date{\today}
 	
@@ -153,20 +153,18 @@
 
 \section*{Revision History}
 
-\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
-\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+\begin{table}[hp]
+\caption{Revision History} \label{TblRevisionHistory}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+October 19th, 2026 & All & Initial Revision for Deliverable 2\\
 \bottomrule
 \end{tabularx}
+\end{table}
 
 ~\\
-\plt{This template is intended for use by CAS 741.  For CAS 741 the template
-should be used exactly as given, except the Reflection Appendix can be deleted.
-For the capstone course it is a source of ideas, but shouldn't be followed
-exactly.  The exception is the reflection appendix.  All capstone SRS documents
-should have a reflection appendix.}
 
 ~\newpage
 
@@ -592,10 +590,10 @@ The elements of the system's setting are described below.
 
 \begin{itemize}
 
-\item GS1: Identify the substitution errors in a child's production of a practice item.
-\item GS2: Present the SLP with the results, including how the produced sounds differ from the expected sounds.
-\item GS3: Track a patient's performance on target sounds across sessions.
-\item GS4: Support the SLP in conducting practice with the child (prompts, item selection).
+\item \textbf{GS1}: Identify the substitution errors in a child's production of a practice item.
+\item \textbf{GS2}: Present the SLP with the results, including how the produced sounds differ from the expected sounds.
+\item \textbf{GS3}: Track a patient's performance on target sounds across sessions.
+\item \textbf{GS4}: Support the SLP in conducting practice with the child (prompts, item selection).
 
 \end{itemize}
 
@@ -772,71 +770,81 @@ qualities that the software is expected to exhibit.
 
 
 \subsection{Nonfunctional Requirements}
-
-    \subsubsection{Accuracy Requirements} 
+    \subsubsection{Accuracy Requirements}
     \begin{itemize}
-      \item
-        % Add accuracy requirements here.
-        % Example: \item \textbf{NFR-ACC1:} ...
-        % \textbf{Rationale:} ...
+        \item \textbf{NFR-ACCU1:} The accuracy of the system for identifying phonemes will be 87\% which will be measured against the analysis and judgement of one or more speech language pathologists (SLPs).\\
+        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range. https://pmc.ncbi.nlm.nih.gov/articles/PMC9135012/, https://www.sciencedirect.com/science/article/pii/S1877050926024889, https://pubs.asha.org/doi/10.1044/2024\_JSLHR-24-00009, https://pubmed.ncbi.nlm.nih.gov/39173066/    
     \end{itemize}
 
     \subsubsection{Performance Requirements}
     \begin{itemize}
-        \item \textbf{NFR-PER1:} Phonemic estimation results must be presented in less than 10 seconds for a short sentence.
-
+        \item \textbf{NFR-PER1:} Phonemic estimation results must be presented in less than 10 seconds for a short sentence.\\
         \textbf{Rationale:} This is because 10 seconds is the limit for sustaining a user's attention during a human-computer dialogue before they will want to perform other tasks \cite{software_response_times}.
     \end{itemize}
 
     \subsubsection{Usability Requirements}
     \begin{itemize}
-        \item \textbf{NFR-USA1:} The SLP must be able to fully navigate the software within one hour of use.
-
+        \item \textbf{NFR-USA1:} The SLP must be able to fully navigate the software within one hour of use.\\
         \textbf{Rationale:} We expect that it will take some time to become accustomed to the software, but we do not want the software to be a time sink.
-
-        \item \textbf{NFR-USA2:} The SLP cannot delete critical data without a confirmation or the ability to recover it within 72 hours.
-
+        \item \textbf{NFR-USA2:} The SLP cannot delete critical data without a confirmation or the ability to recover it within 72 hours.\\
         \textbf{Rationale:} This provides a safety net for the SLP to prevent accidental deletion of critical data.
-
-        \item \textbf{NFR-USA3:} The time spent using the software tool during and outside of a session should be less than the time spent using equivalent manual tools.
-
+        \item \textbf{NFR-USA3:} The time spent using the software tool during and outside of a session should be less than the time spent using equivalent manual tools.\\
         \textbf{Rationale:} The software is intended to improve efficiency, and any loss in efficiency would be counterproductive.
-
-        \item \textbf{NFR-USA4:} The child cannot access the rest of the system beyond the gamified experience.
-
+        \item \textbf{NFR-USA4:} The child cannot access the rest of the system beyond the gamified experience.\\
         \textbf{Rationale:} This provides a safety measure to ensure that the child cannot access data without the supervision of the SLP.
     \end{itemize}
 
     \subsubsection{Maintainability Requirements}
     \begin{itemize}
-        \item \textbf{NFR-MAI1:} The software should be modular to allow extension to interfaces for other professions (e.g., accent coaches and language teachers).
-
+        \item \textbf{NFR-MAI1:} The software should be modular to allow extension to interfaces for other professions (e.g., accent coaches and language teachers).\\
         \textbf{Rationale:} We anticipate the value of extending the software, and a modular design facilitates this.
-
-        \item \textbf{NFR-MAI2:} The software should be modular to allow extension to other speech differences under SODA.
-
+        \item \textbf{NFR-MAI2:} The software should be modular to allow extension to other speech differences under SODA.\\
         \textbf{Rationale:} We anticipate the value of extending the software, and a modular design facilitates this.
-
-        \item \textbf{NFR-MAI3:} Building and deploying a patch should take less than 30 minutes.
-
+        \item \textbf{NFR-MAI3:} Building and deploying a patch should take less than 30 minutes.\\
         \textbf{Rationale:} This is to ensure that the software is updated in a timely manner, ideally before the next session with a child for critical bug fixes.
     \end{itemize}
 
     \subsubsection{Portability Requirements}
     \begin{itemize}
-        \item \textbf{NFR-POR1:} The web-based application should work on Windows, macOS, iOS, and Android.
-
+        \item \textbf{NFR-POR1:} The web-based application should work on Windows, macOS, iOS, and Android.\\
         \textbf{Rationale:} Although this is a web-based application, compatibility with common operating systems still needs to be ensured.
-
-        \item \textbf{NFR-POR2:} The web-based application should work on Chrome, Firefox, Safari, and Edge browsers.
-
+        \item \textbf{NFR-POR2:} The web-based application should work on Chrome, Firefox, Safari, and Edge browsers.\\
         \textbf{Rationale:} This covers some of the most commonly used browsers, including default browsers such as Safari on macOS and Edge on Windows.
-
-        \item \textbf{NFR-POR3:} The web-based application should work on desktop, tablet, and laptop devices.
-
+        \item \textbf{NFR-POR3:} The web-based application should work on desktop, tablet, and laptop devices.\\
         \textbf{Rationale:} The majority of SLPs will likely use one of these devices, with iPads (tablets) being particularly common \cite{supervisor2026initialcomm}.
 
-\end{itemize}
+    \end{itemize}
+
+    \subsubsection{Reliability Requirements}
+    \begin{itemize}
+        \item \textbf{NFR-REL1:} Server-side actions (login/out, data storage and retrieval) have a maximum latency of 10 seconds. \\
+        \textbf{Rationale: } Should SLPs be using the program frequently, SLPs can almost always be sure any transaction they make with servers will take at most 10 seconds. 
+        \item \textbf{NFR-REL2:} The system will operate at max performance from 6am to 12am. \\
+        \textbf{Rationale: } Since there will be portions of PronouncedFish that are continuously operational (data storage and authentication), those systems will operate at max efficiency during the times that SLPs are most likely to conduct treatments, those times being 6am-12am.
+        \item \textbf{NFR-REL3:} The system will be minimally operational between 12am to 6am outside of SLP work hours. \\
+        \textbf{Rationale: } Since there will be portions of PronouncedFish that are continuously operational (data storage and authentication), there will be times where the system is not being extensively used (mainly outside of SLP work hours). During those times, the system can operate slower and consume less energy to run since the number of people using the system at that time is few to zero.
+        \item \textbf{NFR-REL4:} Required maintenance, system health checkups, and system updates happen no more than every 1-2 months and during minimal operation hours \\
+        \textbf{Rationale: } Possible server or data storage maintenance will be required to keep the system running and trusted. Whenever non-critical checkups/maintenance/updates need to happen, they will happen during SLP off hours so the impact on the SLPs are minimized.
+    \end{itemize}
+
+    \subsubsection{Security and Privacy:} 
+    \begin{itemize}
+        \item \textbf{NFR-SAP1:} The system will encrypt all PHI as it is collected using strong up-to-date encryption standards \\
+        \textbf{Rationale: } To protect user information from cyber attacks, any sensitive health information that may be collected or used in treatments is immediately encrypted. This prevents attackers from reading or getting significant information on a patient.
+        \item \textbf{NFR-SAP2:} The system will use a secure cryptographic protocol for communications for all data traffic between system components\\
+        \textbf{Rationale: } The system may require PHI to be sent through the internet, especially for data management. This leaves it open to interception by third parties, therefore, a secure communication protocol that prevents third parties from interpreting sensitie information.
+        \item \textbf{NFR-SAP3:} The system will provide outlets for SLPs to anonymize PHI that is collected from a patient. \\
+        \textbf{Rationale: } Data must be able to be anonymised to remain compliant with PHIPA and prevent compromised data from being used to identify patients. 
+    \end{itemize}
+
+    \subsubsection{Legal and Licensing:} 
+    \begin{itemize}
+        \item \textbf{NFR-LAL1:} The system will follow the Personal Health Information Protection Act (PHIPA) guidelines for data storage, data transfer, data access and data residency.\\
+        \textbf{Rationale: } SLPs are required to work within the guidelines of PHIPA to protect patient information. Thus, the tools they use in sessions must also not violate PHIPA guidelines.
+        \item \textbf{NFR-LAL2:} The system will be open source using the GNU General Public License (GPL).\\
+        \textbf{Rationale:} The materials that are used to make PronouncedFish are licensed under the GNU GPL. Thus, PronouncedFish itself becomes licensed under GNU GPL and becomes open source.
+    \end{itemize}
+
 
 \section{Likely Changes}    
 
