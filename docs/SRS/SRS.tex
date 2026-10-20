@@ -270,6 +270,26 @@ heat is transferred in
 
 \subsection{Mathematical Notation}
 
+Let \textit{x} represent the expected phoneme that the child is trying to produce.\\
+Let \textit{y} represent the phoneme estimated by the machine learning classification based on what the child actually produced.\\
+  \begin{equation}
+    features(phoneme) = p;   p \in ( {-1,0,1} )^n
+  \end{equation}
+\noindent Note: \textit{p} is a representation of \textit{n} phonological features of the phoneme.\\ \\
+\noindent Extract the phonological features of the expected and estimated phoneme:
+\begin{equation}
+  A = features(x)
+\end{equation}
+\begin{equation}
+  B = features(y)
+\end{equation}
+\noindent Compare using Manhattan Distance to represent the magnitude of the error \cite{manhattan_distance}:
+\begin{equation}
+  d_m(A,B) = \sum_{i=0}^{n} |A_i - B_i|
+\end{equation}
+
+This final value will be what we use to estimate the error in the childs pronunciation.
+
 \plt{This section is optional, but should be included for projects that make use
   of notation to convey mathematical information.  For instance, if typographic
   conventions (like bold face font) are used to distinguish matrices, this
@@ -1013,14 +1033,6 @@ This is the phase that ensures that the software is fully ready for clinical dep
 \textbf{Phase 4 and on:}
 This is the phase where the software will be further into a line of software products for various professions and applications.
 Additional phonemic analysis may be required for this to detect speech differences that do not fall under SODA such as prosody.
-
-\plt{This section is optional.  It is used to explain the plan for developing
-  the software.  In particular, this section gives a list of the order in which
-  the requirements will be implemented.  In the context of a course  this is
-  where you can indicate which requirements will be implemented as part of the
-  course, and which will be ``faked'' as future work.  This section can be
-  organized as a prioritized list of requirements, or it could should the
-  requirements that will be implemented for ``phase 1'', ``phase 2'', etc.}
 
 \section{Values of Auxiliary Constants}
 
