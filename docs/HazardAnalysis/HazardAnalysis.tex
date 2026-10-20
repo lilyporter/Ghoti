@@ -4,6 +4,8 @@
 \usepackage{tabularx}
 \usepackage{hyperref}
 \usepackage{tabularray}
+\usepackage{float}
+\UseTblrLibrary{booktabs}
 
 \hypersetup{
     colorlinks=true,       % false: boxed links; true: colored links
@@ -73,9 +75,10 @@ The purpose of this hazard analysis is early identification of any risks that co
 Identifying these risks will inform the creation of mitigation strategies and proper safety and security requirements. 
 Doing this will minimize risk and potential loss from unaddressed hazards. 
 
+\clearpage
 \section{System Boundaries and Components}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{System Components and Boundaries}
 \label{tab:system-components}
@@ -134,7 +137,6 @@ System (configuration) \\
 \end{tabularx}
 \end{table}
 
-
 \section{Critical Assumptions}
 
 \begin{itemize}
@@ -148,7 +150,7 @@ System (configuration) \\
 
 \section{Failure Mode and Effect Analysis}
 
-\fontsize{7}{9}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{longtblr}[
     caption = {Failure Mode and Effects Analysis},
     label = {tab:fmea},
@@ -156,8 +158,8 @@ System (configuration) \\
     width = \linewidth, 
     colspec = {X[1,l] X[1,l] X[1,l] X[1.1,l] X[1.6,l]},
     row{1}  = {font=\bfseries},
-    hlines, 
-    vlines,
+    hline{1,Z} = {0.8pt},
+    hline{2} = {0.5pt},
     rowhead = 1, % Automatically repeats the header row on every new page
 }
 Failure Mode &
