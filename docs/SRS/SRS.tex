@@ -769,7 +769,7 @@ qualities that the software is expected to exhibit.
     \subsubsection{Accuracy Requirements}
     \begin{itemize}
         \item \textbf{NFR-ACCU1:} The accuracy of the system for identifying phonemes will be 87\% which will be measured against the analysis and judgement of one or more speech language pathologists (SLPs).\\
-        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range. \cite{nihSpeechLanguagePathologists}, https://www.sciencedirect.com/science/article/pii/S1877050926024889, https://pubs.asha.org/doi/10.1044/2024\_JSLHR-24-00009, https://pubmed.ncbi.nlm.nih.gov/39173066/    
+        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range. \cite{nihSpeechLanguagePathologists}
     \end{itemize}
 
     \subsubsection{Performance Requirements}
@@ -895,49 +895,90 @@ other. Table~\ref{Table:A_trace} shows the dependencies of theoretical models,
 general definitions, data definitions, instance models, and likely changes on
 the assumptions.
 
-\plt{You will have to modify these tables for your problem.}
+% Traceability matrix 1 (i)
 
-\plt{The traceability matrix is not generally symmetric.  If GD1 uses A1, that
-  means that GD1's derivation or presentation requires invocation of A1.  A1
-  does not use GD1.  A1 is ``used by'' GD1.}
+\clearpage
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
 
-\plt{The traceability matrix is challenging to maintain manually.  Please do
-  your best.  In the future tools (like Drasil) will make this much easier.}
-
-\afterpage{
-\begin{landscape}
-\begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
-\hline
-\tref{T_COE}        & X& & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_LHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\dref{NL}           & & X& & & & & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}         & & & X& X& X& X& & & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil}    & & & & & & & X& X& X& & & & & & & & & & \\ \hline
-\ddref{FluxPCM}     & & & X& X& & & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}       & & & & & & & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\iref{ewat}         & & & & & & & & & & & X& X& & X& X& X& & & X \\ \hline
-\iref{epcm}         & & & & & & & & & & & & X& X& & & X& X& X& \\ \hline
-\iref{I_HWAT}       & & & & & & & & & & & & & & X& & & & & X \\ \hline
-\iref{I_HPCM}       & & & & & & & & & & & & & X& & & & & X & \\ \hline
-\lcref{LC_tpcm}     & & & & X& & & & & & & & & & & & & & & \\ \hline
-\lcref{LC_tcoil}    & & & & & & & & X& & & & & & & & & & & \\ \hline
-\lcref{LC_tlcoil}   & & & & & & & & & X& & & & & & & & & & \\ \hline
-\lcref{LC_charge}   & & & & & & & & & & & X& & & & & & & & \\ \hline
-\lcref{LC_InitTemp} & & & & & & & & & & & & X& & & & & & & \\ \hline
-\lcref{LC_htank}    & & & & & & & & & & & & & & & X& & & & \\
-\hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
-\label{Table:A_trace}
-\end{table}
-\end{landscape}
+\begin{longtable}{|
+    >{\centering\arraybackslash}p{1.6cm}|
+    *{9}{>{\centering\arraybackslash}p{0.85cm}|}
 }
+\caption{Traceability Matrix: Functional and Nonfunctional Requirements (1)}
+\label{Table:FR_NFR_trace_1}\\
+\hline
+
+\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Functional}}} &
+\multicolumn{9}{c|}{\textbf{Nonfunctional}} \\
+\cline{2-10}
+\multicolumn{1}{|c|}{} &
+\textbf{ACU1} & \textbf{PER1} &
+\textbf{USA1} & \textbf{USA2} & \textbf{USA3} & \textbf{USA4} &
+\textbf{MAI1} & \textbf{MAI2} & \textbf{MAI3} \\
+\hline
+\endfirsthead
+
+\multicolumn{10}{|l|}{\textit{Traceability Matrix (1), continued}}\\
+\hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Functional}}} &
+\multicolumn{9}{c|}{\textbf{Nonfunctional}} \\
+\cline{2-10}
+\multicolumn{1}{|c|}{} &
+\textbf{ACU1} & \textbf{PER1} &
+\textbf{USA1} & \textbf{USA2} & \textbf{USA3} & \textbf{USA4} &
+\textbf{MAI1} & \textbf{MAI2} & \textbf{MAI3} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{10}{|r|}{\textit{Continued on next page}}\\
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+AC1  &X&X&X& & & & & & \\ \hline
+AC2  & & & & & & & & & \\ \hline
+AC3  &X&X& & & & & & &X \\ \hline
+SM1  & & &X& & & & & & \\ \hline
+SM2  & & &X& & & & & & \\ \hline
+SM3  & & &X& & & & & & \\ \hline
+SM4  & & &X& & & & & & \\ \hline
+SA1  &X&X& & &X& & &X&X \\ \hline
+SA2  &X&X& & &X& & &X&X \\ \hline
+SA3  &X&X& & &X& & &X&X \\ \hline
+RDV1 & & &X& &X& & &X& \\ \hline
+RDV2 & & &X& &X& & & & \\ \hline
+RDV3 & & &X& &X& & & & \\ \hline
+RDV4 & & &X& &X& & & & \\ \hline
+RDV5 & & &X& &X& & &X& \\ \hline
+RDV6 & & & & &X& & & & \\ \hline
+RDV7 & & &X& & & & & & \\ \hline
+RDV8 & & & & & & & & & \\ \hline
+RDV9 & & &X& & & & & & \\ \hline
+DMR1 & & & & & & & & & \\ \hline
+DMR2 & & &X& &X& & & & \\ \hline
+DMR3 & & &X& & & & & & \\ \hline
+DMR4 & & &X&X& &X&X& & \\ \hline
+DMR5 & & &X& & &X& & & \\ \hline
+DMR6 & & & & & & & & & \\ \hline
+DMR7 & & & & & & & & & \\ \hline
+DMR8 & & & & & & & & & \\ \hline
+DMR9 & & &X& & & & & & \\ \hline
+DMR10 & & & & & & & & & \\ \hline
+DMR11 & & & & & & & & & \\ \hline
+PAR1 & & &X& & & & & & \\ \hline
+PAR2 & & & & & & & & & \\ \hline
+PAR3 & & & & & & & & & \\ \hline
+PAR4 & & & & & & & & & \\ \hline
+PAR5 & & & & & & & & & \\ \hline
+PAR6 & & &X& & & & & & \\ \hline
+PAR7 & & & & & & & & &
+
+\end{longtable}
 
 \begin{table}[h!]
 \centering
