@@ -77,6 +77,15 @@
 \newcounter{lcnum} %Likely change number
 \newcommand{\lthelcnum}{LC\thelcnum}
 \newcommand{\lcref}[1]{LC\ref{#1}}
+\newcounter{presnum} %Responsibility for Patient Number
+\newcommand{\prtheresnum}{RES\thepresnum}
+\newcommand{\presref}[1]{RES\ref{#1}}
+\newcounter{slpresnum} %Responsibility for SLP Number
+\newcommand{\slptheresnum}{RES\theslpresnum}
+\newcommand{\slpresref}[1]{RES\ref{#1}}
+\newcounter{scnum} %System Constraint Number
+\newcommand{\scthescnum}{SC\thescnum}
+\newcommand{\scref}[1]{SC\ref{#1}}
 
 \usepackage{fullpage}
 
@@ -410,81 +419,111 @@ characteristics and lists the system constraints.  \plt{This text can likely be
 
 \subsection{System Context}
 
-\plt{Your system context will include a figure that shows the abstract view of
-  the software.  Often in a scientific context, the program can be viewed
-  abstractly following the design pattern of Inputs $\rightarrow$ Calculations
-  $\rightarrow$ Outputs.  The system context will therefore often follow this
-  pattern.  The user provides inputs, the system does the calculations, and then
-  provides the outputs to the user.  The figure should not show all of the
-  inputs, just an abstract view of the main categories of inputs (like material
-  properties, geometry, etc.).  Likewise, the outputs should be presented from
-  an abstract point of view.  In some cases the diagram will show other external
-  entities, besides the user.  For instance, when the software product is a
-  library, the user will be another software program, not an actual end user.
-  If there are system constraints that the software must work with external
-  libraries, these libraries can also be shown on the System Context diagram.
-  They should only be named with a specific library name if this is required by
-  the system constraint.}
+\subsubsection{System Diagram}
 
-\begin{figure}[h!]
-\begin{center}
- \includegraphics[width=0.6\textwidth]{SystemContextFigure}
-\caption{System Context}
-\label{Fig_SystemContext} 
-\end{center}
+\noindent
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{System.png}
+    \caption{Overall System Diagram}
+    \label{fig:OverallSystem}
 \end{figure}
 
-\plt{For each of the entities in the system context diagram its responsibilities
-  should be listed.  Whenever possible the system should check for data quality,
-  but for some cases the user will need to assume that responsibility.  The list
-  of responsibilities should be about the inputs and outputs only, and they
-  should be abstract.  Details should not be presented here.  However, the
-  information should not be so abstract as to just say ``inputs'' and
-  ``outputs''.  A summarizing phrase can be used to characterize the inputs.
-  For instance, saying ``material properties'' provides some information, but it
-  stays away from the detail of listing every required properties.}
+\subsubsection{Patient Responsibilities}
 
 \begin{itemize}
-\item User Responsibilities:
-\begin{itemize}
-\item 
-\end{itemize}
-\item \progname{} Responsibilities:
-\begin{itemize}
-\item Detect data type mismatch, such as a string of characters instead of a
-  floating point number
-\item 
-\end{itemize}
+\item[P-R\refstepcounter{presnum}\thepresnum \label{Accuracy And Clarity}:]
+When a patient is providing audio to PronouncedFish to have their speech analyzed, it is their responsibility that the audio they output is as clear as possible and as accurate to the testing phrases as they can make it
+\item[P-R\refstepcounter{presnum}\thepresnum \label{Data Privacy And Sharing}:] It is up to the patient or patient’s parents/guardians that a patient is not sharing any sensitive medical data or personal information when they view their data
 \end{itemize}
 
-\plt{Identify in what context the software will typically be used.  Is it for
-exploration? education? engineering work? scientific work?. Identify whether it
-will be used for mission-critical or safety-critical applications.} \plt{This
-additional context information is needed to determine how much effort should be
-devoted to the rationale section.  If the application is safety-critical, the
-bar is higher.  This is currently less structured, but analogous to, the idea to
-the Automotive Safety Integrity Levels (ASILs) that McSCert uses in their
-automotive hazard analyses.}
+\subsubsection{SLP Responsibilities}
+
+\begin{itemize}
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Initiator of Sessions}:] It will be the SLP's responsibility to initiate sessions for patients. To begin a session, they will need to select the lesson plan they want to use for the session along with the phonemic identification model
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Changing Patient Records}:]When an SLP makes a change to patient records, they are responsible for ensuring that the data they enter is accurate
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Deleting Patient Data}:]SLPs are responsible for any patient data that they delete from the system
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Changing or Adding Lesson Plans}:]When a SLP adds or changes a lesson plan, they are responsible for ensuring  the lesson plan contents are accurate to what they want to work on in a session with a patient
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Deleting Lesson Plans}:]SLPs are responsible for any lesson plans they delete in the system
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Patient Data Exporting}:]It is up to the SLP that whenever they export patient data for external usage, they follow PHIPA guidelines for keeping the data safe
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Updates To Phonemic Identification Models}:]When an SLP wants to add or make an update a model, it is their responsibility to know where the model is sending data to ensure the system remains PHIPA compliant
+\item[SLP-R\refstepcounter{slpresnum}\theslpresnum \label{Deleting Models}:] SLPs are responsible for any models they delete from the system 
+\end{itemize}
+
+\subsubsection{Context of Typical Use}
+
+The software will typically be used in medical applications for treating patients that have speech sound disorders (SSDs). The system is neither safety-critical nor mission-critical, should the system fail, users will not be in danger and critical business/societal infrastructure will not be impacted. Since PronouncedFish is primarily an assistant to SLPs, it is not autonomously making critical medical decisions. Should the system fail during treatment, the SLP can step in with their own judgements to correct issues that come from the system. Any administrative suggestions made by PronouncedFish can be overruled by an SLPs own judgement, helping to mitigate risk for end users. 
+
+\subsubsection{Auxilliary System Diagrams}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{PhonemicID.png}
+    \caption{Phonemic Identification System}
+    \label{fig:PID}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Session.png}
+    \caption{Session System}
+    \label{fig:session}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{ProgressTracking.png}
+    \caption{Progress Tracking System}
+    \label{fig:PT}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{LessonPlan.png}
+    \caption{Lesson Plan System}
+    \label{fig:LP}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{ModelManagement.png}
+    \caption{Model Management System}
+    \label{fig:MM}
+\end{figure}
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
 
-\plt{This section summarizes the knowledge/skills expected of the user.
-  Measuring usability, which is often a required non-function requirement,
-  requires knowledge of a typical user.  As mentioned above, the user is a
-  different role from the ``intended reader,'' as given in
-  Section~\ref{sec_IntendedReader}.  As in Section~\ref{sec_IntendedReader}, the
-  user characteristics should be specific an unambiguous.  For instance, ``The
-  end user of \progname{} should have an understanding of undergraduate Level 1
-  Calculus and Physics.''}
+\subsubsection{Patient}
+\begin{itemize}
+    \item A patient is typically a child between the ages of 4-6 with an SSD like difficulties with substitutions
+    \item A patient should be starting to learn how to read. PronouncedFish may use components that require a patient to read a sentence aloud. If a patient cannot read, alternative methods of treatment will be available in the system 
+    \item A patient should know how repeat a sentence said by an SLP when prompted. During treatment, an SLP may ask a patient to say a sentence to get an audio sample for phonemic analysis, the patient should be able to provide such a sentence when prompted
+    \item A patient will likley still be learning how to pronounce fricative phonemes (/f/, /r/, /z/) but should have an understanding of plosive phonemes (/p/, /b/, /k/, /d/) and voiced phonemes (/w/, /m/, /n/). There are still some phonemes a child has not fully learned how to say yet which will be accounted for in the system
+    \item Patients have limited digital literacy, they should not need to understand the internals of how the system works to use it
+    \item A patient may not be able to understand advanced data or tracking information. The data provided by PronouncedFish should readable diagrams and data tracking statistics for children above the age of 4
+\end{itemize}
+
+\subsubsection{SLP}
+
+\begin{itemize}
+    \item Expert in speech language pathology, they have a good understanding of phonemic analysis and are able to detect SSDs like substitutions.
+    \item SLPs run sessions for patients, they decide which lessons to provide and which tools to use during a session to diagnose and treat SSDs. They have a good understanding of theses lessons and tools and know how to employ them effectively.  
+    \item SLPs are able to track and analyze a patient's data. They are able to use data to inform them of the SSDs a patient may have an how best to treat it. They can also use the data to track the progress of treatment for a patient and use that information to guide them on which tools are best to use for future sessions.
+    \item SLPs are likely not experts in machine learning, they should not need an understanding of how machine learning works to use PronouncedFish. 
+    \item SLPs can use their judgements to formulate new lesson plans that are well tuned to a patients specicfic needs. 
+\end{itemize}
+
 
 \subsection{System Constraints}
 
-\plt{System constraints differ from other type of requirements because they
-  limit the developers' options in the system design and they identify how the
-  eventual system must fit into the world. This is the only place in the SRS
-  where design decisions can be specified.  That is, the quality requirement for
-  abstraction is relaxed here.  However, system constraints should only be
-  included if they are truly required.}
+\begin{itemize}
+\item[\stepcounter{scnum}\scthescnum \label{iPad Functionality}: ]PronouncedFish and all of its functionalities must be able to run on an iPad or other kinds of tablets. \\
+\textbf{Rationale: }Tablets are the most common tool for SLPs to use in a session. PronouncedFish must be able to run on existing SLP hardware to minimize the cost and training required for SLPs to be able to use the app.  
+\item[\stepcounter{scnum}\scthescnum \label{Quiet Environment Constraint}: ]PronouncedFish cannot function in noisy environments.\\
+\textbf{Rationale: }The system will have a more difficult time isolating a patient's voice in an environment that is noisy. At a certain level of noise, the patient's voice is indistinguishable from the surrounding noise and the app will not be able to identify phonemes.
+\item[\stepcounter{scnum}\scthescnum \label{Internet Access for Authentication}: ] The system will need access the internet for authenticating a user account. \\
+\textbf{Rationale: } SLPs will have accounts that they can use to access patient data, authentication of these accounts will need to happen through external services over the internet as it is infeasible to create a locally hosted authentication system.
+\end{itemize}
 
 \section{Specific System Description}
 
@@ -710,7 +749,6 @@ qualities that the software is expected to exhibit.
 \textbf{Rationale:} Gives the SLP complete control of the session based on how they judge patient progress and needs.
 \item \textbf{FR-PAR7:} The system shall include elements that keep patients engaged during practice. 
 \end{itemize}
-
 
 
 \subsection{Nonfunctional Requirements}
