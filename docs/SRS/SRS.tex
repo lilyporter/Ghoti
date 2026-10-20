@@ -186,40 +186,12 @@ description of the unit and the SI name.
     \toprule		
     \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
     \midrule 
-    \si{\metre} & length & metre\\
-    \si{\kilogram} & mass	& kilogram\\
     \si{\second} & time & second\\
-    \si{\celsius} & temperature & centigrade\\
-    \si{\joule} & energy & joule\\
-    \si{\watt} & power & watt (W = \si{\joule\per\second})\\
+    \si{\minute} & time & minute\\
     \bottomrule
   \end{tabular}
   %	\caption{Provide a caption}
 %\end{table}
-
-\plt{Only include the units that your SRS actually uses.}
-
-\plt{Derived units, like newtons, pascal, etc, should show their derivation
-    (the units they are derived from) if their constituent units are in the
-    table of units (that is, if the units they are derived from are used in the
-    document).  For instance, the derivation of pascals as
-    $\si{\pascal}=\si{\newton\per\square\meter}$ is shown if newtons and m are
-    both in the table.  The derivations of newtons would not be shown if kg and
-    s are not both in the table.}
-
-\plt{The symbol for units named after people use capital letters, but the name
-  of the unit itself uses lower case.  For instance, pascals use the symbol Pa,
-  watts use the symbol W, teslas use the symbol T, newtons use the symbol N,
-  etc.  The one exception to this is degree Celsius.  Details on writing metric
-  units can be found on the 
-  \href{https://www.nist.gov/pml/weights-and-measures/writing-metric-units}
-  {NIST} web-page.}
-
-\plt{The table should include the basic units and derived units that are used,
-with basic and derived defined as by
-\href{https://en.wikipedia.org/wiki/International_System_of_Units}{SI}. Units
-that aren't named, aren't normally in the table of units.  For instance, the
-units m/s$^2$ for acceleration won't normally appear in the table.}
 
 \subsection{Table of Symbols}
 
@@ -233,15 +205,20 @@ systems.  The symbols are listed in alphabetical order.
 \noindent \begin{longtable*}{l l p{12cm}} \toprule
 \textbf{symbol} & \textbf{unit} & \textbf{description}\\
 \midrule 
-$A_C$ & \si[per-mode=symbol] {\square\metre} & coil surface area
+$x$ & dimensionless & expected phoneme
 \\
-$A_\text{in}$ & \si[per-mode=symbol] {\square\metre} & surface area over which
-heat is transferred in
+$y$ & dimensionless & estimated phoneme
+\\
+$p$ & dimensionless & n dimensional matrix of phonological features
+\\
+$A$ & dimensionless & features of expected phoneme
 \\ 
+$B$ & dimensionless & features of estimated phoneme
+\\ 
+$d_m(A,B)$ & dimensionless & Manhattan distance between A and B
+\\
 \bottomrule
 \end{longtable*}
-\plt{Use your problems actual symbols.  The si package is a good idea to use for
-  units.}
 
 \subsection{Abbreviations and Acronyms}
 
@@ -259,12 +236,31 @@ heat is transferred in
   PS & Physical System Description\\
   R & Requirement\\
   SRS & Software Requirements Specification\\
-  \progname{} & \plt{put an expanded version of your program name here (as appropriate)}\\
   TM & Theoretical Model\\
+  SLP & Speech Language Pathologist \\
+  SODA & Substitution/Omission/Distortion/Articulation \\
+  SD & Scope Decision \\
+  SSD & Speech Sound Disorder \\
+  PHI & Personal Health Information \\
+  PHIPA & Personal Health Information Protection Act \\
+  FR & Functional Requirement \\
+  NFR & Nonfunctional Requirement \\
+  AC & Audio Capture \\
+  SM & Session Management \\
+  SA & Speech Analysis \\
+  RDV & Results and Data Visualization \\
+  DMR & Progress and Data Management Requirements\\
+  PAR & Practice Activities Requirements \\
+  ACCU & Accuracy \\
+  PER & Performance \\
+  USA & Usability \\
+  MAI & Maintainability \\
+  POR & Portability \\
+  REL & Reliability \\
+  SAP & Security and Privacy \\
+  LAL & Legal and Licensing \\
   \bottomrule
 \end{tabular}\\
-
-\plt{Add any other abbreviations or acronyms that you add}
 
 \subsection{Mathematical Notation}
 
@@ -773,7 +769,7 @@ qualities that the software is expected to exhibit.
     \subsubsection{Accuracy Requirements}
     \begin{itemize}
         \item \textbf{NFR-ACCU1:} The accuracy of the system for identifying phonemes will be 87\% which will be measured against the analysis and judgement of one or more speech language pathologists (SLPs).\\
-        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range. https://pmc.ncbi.nlm.nih.gov/articles/PMC9135012/, https://www.sciencedirect.com/science/article/pii/S1877050926024889, https://pubs.asha.org/doi/10.1044/2024\_JSLHR-24-00009, https://pubmed.ncbi.nlm.nih.gov/39173066/    
+        \textbf{Rationale: } Many models created after 2020 for phonemic analysis are able to achieve accuracies around the 80-90\% range. \cite{nihSpeechLanguagePathologists}, https://www.sciencedirect.com/science/article/pii/S1877050926024889, https://pubs.asha.org/doi/10.1044/2024\_JSLHR-24-00009, https://pubmed.ncbi.nlm.nih.gov/39173066/    
     \end{itemize}
 
     \subsubsection{Performance Requirements}
