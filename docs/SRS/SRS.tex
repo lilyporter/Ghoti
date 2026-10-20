@@ -18,6 +18,8 @@
 \usepackage{caption}
 \usepackage{pdflscape}
 \usepackage{afterpage}
+\usepackage{multirow}
+
 
 \usepackage[round]{natbib}
 
@@ -712,7 +714,7 @@ qualities that the software is expected to exhibit.
 \textbf{Rationale:} All deductions are assistive, not diagnostic. It is important to remind users so they do not try using this to replace judgments of SLPs.
 \item \textbf{FR-RDV8:} The system shall not present error information in a way that discourages the patient. \\
 \textbf{Rationale:} Avoids discouraging error displays to support patient confidence.
-\item \textbf{FR-RDV8:} The system shall present phonemes as the appropriate IPA symbols. \\
+\item \textbf{FR-RDV9:} The system shall present phonemes as the appropriate IPA symbols. \\
 \textbf{Rationale:} IPA is the standard language used worldwide so these symbols must be used.
 \end{itemize}
 
@@ -884,143 +886,240 @@ Below is a list of requirements that are likely to change. The provided rational
 
 \section{Traceability Matrices and Graphs}
 
-The purpose of the traceability matrices is to provide easy references on what
-has to be additionally modified if a certain component is changed.  Every time a
-component is changed, the items in the column of that component that are marked
-with an ``X'' may have to be modified as well.  Table~\ref{Table:trace} shows the
-dependencies of theoretical models, general definitions, data definitions, and
-instance models with each other. Table~\ref{Table:R_trace} shows the
-dependencies of instance models, requirements, and data constraints on each
-other. Table~\ref{Table:A_trace} shows the dependencies of theoretical models,
-general definitions, data definitions, instance models, and likely changes on
-the assumptions.
+The following traceability matrices map relationships between the various requirements and design
+decisions made throughout this document. The first one traces relations between the functional 
+and non-functional system requirements. The second matrix links the assumptions 
+to all other goals, scope decisions, and items. Each relation is marked by an X between the corresponding items.  
 
-\plt{You will have to modify these tables for your problem.}
 
-\plt{The traceability matrix is not generally symmetric.  If GD1 uses A1, that
-  means that GD1's derivation or presentation requires invocation of A1.  A1
-  does not use GD1.  A1 is ``used by'' GD1.}
+% Traceability matrix 1 (i)
 
-\plt{The traceability matrix is challenging to maintain manually.  Please do
-  your best.  In the future tools (like Drasil) will make this much easier.}
+\clearpage
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
 
-\afterpage{
-\begin{landscape}
-\begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
-\hline
-\tref{T_COE}        & X& & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_LHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\dref{NL}           & & X& & & & & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}         & & & X& X& X& X& & & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil}    & & & & & & & X& X& X& & & & & & & & & & \\ \hline
-\ddref{FluxPCM}     & & & X& X& & & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}       & & & & & & & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\iref{ewat}         & & & & & & & & & & & X& X& & X& X& X& & & X \\ \hline
-\iref{epcm}         & & & & & & & & & & & & X& X& & & X& X& X& \\ \hline
-\iref{I_HWAT}       & & & & & & & & & & & & & & X& & & & & X \\ \hline
-\iref{I_HPCM}       & & & & & & & & & & & & & X& & & & & X & \\ \hline
-\lcref{LC_tpcm}     & & & & X& & & & & & & & & & & & & & & \\ \hline
-\lcref{LC_tcoil}    & & & & & & & & X& & & & & & & & & & & \\ \hline
-\lcref{LC_tlcoil}   & & & & & & & & & X& & & & & & & & & & \\ \hline
-\lcref{LC_charge}   & & & & & & & & & & & X& & & & & & & & \\ \hline
-\lcref{LC_InitTemp} & & & & & & & & & & & & X& & & & & & & \\ \hline
-\lcref{LC_htank}    & & & & & & & & & & & & & & & X& & & & \\
-\hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
-\label{Table:A_trace}
-\end{table}
-\end{landscape}
+\begin{longtable}{|
+    >{\centering\arraybackslash}p{1.6cm}|
+    *{9}{>{\centering\arraybackslash}p{0.85cm}|}
 }
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline        
-	& \tref{T_COE}& \tref{T_SHE}& \tref{T_LHE}& \dref{NL}& \dref{ROCT} & \ddref{FluxCoil}& \ddref{FluxPCM} & \ddref{D_HOF}& \ddref{D_MF}& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM} \\
+\caption{Traceability Matrix: Functional and Nonfunctional Requirements (1)}
+\label{Table:FR_NFR_trace_1}\\
 \hline
-\tref{T_COE}     & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}     & & & X& & & & & & & & & & \\ \hline
-\tref{T_LHE}     & & & & & & & & & & & & & \\ \hline
-\dref{NL}        & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}      & X& & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil} & & & & X& & & & & & & & & \\ \hline
-\ddref{FluxPCM}  & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}    & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}     & & & & & & & & X& & & & & \\ \hline
-\iref{ewat}      & & & & & X& X& X& & & & X& & \\ \hline
-\iref{epcm}      & & & & & X& & X& & X& X& & & X \\ \hline
-\iref{I_HWAT}    & & X& & & & & & & & & & & \\ \hline
-\iref{I_HPCM}    & & X& X& & & & X& X& X& & X& & \\
+
+\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Functional}}} &
+\multicolumn{9}{c|}{\textbf{Nonfunctional}} \\
+\cline{2-10}
+\multicolumn{1}{|c|}{} &
+\textbf{ACU1} & \textbf{PER1} &
+\textbf{USA1} & \textbf{USA2} & \textbf{USA3} & \textbf{USA4} &
+\textbf{MAI1} & \textbf{MAI2} & \textbf{MAI3} \\
 \hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
-\label{Table:trace}
-\end{table}
+\endfirsthead
 
-\begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\multicolumn{10}{|l|}{\textit{Traceability Matrix (1), continued}}\\
 \hline
-	& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM}& \ref{sec_DataConstraints}& \rref{R_RawInputs}& \rref{R_MassInputs} \\
+\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Functional}}} &
+\multicolumn{9}{c|}{\textbf{Nonfunctional}} \\
+\cline{2-10}
+\multicolumn{1}{|c|}{} &
+\textbf{ACU1} & \textbf{PER1} &
+\textbf{USA1} & \textbf{USA2} & \textbf{USA3} & \textbf{USA4} &
+\textbf{MAI1} & \textbf{MAI2} & \textbf{MAI3} \\
 \hline
-\iref{ewat}            & & X& & & & X& X \\ \hline
-\iref{epcm}            & X& & & X& & X& X \\ \hline
-\iref{I_HWAT}          & & & & & & X& X \\ \hline
-\iref{I_HPCM}          & & X& & & & X& X \\ \hline
-\rref{R_RawInputs}     & & & & & & & \\ \hline
-\rref{R_MassInputs}    & & & & & & X& \\ \hline
-\rref{R_CheckInputs}   & & & & & X& & \\ \hline
-\rref{R_OutputInputs}  & X& X& & & & X& X \\ \hline
-\rref{R_TempWater}     & X& & & & & & \\ \hline 
-\rref{R_TempPCM}       & & X& & & & & \\ \hline
-\rref{R_EnergyWater}   & & & X& & & & \\ \hline
-\rref{R_EnergyPCM}     & & & & X& & & \\ \hline
-\rref{R_VerifyOutput}  & & & X& X& & & \\ \hline
-\rref{R_timeMeltBegin} & & X& & & & & \\ \hline
-\rref{R_timeMeltEnd}   & & X& & & & & \\ 
+\endhead
+
 \hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
-\label{Table:R_trace}
-\end{table}
+\multicolumn{10}{|r|}{\textit{Continued on next page}}\\
+\hline
+\endfoot
 
-The purpose of the traceability graphs is also to provide easy references on
-what has to be additionally modified if a certain component is changed.  The
-arrows in the graphs represent dependencies. The component at the tail of an
-arrow is depended on by the component at the head of that arrow. Therefore, if a
-component is changed, the components that it points to should also be
-changed. Figure~\ref{Fig_ATrace} shows the dependencies of theoretical models,
-general definitions, data definitions, instance models, likely changes, and
-assumptions on each other. Figure~\ref{Fig_RTrace} shows the dependencies of
-instance models, requirements, and data constraints on each other.
+\hline
+\endlastfoot
 
-% \begin{figure}[h!]
-% 	\begin{center}
-% 		%\rotatebox{-90}
-% 		{
-% 			\includegraphics[width=\textwidth]{ATrace.png}
-% 		}
-% 		\caption{\label{Fig_ATrace} Traceability Matrix Showing the Connections Between Items of Different Sections}
-% 	\end{center}
-% \end{figure}
+AC1  & & & & & & & & & \\ \hline
+AC2  & & & & & & & & & \\ \hline
+AC3  & & & & & & & & & \\ \hline
+SM1  & & & & & & & & & \\ \hline
+SM2  & & & & & & & & & \\ \hline
+SM3  & & & & & & & & & \\ \hline
+SM4  & & & & & & & & & \\ \hline
+SA1  & & & & & & & & & \\ \hline
+SA2  & & & & & & & & & \\ \hline
+SA3  & & & & & & & & & \\ \hline
+RDV1 & & & & & & & & & \\ \hline
+RDV2 & & & & & & & & & \\ \hline
+RDV3 & & & & & & & & & \\ \hline
+RDV4 & & & & & & & & & \\ \hline
+RDV5 & & & & & & & & & \\ \hline
+RDV6 & & & & & & & & & \\ \hline
+RDV7 & & & & & & & & & \\ \hline
+RDV8 & & & & & & & & & \\ \hline
+RDV9 & & & & & & & & & \\ \hline
+DMR1 & & & & & & & & & \\ \hline
+DMR2 & & & & & & & & & \\ \hline
+DMR3 & & & & & & & & & \\ \hline
+DMR4 & & & & & & & & & \\ \hline
+DMR5 & & & & & & & & & \\ \hline
+DMR6 & & & & & & & & & \\ \hline
+DMR7 & & & & & & & & & \\ \hline
+DMR8 & & & & & & & & & \\ \hline
+DMR9 & & & & & & & & & \\ \hline
+DMR10 & & & & & & & & & \\ \hline
+DMR11 & & & & & & & & & \\ \hline
+PAR1 & & & & & & & & & \\ \hline
+PAR2 & & & & & & & & & \\ \hline
+PAR3 & & & & & & & & & \\ \hline
+PAR4 & & & & & & & & & \\ \hline
+PAR5 & & & & & & & & & \\ \hline
+PAR6 & & & & & & & & & \\ \hline
+PAR7 & & & & & & & & &
+
+\end{longtable}
+
+% Traceability matrix 1 (ii)
+
+\clearpage
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+
+\begin{longtable}{|
+    >{\centering\arraybackslash}p{1.6cm}|
+    *{12}{>{\centering\arraybackslash}p{0.85cm}|}
+}
+\caption{Traceability Matrix: Functional and Nonfunctional Requirements (2)}
+\label{Table:FR_NFR_trace_2}\\
+\hline
+
+\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Functional}}} &
+\multicolumn{12}{c|}{\textbf{Nonfunctional}} \\
+\cline{2-13}
+\multicolumn{1}{|c|}{} &
+\textbf{POR1} & \textbf{POR2} & \textbf{POR3} &
+\textbf{REL1} & \textbf{REL2} & \textbf{REL3} & \textbf{REL4} &
+\textbf{SAP1} & \textbf{SAP2} & \textbf{SAP3} &
+\textbf{LAL1} & \textbf{LAL2} \\
+\hline
+\endfirsthead
+
+\multicolumn{13}{|l|}{\textit{Traceability Matrix (2), continued}}\\
+\hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{Functional}}} &
+\multicolumn{12}{c|}{\textbf{Nonfunctional}} \\
+\cline{2-13}
+\multicolumn{1}{|c|}{} &
+\textbf{POR1} & \textbf{POR2} & \textbf{POR3} &
+\textbf{REL1} & \textbf{REL2} & \textbf{REL3} & \textbf{REL4} &
+\textbf{SAP1} & \textbf{SAP2} & \textbf{SAP3} &
+\textbf{LAL1} & \textbf{LAL2} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{13}{|r|}{\textit{Continued on next page}}\\
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+AC1  & & & & & & & & & & & & \\ \hline
+AC2  & & & & & & & & & & & & \\ \hline
+AC3  & & & & & & & & & & & & \\ \hline
+SM1  & & & & & & & & & & & & \\ \hline
+SM2  & & & & & & & & & & & & \\ \hline
+SM3  & & & & & & & & & & & & \\ \hline
+SM4  & & & & & & & & & & & & \\ \hline
+SA1  & & & & & & & & & & & & \\ \hline
+SA2  & & & & & & & & & & & & \\ \hline
+SA3  & & & & & & & & & & & & \\ \hline
+RDV1 & & & & & & & & & & & & \\ \hline
+RDV2 & & & & & & & & & & & & \\ \hline
+RDV3 & & & & & & & & & & & & \\ \hline
+RDV4 & & & & & & & & & & & & \\ \hline
+RDV5 & & & & & & & & & & & & \\ \hline
+RDV6 & & & & & & & & & & & & \\ \hline
+RDV7 & & & & & & & & & & & & \\ \hline
+RDV8 & & & & & & & & & & & & \\ \hline
+RDV9 & & & & & & & & & & & & \\ \hline
+DMR1 & & & & & & & & & & & & \\ \hline
+DMR2 & & & & & & & & & & & & \\ \hline
+DMR3 & & & & & & & & & & & & \\ \hline
+DMR4 & & & & & & & & & & & & \\ \hline
+DMR5 & & & & & & & & & & & & \\ \hline
+DMR6 & & & & & & & & & & & & \\ \hline
+DMR7 & & & & & & & & & & & & \\ \hline
+DMR8 & & & & & & & & & & & & \\ \hline
+DMR9 & & & & & & & & & & & & \\ \hline
+DMR10 & & & & & & & & & & & & \\ \hline
+DMR11 & & & & & & & & & & & & \\ \hline
+PAR1 & & & & & & & & & & & & \\ \hline
+PAR2 & & & & & & & & & & & & \\ \hline
+PAR3 & & & & & & & & & & & & \\ \hline
+PAR4 & & & & & & & & & & & & \\ \hline
+PAR5 & & & & & & & & & & & & \\ \hline
+PAR6 & & & & & & & & & & & & \\ \hline
+PAR7 & & & & & & & & & & & &
+
+\end{longtable}
+
+\normalsize
+\clearpage
+
+% Traceability matrix 2
+\clearpage
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.1}
+
+\begin{longtable}{|>{\centering\arraybackslash}p{1.1cm}|*{11}{>{\centering\arraybackslash}p{0.72cm}|}}
+\caption{Traceability Matrix: Assumptions and Other SRS Components}
+\label{Table:Assumptions_trace}\\
+\hline
+\textbf{Items} & \textbf{A1} & \textbf{A2} & \textbf{A3} & \textbf{A4} & \textbf{A5} & \textbf{A6} & \textbf{A7} & \textbf{A8} & \textbf{A9} & \textbf{A10} & \textbf{A11} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Items} & \textbf{A1} & \textbf{A2} & \textbf{A3} & \textbf{A4} & \textbf{A5} & \textbf{A6} & \textbf{A7} & \textbf{A8} & \textbf{A9} & \textbf{A10} & \textbf{A11} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+GS1 &X& &X&X&X& & & & & & \\ \hline
+GS2 & & &X&X&X&X&X&X& &X& \\ \hline
+GS3 &X& &X& & & & &X& &X& \\ \hline
+GS4 & & & & & & &X& & & & \\ \hline
+SD1 & &X& & & & & &X& & & \\ \hline
+SD2 & &X& &X& & & & & & & \\ \hline
+SD3 &X& &X&X&X& & & & &X& \\ \hline
+SD4 & & & & & & & & &X& &X\\ \hline
+TM1 & & &X&X& & & &X& &X& \\ \hline
+TM2 & & &X& & &X& &X& &X& \\ \hline
+GD1 & & &X& &X& & & & & & \\ \hline
+DD1 & & &X& & & & & & & & \\ \hline
+LC1 & & & & &X&X& & & & & \\ \hline
+LC2 & &X& &X& & & & & & & \\ \hline
+LC3 & & & & & & &X& & & & \\ \hline
+LC4 & &X& & & & & & & & & \\ \hline
+LC5 & & & & & & & & &X& &X\\ \hline
+UC1 & &X& & & & & & & & & \\ \hline
+UC2 & & & & & & &X& & & & \\ \hline
+UC3 & &X&X&X& & & & & & & \\ \hline
+UC4 & & & & & & &X& & & & \\ \hline
+
+\end{longtable}
+
+\normalsize
+\clearpage
 
 
-% \begin{figure}[h!]
-% 	\begin{center}
-% 		%\rotatebox{-90}
-% 		{
-% 			\includegraphics[width=0.7\textwidth]{RTrace.png}
-% 		}
-% 		\caption{\label{Fig_RTrace} Traceability Matrix Showing the Connections Between Requirements, Instance Models, and Data Constraints}
-% 	\end{center}
-% \end{figure}
 
 \section{Development Plan}
 \textbf{Proof of Concept:}
