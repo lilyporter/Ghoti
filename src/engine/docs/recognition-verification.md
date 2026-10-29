@@ -149,3 +149,44 @@ python -m pytest -q
 Timing can vary with CPU load, operating-system caches, and first-use library
 initialization. The helper performs local speech synthesis only. On other
 platforms use a permitted synthetic/development WAV or FLAC instead.
+
+## Optional analysis verification — 28 October 2026
+
+The recognition package now exposes `analyze(result, expected_phones, ...)` and
+a saved-JSON `analyze` CLI command. The optional `analysis` extra installs
+Jiwer 4.0.0 and PanPhon 0.22.2. The conda environment has these dependencies
+installed; `pip check` reports no broken requirements.
+
+The full suite passed **59 tests in 23.88 seconds** in the Python 3.12 conda
+environment, including the existing real-weight recognition test with network
+connections blocked. There are 24 new analysis cases covering complete-token
+alignment, accepted variants, spelling aliases, retained IPA distinctions,
+directional substitution inventories, unknown feature mappings, unassessable
+recognition, offline feature loading, input/cache preservation, and CLI output
+and error handling. These are software checks, not child-speech accuracy results.
+
+The real packaged PanPhon data has 24 feature columns. `/t/` versus `/d/` yields
+Manhattan distance 2, entirely in `voi`. Gaps and unknown phones receive no
+distance. PanPhon's default loader failed under Windows cp1252; the implementation
+reads its installed CSV explicitly as UTF-8 without modifying the library.
+
+No acoustic distortion detector, clinical severity score, heatmap UI, approved
+practice-item dictionary, or validated substitution inventory was added. Those
+remain distinct from descriptive target comparison. The older HTML/PDF walkthrough
+documents the recognition-only baseline; the [README](../README.md) describes
+the current analysis API and its limits.
+
+### Windows PowerShell JSON redirection fix
+
+The analysis CLI now lets the standard JSON decoder detect UTF-8/16/32 from
+bytes. Windows PowerShell's UTF-16 redirection previously failed UTF-8 decoding.
+The existing redirected file also contained IPA corrupted by OEM-code-page
+decoding before it was written, so decoding the file alone was insufficient.
+Redirected CLI JSON now uses ASCII Unicode escapes; interactive output keeps IPA.
+Previously corrupted files must be regenerated from their source recording.
+
+All 28 analysis tests passed, including five Unicode file encodings and a simulated
+UTF-8-to-cp437-to-UTF-16 redirection. A real PowerShell `recognize sample.wav >`
+temporary-file run followed by `analyze` returned `status="ok"`,
+`matches_target=true`, and zero substitutions, omissions, or additions against
+the synthetic sample's expected phones. The user's existing file was preserved.

@@ -1,4 +1,4 @@
-"""Explicit asset download and offline local-file recognition commands."""
+"""Explicit asset download, offline recognition, and target comparison commands."""
 
 import argparse
 import json
@@ -16,8 +16,32 @@ def main() -> int:
     recognize.add_argument("audio", type=Path)
     recognize.add_argument("--model-dir", type=Path, default=Path("models/pasketti-phonetic"))
     recognize.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    analysis = commands.add_parser("analyze", help="Compare saved recognition JSON with target phone tokens")
+    analysis.add_argument("recognition", type=Path)
+    analysis.add_argument("--expected-phones", nargs="+", required=True)
+    analysis.add_argument("--acceptable-variant", nargs="+", action="append", default=[])
+    analysis.add_argument("--supported-substitution", nargs=2, action="append", default=[])
     args = parser.parse_args()
     try:
+        if args.command == "analyze":
+            from .analysis import analyze
+
+            # Decode JSON bytes directly: the standard library detects UTF-8,
+            # UTF-16 (Windows PowerShell redirection), UTF-32, and their BOMs.
+            recognition_result = json.loads(args.recognition.read_bytes())
+            if (not isinstance(recognition_result, dict)
+                    or recognition_result.get("status") not in ("ok", "unassessable")
+                    or not isinstance(recognition_result.get("recognized_phones"), list)):
+                raise ValueError("Expected recognition JSON with status and recognized_phones.")
+            result = analyze(
+                recognition_result, args.expected_phones,
+                acceptable_variants=args.acceptable_variant,
+                supported_substitutions=args.supported_substitution,
+            )
+            if hasattr(sys.stdout, "reconfigure"):
+                sys.stdout.reconfigure(encoding="utf-8")
+            print(json.dumps(result, ensure_ascii=not sys.stdout.isatty(), indent=2))
+            return 0 if result["status"] == "ok" else 2
         if args.command == "download-model":
             from .assets import download_pasketti
 
@@ -36,10 +60,12 @@ def main() -> int:
         result = engine.recognize(audio)
         total_ms = (perf_counter() - started) * 1000
         # Standard output is intentional local CLI output; no files or telemetry.
-        # Use UTF-8 for redirected output too, including legacy Windows terminals.
+        # Escape non-ASCII in redirected JSON: Windows PowerShell can decode a
+        # native program's UTF-8 as an OEM code page before writing UTF-16.
+        # Interactive terminals retain readable IPA; JSON readers restore escapes.
         if hasattr(sys.stdout, "reconfigure"):
             sys.stdout.reconfigure(encoding="utf-8")
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        print(json.dumps(result, ensure_ascii=not sys.stdout.isatty(), indent=2))
         print(
             f"model_load_ms={load_ms:.1f} preprocessing_ms={preprocessing_ms:.1f} "
             f"processing_ms={total_ms:.1f}", file=sys.stderr,
@@ -47,8 +73,8 @@ def main() -> int:
         return 0 if result["status"] == "ok" else 2
     except ImportError as error:
         print(
-            "Recognition dependencies are missing or incompatible. "
-            "Install with: python -m pip install . "
+            "Engine dependencies are missing or incompatible. "
+            "Install with: python -m pip install '.[analysis]' "
             f"({type(error).__name__})", file=sys.stderr,
         )
         return 1
