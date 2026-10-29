@@ -69,8 +69,21 @@ class PaskettiRecognizer:
 
     def recognize(self, audio: AudioInput) -> RecognitionResult:
         """Run local acoustic inference without target words or language correction."""
+        return self._run(audio, keep_evidence=False).recognition
+
+    def recognize_with_evidence(self, audio: AudioInput):
+        """One forward pass returning recognition plus internal CTC evidence."""
+        return self._run(audio, keep_evidence=True)
+
+    def _run(self, audio: AudioInput, *, keep_evidence: bool):
+        from .assessment import CTCEvidence, RecognitionRun
+        from .phonetics import BASE_SYMBOLS
+
         import numpy as np
         import torch
+
+        def unassessable(phones, text, time_ms, reason):
+            return RecognitionRun(self._result(phones, text, time_ms, reason), None)
 
         if audio.sample_rate_hz != self.sample_rate_hz:
             raise ValueError("Expected 16000 Hz mono PCM; use load_audio for resampling.")
@@ -83,11 +96,11 @@ class PaskettiRecognizer:
             raise ValueError("PCM samples must lie in [-1, 1].")
         # The convolutional encoder requires at least 400 samples (25 ms).
         if samples.size < 400:
-            return self._result([], "", None, "Audio is too short for the encoder.")
+            return unassessable([], "", None, "Audio is too short for the encoder.")
         if samples.size > MAX_DURATION_SECONDS * self.sample_rate_hz:
-            return self._result([], "", None, "Audio exceeds the 30-second baseline limit.")
+            return unassessable([], "", None, "Audio exceeds the 30-second baseline limit.")
         if float(np.sqrt(np.mean(samples.astype(np.float64) ** 2))) < 1e-5:
-            return self._result([], "", None, "Audio is silent or nearly silent.")
+            return unassessable([], "", None, "Audio is silent or nearly silent.")
         inputs = self._processor(
             samples, sampling_rate=self.sample_rate_hz, return_tensors="pt",
             # One unpadded utterance has no masked frames. Omitting this redundant
@@ -104,17 +117,29 @@ class PaskettiRecognizer:
             torch.cuda.synchronize(self._device)
         time_ms = (perf_counter() - started) * 1000
         if not torch.isfinite(logits).all().item():
-            return self._result([], "", time_ms, "Model produced non-finite logits.")
+            return unassessable([], "", time_ms, "Model produced non-finite logits.")
         # HF handles CTC repeat collapse, blank removal, and word delimiters.
         frame_ids = logits.argmax(dim=-1).cpu()
         transcription = self._processor.batch_decode(frame_ids)[0].strip()
         try:
             phones = tokenize_pasketti(transcription)
         except ValueError:
-            return self._result(
+            return unassessable(
                 [], transcription, time_ms,
                 "Decoded IPA has unsupported or malformed marks; review raw transcription.",
             )
         if not phones:
-            return self._result([], transcription, time_ms, "Model decoded no phones.")
-        return self._result(phones, transcription, time_ms)
+            return unassessable([], transcription, time_ms, "Model decoded no phones.")
+        result = self._result(phones, transcription, time_ms)
+        evidence = None
+        if keep_evidence:
+            vocabulary = self._processor.tokenizer.get_vocab()
+            classes = logits.shape[-1]
+            evidence = CTCEvidence(
+                log_probs=logits[0].detach().float().log_softmax(dim=-1).cpu(),
+                phone_token_ids={p: i for p, i in vocabulary.items() if p in BASE_SYMBOLS and i < classes},
+                blank_id=self._processor.tokenizer.pad_token_id,
+                ignored_token_ids=tuple(i for p, i in vocabulary.items() if p == "|" and i < classes),
+                model_version=result["model_version"],
+            )
+        return RecognitionRun(result, evidence)

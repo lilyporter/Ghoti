@@ -11,14 +11,7 @@ from typing import Any, Iterable, Sequence
 import unicodedata
 
 from .recognition import RecognitionResult
-
-
-# Spelling aliases only: do not merge distinct sounds such as r and ɹ.
-_ALIASES = str.maketrans({"g": "ɡ", "ʧ": "t͡ʃ", "ʤ": "d͡ʒ"})
-
-
-def _canonical(phone: str) -> str:
-    return unicodedata.normalize("NFD", phone.translate(_ALIASES))
+from .phonetics import canonical_phone as _canonical
 
 
 def _tokens(phones: Sequence[str], label: str) -> list[str]:

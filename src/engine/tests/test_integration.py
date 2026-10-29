@@ -25,12 +25,23 @@ def test_real_model_runs_with_network_connections_forbidden(monkeypatch):
     audio = load_audio(audio_path)
     with warnings.catch_warnings():
         warnings.filterwarnings("error", message="Support for mismatched key_padding_mask")
-        result = recognizer.recognize(audio)
+        run = recognizer.recognize_with_evidence(audio)
+        result = run.recognition
     assert result["status"] == "ok", result["review_reason"]
     assert result["recognized_phones"]
     assert result["phonetic_transcription"]
     assert result["inference_time_ms"] > 0
     assert result["requires_review"] is True
+
+    from pronouncedfish_engine import score_ctc
+    import json
+
+    assert run.evidence is not None
+    acoustic = score_ctc(run.evidence, result["recognized_phones"])
+    assert acoustic["status"] == "ok", acoustic["review_reason"]
+    assert len(acoustic["phone_scores"]) == len(result["recognized_phones"])
+    assert all(row["conditional_log_support"] <= 0 for row in acoustic["phone_scores"])
+    json.dumps(acoustic, allow_nan=False)
 
     # Omitting a redundant mask must preserve the original masked decoding.
     import torch

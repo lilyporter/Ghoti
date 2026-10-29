@@ -5,6 +5,9 @@ It accepts WAV/FLAC audio and returns IPA plus complete phone tokens. Recognitio
 accuracy is inherited from Pasketti; we have not trained or fine-tuned it.
 An optional analysis module compares those tokens against supplied target
 pronunciations and returns candidate differences and phonological feature distances.
+An experimental acoustic scorer additionally compares CTC sequence probabilities
+from the recording. It is separate from symbolic PanPhon distances and remains
+uncalibrated; it does not detect distortions or predict acoustic feature vectors.
 
 ## Run it
 
@@ -34,9 +37,10 @@ engine/
     audio.py                Read, validate, mix channels, and resample audio
     phonetics.py            Group IPA marks into complete phone tokens
     analysis.py             Align target/recognized phones and compare features
+    assessment.py           CTC evidence, experimental scoring, and model boundary
     assets.py               Download and verify a reproducible model snapshot
     recognition.py          AudioInput and RecognitionResult used by the code
-    cli.py                  The download-model, recognize, and analyze commands
+    cli.py                  download-model, recognize, analyze, and assess commands
   tests/                    Regression checks and an optional real-model test
   scripts/                  One Windows synthetic-sample generator
   docs/                     Model notes, recorded checks, and team walkthrough
@@ -45,7 +49,8 @@ engine/
   environment.yml           Conda setup; installs this package with test tools
 ```
 
-There is no browser package or generic recognizer framework.
+There is no browser package or plugin framework. The small EvidenceRecognizer
+boundary is used by acoustic assessment and can accept a future model adapter.
 The model assets are required by Pasketti; their configuration and tokenizer JSON
 files are downloaded upstream files, not extra application architecture.
 
@@ -218,9 +223,47 @@ An application may explicitly keep both results together:
 response = {"recognition": result, "analysis": comparison}
 ```
 
-That wrapper is an integration choice, not a third engine result or an existing
-HTTP endpoint. The standalone frontend accepts analysis alone or an object with
-an `analysis` member.
+That two-result wrapper is an integration choice, not an HTTP endpoint. The new
+`assess` command supplies a three-result bundle, described below. The standalone
+frontend accepts analysis alone or a bundle with an `analysis` member.
+
+## Experimental acoustic evidence
+
+```powershell
+python -m pronouncedfish_engine assess sample.wav --expected-phones ð ə ɹ æ b ɪ t s ɪ t s ɪ n ð ə s ʌ n > assessment.json
+```
+
+This performs one model forward pass and returns `recognition`, `analysis`, and
+`acoustic_assessment`. Existing `recognize` and `analyze` outputs are unchanged.
+Open `assessment.json` in the frontend to see its separate acoustic evidence panel.
+
+The versioned method, `ctc-single-substitution-log-support-v1`, compares full-target
+CTC probabilities with sequences replacing one target phone at a time. It sums
+CTC paths rather than assuming a phone segment boundary. Other target positions
+stay fixed, and the selected variant is the one chosen by symbolic analysis.
+
+Unlike fixed PanPhon distance, this evidence can change even when the winning
+recognized phone stays the same. It is a **restricted experimental baseline**,
+not full published GOP-SF, a correctness percentage, clinical severity, numerical
+confidence calibration, or direct audio-to-feature prediction. There are no
+insertion/deletion alternatives or learned decision thresholds.
+
+The acoustic result includes method/model identity, calibration status, selected
+target and candidate phones, full-target sequence log probability, and per-phone
+`conditional_log_support`, `best_alternative_phone`, and
+`log_margin_vs_best_alternative`. Log support closer to 0 means greater relative
+support within this candidate set. A positive margin favors the target over its
+best alternative; it does not establish correctness. `status` describes score
+availability: `ok`, `partial`, or `unavailable`.
+
+Pasketti target phones requiring multiple output classes (nasalization, length,
+tied sequences) return unavailable rather than dropping their marks. Ordinary
+complete single-class affricates are supported. Model adapters supply their own
+phone IDs and blank; non-CTC adapters may explicitly return no CTC evidence.
+
+See [acoustic assessment and model expansion](docs/acoustic-assessment.md) for
+the exact formula, all JSON fields, resource limits, reference papers, and how to
+add a future model. No custom training or calibration has been performed.
 
 ## Phone pairs, SODA, and the heatmap
 
@@ -292,16 +335,18 @@ model sound; it does not mean correct child production.
 
 There is one Python package and one standalone frontend file. The previous unused
 browser types, speculative interfaces, and empty future-feature folders were
-removed. Downloaded model JSON files are upstream assets, not additional services.
+removed. A small model-evidence interface now has an actual consumer in `assess`,
+with replacement-model tests. Downloaded model JSON files are upstream assets, not additional services.
 No frontend framework, HTTP service, database, training pipeline, or browser model
 runtime was added for this milestone.
 
 ## Standalone frontend example
 
 Open [frontend-demo.html](docs/frontend-demo.html) directly in a browser. This
-single file contains all styles, scripts, and six illustrative comparisons
-generated by the actual analysis module. Select sound pairs, inspect the feature
-heatmap, or open and save engine analysis JSON. No server or install is required.
+single file contains all styles, scripts, six illustrative comparisons generated
+by the actual analysis module, and one real-model synthetic-audio assessment.
+Select sound pairs, inspect the feature heatmap and acoustic evidence, or open and
+save engine result JSON. No server or install is required.
 
 To load your own result, append `> analysis.json` to the `analyze` command above,
 then choose **Open analysis JSON**. UTF-8 and BOM-marked UTF-16 files are supported.
@@ -334,6 +379,11 @@ CTC decoding and phone tokenization. Analysis tests run when its optional
 dependencies are installed and cover alignment, variants, feature distances,
 unknown phones, unassessable results, and the saved-JSON CLI. Librosa checks
 that direct SoXR resampling preserves the earlier reference waveform.
+Acoustic tests compare the CTC calculation with exhaustive path enumeration,
+exercise model replacement, unknown mappings and impossible paths, and verify
+audio-dependent scores with unchanged winning labels. The real-model integration
+test now checks acoustic evidence as well as recognition. The latest full run
+passed 85 tests; see the verification record for its scope.
 
 `build/`, `*.egg-info/`, `__pycache__/`, and `.pytest_cache/` are generated by
 packaging or Python/pytest. They are not source modules and are ignored by Git.

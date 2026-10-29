@@ -1,10 +1,45 @@
-# Recognition verification — 2026-10-28
+# Engine verification — through 2026-10-29
 
 The first Python audio-to-phone baseline executed successfully using the real
 Pasketti checkpoint. This record concerns execution and software behavior, not
 clinical accuracy or acceptance of the 87% recognition requirement.
 
-## Current state at documentation refresh
+## Current acoustic baseline — 2026-10-29
+
+The complete conda suite passed **85 tests in 40.53 seconds**. This includes
+existing recognition/analysis regressions and 22 new acoustic/workflow cases.
+CTC probabilities and substitution scores are checked against exhaustive path
+enumeration, including repeated phones and word-separator-to-blank marginalization.
+Tests cover native model IDs, complete-affricate spelling aliases, normalization,
+unknown/multi-class targets, resource limits, impossible/zero-probability paths,
+partial availability, model-version mismatch, an independently supplied model
+adapter, and combined CLI output. The prior 63-test count is historical.
+
+The real-model integration check now obtains CTC evidence while forbidding network
+connections and scores the generated sample's full target. A separate combined
+`assess` smoke run used the real local model, counted **one forward pass**, and
+returned 18 available acoustic phone scores with matching symbolic analysis.
+The generated result was saved in a temporary file and embedded as the frontend's
+seventh example; the original six illustrative symbolic examples remain.
+
+That single CPU smoke run observed model load 12,781.7 ms and combined audio
+preparation/recognition/analysis/scoring 1,667.3 ms. These are uncontrolled single
+observations, not a latency guarantee or target-device benchmark.
+
+The method is restricted single-substitution CTC sequence support, not full
+published GOP-SF, calibrated correctness, severity, or direct phonological-feature
+prediction. There are no acoustic decision thresholds or trained custom models.
+See [method, output contract, and adapter details](acoustic-assessment.md).
+
+Chrome checks passed for all seven cases and the 18-row acoustic panel at 1440,
+768, and 390 px widths without page overflow. UTF-16 combined-result import
+preserved IPA and acoustic fields; invalid positive log support and model-version
+mismatch were rejected without replacing the current view. A browser download
+was read back to confirm all three result objects were preserved. No runtime
+exceptions or frontend network requests were observed. The expanded walkthrough
+was checked for footer overlap and regenerated as a 16-page PDF.
+
+## Documentation refresh — 2026-10-28
 
 The complete current conda suite passed **63 tests in 25.71 seconds**, including
 real-weight recognition with network connections forbidden. This supersedes the

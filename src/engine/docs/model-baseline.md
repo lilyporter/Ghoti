@@ -71,11 +71,20 @@ Our analysis uses caller-supplied targets/variants and reports candidate S/O/A
 differences; acoustic distortions are not assessed. No clinical severity or
 calibrated probability follows from a feature distance.
 
-`docs/frontend-demo.html` is an offline renderer of six illustrative engine
-outputs and imported JSON. Audio selection enables playback only; it does not
+`docs/frontend-demo.html` is an offline renderer of six illustrative symbolic
+outputs, a real-model synthetic-audio assessment, and imported JSON. Audio selection enables playback only; it does not
 perform inference. The notebook's Colab-backed inference and our static demo
 are not browser/iPad inference implementations. See the
 [team walkthrough](PronouncedFish-Engine-Walkthrough.html) for the full discussion.
+
+As of 29 October, `assessment.py` also implements experimental audio-dependent
+CTC single-substitution sequence support, using one forward pass from the same
+unchanged model. This independent restricted baseline is not full published
+GOP-SF, a distortion detector, direct feature prediction, or calibrated confidence.
+Its `CTCEvidence`/`EvidenceRecognizer` boundary accepts another model's native
+phone IDs; a non-CTC adapter may explicitly report no CTC evidence. See
+[acoustic assessment and model expansion](acoustic-assessment.md) for the formula,
+limitations, result contract, and distinct future training options.
 
 ## Licensing and deployment limits
 

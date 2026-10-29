@@ -21,6 +21,13 @@ def main() -> int:
     analysis.add_argument("--expected-phones", nargs="+", required=True)
     analysis.add_argument("--acceptable-variant", nargs="+", action="append", default=[])
     analysis.add_argument("--supported-substitution", nargs=2, action="append", default=[])
+    assessment = commands.add_parser("assess", help="Experimental acoustic evidence plus recognition and analysis")
+    assessment.add_argument("audio", type=Path)
+    assessment.add_argument("--model-dir", type=Path, default=Path("models/pasketti-phonetic"))
+    assessment.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    assessment.add_argument("--expected-phones", nargs="+", required=True)
+    assessment.add_argument("--acceptable-variant", nargs="+", action="append", default=[])
+    assessment.add_argument("--supported-substitution", nargs=2, action="append", default=[])
     args = parser.parse_args()
     try:
         if args.command == "analyze":
@@ -57,7 +64,14 @@ def main() -> int:
         started = perf_counter()
         audio = load_audio(args.audio)
         preprocessing_ms = (perf_counter() - started) * 1000
-        result = engine.recognize(audio)
+        if args.command == "assess":
+            from .assessment import assess
+
+            result = assess(engine, audio, args.expected_phones,
+                            acceptable_variants=args.acceptable_variant,
+                            supported_substitutions=args.supported_substitution)
+        else:
+            result = engine.recognize(audio)
         total_ms = (perf_counter() - started) * 1000
         # Standard output is intentional local CLI output; no files or telemetry.
         # Escape non-ASCII in redirected JSON: Windows PowerShell can decode a
@@ -70,6 +84,8 @@ def main() -> int:
             f"model_load_ms={load_ms:.1f} preprocessing_ms={preprocessing_ms:.1f} "
             f"processing_ms={total_ms:.1f}", file=sys.stderr,
         )
+        if args.command == "assess":
+            return 0 if result["acoustic_assessment"]["status"] == "ok" else 2
         return 0 if result["status"] == "ok" else 2
     except ImportError as error:
         print(
