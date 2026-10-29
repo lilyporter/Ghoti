@@ -301,7 +301,7 @@ def process_recording(path):
 <section class="sheet compact " id="frontend"><header><strong>PronouncedFish / Ghoti</strong><span>Frontend prototype</span></header><div class="eyebrow">Current implementation · Frontend prototype</div><h2>One file teammates can open</h2>
 <p class="lead"><a href="frontend-demo.html">Open frontend-demo.html</a> directly in a browser. Everything needed for the prototype is inside that file.</p>
 <table><thead><tr><th>Interaction</th><th>What it does</th></tr></thead><tbody>
-<tr><td>Select an example</td><td>Six illustrative symbolic cases, plus one actual model run on the synthetic sentence with acoustic evidence.</td></tr>
+<tr><td>Select an example</td><td>13 cases: six symbolic examples, one synthetic sentence, and six playable S/O/A controls and variants.</td></tr>
 <tr><td>Select a sound pair</td><td>Updates the selected pair, feature values, and total distance.</td></tr>
 <tr><td>Change the map view</td><td>Shows changed features only or all features. If none differ, all are shown.</td></tr>
 <tr><td>Open analysis JSON</td><td>Reads local analysis output; validates its structure and vector consistency. Accepts standalone analysis or an object with an analysis member.</td></tr>
@@ -313,7 +313,9 @@ def process_recording(path):
 <pre><code>python -m pronouncedfish_engine recognize sample.wav &gt; recognition.json
 python -m pronouncedfish_engine analyze recognition.json --expected-phones ð ə ɹ æ b ɪ t s ɪ t s ɪ n ð ə s ʌ n &gt; analysis.json</code></pre>
 <p>Use <strong>Open analysis JSON</strong> and select <code>analysis.json</code>. Recognition-only JSON receives an explanatory error because it contains no target comparison. The frontend supports UTF-8 and BOM-marked UTF-16. Example data is illustrative, not inferred from a child recording.</p>
-<p>Page 15 adds the <code>assess</code> command, which returns recognition, analysis, and experimental acoustic evidence together. The demo renders raw log support and margins in a separate panel; these are not correctness percentages.</p><h3>What is connected today?</h3>
+<p>Page 15 adds the <code>assess</code> command, which returns recognition, analysis, and experimental acoustic evidence together. The demo renders raw log support and margins in a separate panel; these are not correctness percentages.</p>
+<p>New plots offer phone/supplied-syllable groups and synthetic control overlays. Group distance averages complete feature comparisons; group margin uses the weakest phone. Gaps remain unavailable and additions stay visible. Groups are supplied, not detected. Play “seat”/“sheet”/“see”/“seats” and “sunset”/“sun sat.” Synthesis intent is not ground truth; controls can be misrecognized. The engine README documents reproduction and the local ZIP.</p>
+<h3>What is connected today?</h3>
 <p>The Python engine and HTML renderer are connected through saved files. There is no live HTTP endpoint, browser model runtime, microphone inference, patient/session database, authentication, or correction-history storage in this prototype. It makes no network requests and has no persistent session storage; explicit file downloads remain possible.</p>
 <p>A future development application could call the Python engine through a backend and pass its result bundle into a view. A backend bridge would not satisfy a requirement for production inference entirely on the user's iPad; that requires a separately validated browser model/runtime.</p>
 <div class="callout quiet"><p><strong>Colors have an explicit legend.</strong> Alignment colors distinguish match/substitution/omission/addition. Heatmap colors encode feature differences. Neither color scheme is a validated clinical traffic-light score.</p></div>

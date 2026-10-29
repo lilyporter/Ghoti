@@ -10,6 +10,7 @@ dist/
 
 # Local datasets, recordings, model weights, and experiment outputs
 models/
+examples/synthetic-soa/
 *.wav
 *.mp3
 *.m4a

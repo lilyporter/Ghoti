@@ -55,6 +55,19 @@ acoustic panel shows raw log support and margins. Save preserves the whole bundl
 There are six symbolic examples and one real-model synthetic-audio snapshot. The
 page still cannot run inference; loading audio enables playback only.
 
+Six further synthetic adult S/O/A comparison recordings are now embedded, bringing
+the total to 13 examples. They include control/modified “seat” prompts and two
+“sunset” prompts. Built-in recordings can be played, and the matching synthetic
+control can be overlaid on the new distance/margin plots. Supplied syllable groups
+are display annotations, not detected segments. Group distance is the mean of
+complete symbolic comparisons; group margin is the minimum available-phone margin
+only when every target phone is assessable. Additions remain separate, and gaps
+are never given a zero distance. No learned syllable score is introduced.
+
+See the [synthetic comparison guide](../README.md#synthetic-soa-comparisons-and-graphical-groups)
+for generated WAVs/results, ZIP, reproduction commands, grouping rules, and observed
+recognizer errors. Intended synthesis changes are not treated as verified labels.
+
 ## What the method actually calculates
 
 Method identifier: `ctc-single-substitution-log-support-v1`.

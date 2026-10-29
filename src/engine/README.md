@@ -343,8 +343,8 @@ runtime was added for this milestone.
 ## Standalone frontend example
 
 Open [frontend-demo.html](docs/frontend-demo.html) directly in a browser. This
-single file contains all styles, scripts, six illustrative comparisons generated
-by the actual analysis module, and one real-model synthetic-audio assessment.
+single file contains all styles, scripts, and 13 cases: six illustrative symbolic
+comparisons, one real-model synthetic sentence, and six playable S/O/A recordings.
 Select sound pairs, inspect the feature heatmap and acoustic evidence, or open and
 save engine result JSON. No server or install is required.
 
@@ -359,6 +359,70 @@ the engine does not infer a practice target from the recording. If an older
 PowerShell-generated JSON file has damaged IPA, regenerate it with the current
 recognition CLI. Merely converting that file's encoding cannot recover sounds
 already replaced or corrupted during redirection.
+
+## Synthetic S/O/A comparisons and graphical groups
+
+The frontend now includes six additional recordings/results, synthesized with
+Microsoft David Desktop. They are adult synthetic prompts, not a child-speech
+validation dataset. Audio is embedded in the standalone HTML, so each comparison
+can be played without choosing a file. Generated WAVs and individual result JSONs
+are also available locally in `examples/synthetic-soa/`, with `comparison-pack.zip`.
+
+| Target | Spoken prompt | Intended change |
+| --- | --- | --- |
+| seat | Seat. | Control. |
+| seat | Sheet. | Initial /s/ → /ʃ/ substitution. |
+| seat | See. | Omit final /t/. |
+| seat | Seats. | Add final /s/. |
+| sunset | Sunset. | Two-group control. |
+| sunset | Sun sat. | Change the second vowel; timing and prosody also differ. |
+
+These are intended synthesis changes, not guaranteed recognition results. In the
+recorded run the seat control itself ends in recognized `d`; sheet/seats include
+additional recognition differences. Minimum-edit alignment can place an addition
+differently when substitutions also occur. No predictions are edited to fit labels.
+Both sunset recordings are recognized as the target, but the weakest second-group
+acoustic margin drops from about +3.69 to +1.34. This is model evidence, not an
+assessment of clinical severity or proof of the cause of the change.
+
+The **Distance and acoustic support** panel offers phone or supplied-group views:
+
+- Symbolic distance is a raw PanPhon distance per phone; group distance is the
+  mean only when every target phone has a comparison. Gaps/unknown mappings stay
+  unavailable, and unmatched additions are displayed separately.
+- Acoustic margin is the raw log margin; a group's value is its weakest phone
+  (minimum), not a learned syllable score. Positive favors target over the best
+  restricted alternative; negative favors the alternative. No percent-correct
+  conversion or clinical threshold is used.
+- Outlined dots overlay the synthetic control for the same target/model. This
+  recording is not a clinical norm and may itself have recognition errors.
+- The axes are fixed for comparison (distance 0–12, margin −10 to +10); values
+  outside that display range are clipped graphically; numeric labels are rounded
+  to two decimals without clipping. Raw JSON keeps the full precision.
+- “sun” and “set” use supplied groups of three target phones each. You can enter
+  other group sizes, such as `3 3`, that sum to the selected target length. This is
+  a display grouping, not automatic syllabification or measured audio boundaries.
+  Custom grouping controls do not change the engine result.
+
+Regenerate audio and assess it with one resident model:
+
+```powershell
+.\scripts\New-ComparisonAudio.ps1
+python scripts/Assess-ComparisonAudio.py
+```
+
+The Python script writes per-fixture JSON with optional `demo_metadata`: the
+synthesis prompt, target word, voice, supplied `syllables` intervals (`start`
+inclusive, `end` exclusive), and embedded `audio_data_url`. These annotations are
+fixture data, not extra fields in the core engine's assessment contract. The
+frontend validates them when importing an individual fixture JSON. The aggregate
+`comparison-examples.json` is for embedding examples, not a single result import.
+
+If you see two `assessment.json` files, remember redirection is relative to the
+shell's current directory. Running the command from `src/engine/` writes
+`src/engine/assessment.json`, not `src/assessment.json`. Inspect with
+`Get-Item .\assessment.json` and load the file from that directory. Console timing
+lines are stderr diagnostics; JSON is redirected into the file.
 
 ## Check it
 

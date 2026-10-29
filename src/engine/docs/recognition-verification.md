@@ -39,6 +39,37 @@ was read back to confirm all three result objects were preserved. No runtime
 exceptions or frontend network requests were observed. The expanded walkthrough
 was checked for footer overlap and regenerated as a 16-page PDF.
 
+## Synthetic S/O/A fixtures and graphical groups — 2026-10-29
+
+Six new WAVs were synthesized locally with Microsoft David Desktop at rate -1,
+then assessed with one resident real Pasketti model. Per-fixture JSON retains
+predictions without correction, and includes optional fixture metadata, embedded
+audio, and supplied phone groups. The standalone demo now embeds 13 cases. A
+local ZIP contains WAVs, individual result JSONs, manifest, aggregate example
+data, and a README. Generated files are ignored under `examples/synthetic-soa/`.
+
+Observed candidate counts (S/O/A) were: seat control 1/0/0, sheet 2/0/0,
+see 0/1/0, seats 1/0/1, sunset control 0/0/0, and sun sat 0/0/0. Thus synthesis
+prompts are not verified recognizer labels. The seat control was recognized
+with a final `d`; minimum-edit alignment in the addition example can also place
+the unmatched phone differently from the intended suffix.
+
+Sunset and sun sat had identical recognized phone tokens and symbolic distances.
+The weakest raw acoustic margin in the supplied second group changed from about
++3.69 to +1.34. This illustrates audio dependence, not clinical quality or proof
+that only the vowel caused the difference; timing/prosody also changed.
+
+Chrome checks passed for all 13 results, embedded WAV decoding, phone/group
+switching, custom group validation, gaps remaining unavailable, visible unmatched
+additions, control overlays, result import/export preserving audio and metadata,
+unsafe metadata rejection, and 1440/768/390 px layouts with no page overflow.
+No frontend runtime exceptions or network requests were observed. The backend
+math is unchanged; the prior 85-test suite remains its recorded verification.
+
+The earlier JSON report was also checked: `src/assessment.json` was empty while
+`src/engine/assessment.json` was 78,442 bytes, valid, and had acoustic status ok.
+Both user files were preserved; the confusion was between two paths.
+
 ## Documentation refresh — 2026-10-28
 
 The complete current conda suite passed **63 tests in 25.71 seconds**, including
