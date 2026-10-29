@@ -9,6 +9,15 @@ An experimental acoustic scorer additionally compares CTC sequence probabilities
 from the recording. It is separate from symbolic PanPhon distances and remains
 uncalibrated; it does not detect distortions or predict acoustic feature vectors.
 
+## Understand the code
+
+Start with the [step-by-step code guide](docs/code-walkthrough.md) if you are new
+to this repository. It follows a recording through the engine, works through
+sequence edits, PanPhon distances, CTC probabilities, and frontend plot positions
+with numbers, then explains every Python module and frontend function. It also
+covers model files, dependencies, synthetic scripts, tests, model replacement,
+and common debugging problems. The field tables below are the API reference.
+
 ## Run it
 
 From `src/engine/`:
@@ -42,7 +51,7 @@ engine/
     recognition.py          AudioInput and RecognitionResult used by the code
     cli.py                  download-model, recognize, analyze, and assess commands
   tests/                    Regression checks and an optional real-model test
-  scripts/                  One Windows synthetic-sample generator
+  scripts/                  Synthetic audio generators and comparison assessment
   docs/                     Model notes, recorded checks, and team walkthrough
   models/                   Downloaded assets, ignored by Git
   pyproject.toml            Package metadata and dependency pins

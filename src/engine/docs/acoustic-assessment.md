@@ -1,5 +1,10 @@
 # Experimental acoustic assessment and model expansion
 
+For a beginner-oriented explanation of logits, CTC paths, the two log scores,
+and how the frontend groups/draws them, read the
+[code guide](code-walkthrough.md#5-scores-that-use-the-actual-recording).
+This document is the method and contract reference.
+
 Implemented 29 October 2026. This is an audio-dependent research baseline, not
 validated pronunciation correctness, confidence, clinical severity, or distortion
 detection. Existing recognition and analysis contracts are unchanged.
