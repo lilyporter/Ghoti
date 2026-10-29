@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A team walkthrough of the PronouncedFish recognition engine."><title>PronouncedFish — Recognition Engine Walkthrough</title><style>
+:root{--ink:#18313f;--muted:#526675;--teal:#087f8c;--line:#dce5eb;--pale:#eef7f8}
+*{box-sizing:border-box}
+body{margin:0;background:#e9eef2;color:var(--ink);font:9.8pt/1.42 "Segoe UI",Arial,sans-serif}
+.sheet{width:8.5in;min-height:11in;margin:24px auto;padding:.56in .64in .65in;position:relative;background:white;box-shadow:0 10px 36px #20313d19}
+header{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:19px;font-size:8pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+header strong{color:var(--teal)}
+footer{position:absolute;left:.64in;right:.64in;bottom:.3in;display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:9px;color:var(--muted);font-size:8pt}
+h1,h2,h3{line-height:1.18;margin:0;color:var(--ink)}
+h1{font-size:38pt;letter-spacing:-.04em;margin-bottom:18px}
+h2{font-size:23pt;letter-spacing:-.025em;margin-bottom:13px}
+h3{font-size:12pt;margin:16px 0 8px}
+p{margin:0 0 9px}
+.lead{font-size:12pt;line-height:1.5;color:var(--muted);margin-bottom:20px}
+.eyebrow{color:var(--teal);font-size:8.6pt;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+.cover{padding-top:.72in}.cover header{margin-bottom:60px}.cover .lead{font-size:13pt}
+.tag{display:inline-block;padding:6px 10px;background:var(--pale);border-radius:5px;color:var(--teal);font-size:8.5pt;font-weight:600}
+.rule{height:4px;width:65px;background:var(--teal);margin:28px 0}
+.callout{background:var(--pale);border-left:4px solid var(--teal);padding:13px 16px;margin:16px 0;border-radius:0 6px 6px 0}
+.callout p:last-child{margin-bottom:0}.quiet{background:#f3f5fa;border-left-color:#315bc7}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{border:1px solid var(--line);padding:14px 16px;border-radius:7px}.card h3{margin:0 0 7px}
+.small{font-size:8.7pt;color:var(--muted)}
+.ipa{font-family:"Segoe UI",Arial,sans-serif;font-size:13pt}
+.big-ipa{font-size:19pt;padding:15px 0;text-align:center;color:var(--teal)}
+table{border-collapse:collapse;width:100%;margin:9px 0 13px;font-size:9pt}
+th{text-align:left;background:#edf3f7;font-weight:600;padding:9px 10px;border-bottom:2px solid var(--line)}
+td{vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}td:first-child{font-weight:600}
+.dense{font-size:8.7pt}.dense td{padding:6px 9px}
+code{font-family:Consolas,"Segoe UI",monospace;font-size:.91em;background:#edf2f5;padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}
+pre{margin:11px 0 16px;background:#152c3a;color:#eef7fa;border-radius:7px;padding:14px 17px;font:8.7pt/1.46 Consolas,"Segoe UI",monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+pre code{padding:0;background:none;color:inherit;border-radius:0;font-size:inherit}
+ul,ol{margin:8px 0 14px;padding-left:22px}li{margin-bottom:6px}
+a{color:#315bc7;text-decoration:none}
+.contents{display:grid;grid-template-columns:1fr 1fr;gap:10px 25px;margin-top:20px;font-size:9.3pt}
+.contents a{color:var(--ink);display:flex;gap:10px}.contents b{color:var(--teal)}
+.pipeline{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:21px 0}
+.pipeline div{background:#f2f6f9;border:1px solid var(--line);border-radius:6px;padding:12px;font-size:9pt}
+.pipeline b{display:block;color:var(--teal);font-size:8pt;margin-bottom:5px;text-transform:uppercase}
+.step{display:flex;gap:12px;margin:14px 0}.step>span{flex:0 0 25px;height:25px;text-align:center;background:var(--pale);color:var(--teal);border-radius:50%;font-weight:700;line-height:25px}.step p{margin:0}
+.refs{font-size:8.1pt}.refs li{margin-bottom:5px}
+#decoding,#performance,#setup{font-size:9.3pt;line-height:1.37}
+#decoding p,#performance p,#setup p{margin-bottom:8px}
+#decoding h3,#performance h3,#setup h3{margin:13px 0 7px}
+#decoding pre,#performance pre,#setup pre{font-size:8.3pt;line-height:1.4;padding:12px 15px;margin:9px 0 12px}
+#decoding table,#performance table,#setup table{margin:8px 0 10px}
+#decoding .card{padding:10px 14px}
+#decoding .big-ipa{padding:7px 0}
+#performance .dense,#setup .dense{font-size:8.4pt}
+@page{size:Letter;margin:0}
+@media print{body{background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.sheet{margin:0;width:8.5in;min-height:11in;box-shadow:none;break-after:page}.sheet:last-child{break-after:auto}h2,h3{break-after:avoid}pre,.callout,.card,tr{break-inside:avoid}}
+</style></head><body>
+<section class="sheet cover" id="overview"><header><strong>PronouncedFish / Ghoti</strong><span>Engineering team walkthrough</span></header>
+<div class="eyebrow">Implementation snapshot · 28 October 2026</div>
+<h1>Understanding the<br>recognition engine</h1>
+<p class="lead">How a local recording becomes a sequence of speech sounds—and how that capability fits into the application.</p>
+<span class="tag">Working Python baseline</span><div class="rule"></div>
+<p>The engine uses a pretrained phonetic speech model to estimate the sounds produced in a recording. Our code prepares audio, executes the model locally, decodes its predictions, and returns a reusable structured result.</p>
+<div class="pipeline" aria-label="Recognition pipeline">
+<div><b>01 · Prepare</b>Local WAV/FLAC → mono waveform at 16 kHz</div>
+<div><b>02 · Recognize</b>Pasketti / WavLM → symbol scores across time</div>
+<div><b>03 · Decode</b>CTC decoding → IPA phone tokens and review status</div>
+</div>
+<div class="callout"><p><strong>Implemented:</strong> real Python inference, local audio preprocessing, phone tokenization, a CLI, and 35 passing software checks.</p><p><strong>Next:</strong> target-based pronunciation analysis, evaluation on the intended child population, and browser/iPad inference. Source folders will be added when those features are implemented.</p></div>
+<h3>Read this document in order</h3>
+<nav class="contents">
+<a href="#purpose"><b>02</b> Purpose, terminology, and training</a>
+<a href="#assets"><b>03</b> Model files and initialization</a>
+<a href="#audio"><b>04</b> Audio preparation and model internals</a>
+<a href="#decoding"><b>05</b> CTC decoding and phone tokens</a>
+<a href="#results"><b>06</b> Interpreting recognition results</a>
+<a href="#performance"><b>07</b> Runtime, timing, and local execution</a>
+<a href="#integration"><b>08</b> Application and analysis integration</a>
+<a href="#setup"><b>09</b> Setup, validation, and next milestones</a>
+</nav><footer><span>Technical explanation · Shareable team reference</span><span>01 / 09</span></footer></section>
+<section class="sheet" id="purpose"><header><strong>PronouncedFish / Ghoti</strong><span>Purpose and foundations</span></header>
+<div class="eyebrow">01 · The problem we are solving</div>
+<h2>Recognize the produced sounds</h2>
+<p class="lead">Recognition estimates what is in the audio. Pronunciation analysis compares that estimate with an intended target.</p>
+<div class="two">
+<div class="card"><h3>Phoneme</h3><p>An intended contrastive sound category. For “rabbit,” the target begins with <span class="ipa">/ɹ/</span>.</p></div>
+<div class="card"><h3>Phone</h3><p>The actual produced sound. A child might produce <span class="ipa">[w]</span>, giving a production resembling “wabbit.”</p></div>
+</div>
+<h3>Two questions, two components</h3>
+<table><thead><tr><th>Question</th><th>Responsible component</th></tr></thead><tbody>
+<tr><td>What sounds appear in this recording?</td><td>Acoustic recognition—implemented in Python.</td></tr>
+<tr><td>How do those sounds differ from the target?</td><td>Pronunciation analysis—not implemented yet.</td></tr>
+</tbody></table>
+<p>The recognition API receives audio alone, with no expected word or expected IPA:</p>
+<pre><code>result = recognizer.recognize(audio)</code></pre>
+<p>This prevents application code from copying the target pronunciation into the recognition result. A learned recognizer can still mishear sounds or favor familiar productions. Whether it preserves a particular child's substitution correctly must be evaluated.</p>
+<h3>Where the learned ability comes from</h3>
+<p>We use <strong>Pasketti Phonetic</strong>, a published WavLM-based model fine-tuned to produce IPA from children's speech. Its trained weights supply the learned acoustic behavior; our package supplies the surrounding pipeline and integration boundary. <a href="https://huggingface.co/drivendata/pasketti-phonetic">[1]</a></p>
+<table><thead><tr><th>Activity</th><th>What happens?</th><th>Project status</th></tr></thead><tbody>
+<tr><td>Training / fine-tuning</td><td>Examples and human references update model weights.</td><td>No project-specific fine-tuning yet.</td></tr>
+<tr><td>Inference</td><td>Fixed trained weights process new audio.</td><td>Implemented and exercised locally.</td></tr>
+</tbody></table>
+<div class="callout"><p><strong>A recording does not train the model.</strong> Weights stay fixed during inference. The engine does not automatically collect recordings for retraining.</p></div><footer><span>Source: recognition.py · pasketti.py · model-baseline.md</span><span>02 / 09</span></footer></section>
+<section class="sheet" id="assets"><header><strong>PronouncedFish / Ghoti</strong><span>Assets and initialization</span></header>
+<div class="eyebrow">02 · What gets loaded</div>
+<h2>The model is a set of cooperating files</h2>
+<p>The architecture, learned weights, vocabulary, and preprocessing settings must agree with one another.</p>
+<table class="dense"><thead><tr><th style="width:35%">File</th><th>Role</th></tr></thead><tbody>
+<tr><td><code>model.safetensors</code></td><td>Trained numerical weights; about 1.26 GB on disk.</td></tr>
+<tr><td><code>config.json</code></td><td>How to construct the network so the weights fit correctly.</td></tr>
+<tr><td><code>vocab.json</code></td><td>Output ID → symbol mappings, such as <code>39 → ɹ</code>.</td></tr>
+<tr><td><code>preprocessor_config.json</code></td><td>Required sample rate, normalization, and processor settings.</td></tr>
+<tr><td><code>tokenizer_config.json</code></td><td>Decoding behavior, including blank and word-separator symbols.</td></tr>
+<tr><td><code>special_tokens_map.json</code></td><td>Identifies special tokenizer symbols.</td></tr>
+<tr><td><code>added_tokens.json</code></td><td>Additional tokenizer entry: currently <code>&lt;unk&gt;</code>.</td></tr>
+<tr><td><code>pronouncedfish-model.json</code></td><td>Our pinned revision and checksums for the model files.</td></tr>
+</tbody></table>
+<p>The pinned model has about <strong>315.5 million parameters</strong>. Its config specifies 24 transformer layers, 16 attention heads, a hidden size of 1,024, and an active recognition vocabulary size of 55.</p>
+<div class="callout quiet"><p><strong>Configuration is not learned knowledge.</strong> The config describes the network; the weights contain its learned numbers. Editing the config does not improve recognition and can make the checkpoint incompatible.</p></div>
+<h3>Constructing a recognizer</h3>
+<pre><code>recognizer = PaskettiRecognizer("models/pasketti-phonetic")</code></pre>
+<p>The constructor verifies the local snapshot and checksums, loads the processor, constructs WavLM, loads its weights, rejects incomplete checkpoint loads, and places the model in evaluation mode on CPU or the requested CUDA device.</p>
+<p>A checksum is a fingerprint of file contents. It helps detect changed or corrupted files. The pinned revision identifies exactly which model produced a result.</p>
+<p><code>Wav2Vec2Processor</code> is the expected processor class for this <code>WavLMForCTC</code> model. They share audio-processing and tokenizer machinery. <a href="https://huggingface.co/docs/transformers/v4.57.1/model_doc/wavlm">[2]</a></p>
+<p class="small">The model runs in FP32. The publisher warns that half-precision WavLM calculations can produce non-finite values; reduced-precision deployment needs separate validation.</p><footer><span>Source: assets.py · pasketti.py · downloaded model configuration</span><span>03 / 09</span></footer></section>
+<section class="sheet" id="audio"><header><strong>PronouncedFish / Ghoti</strong><span>Waveform to acoustic representation</span></header>
+<div class="eyebrow">03 · Audio preparation and inference</div>
+<h2>A recording starts as numbers</h2>
+<p>A waveform is a sequence of signal samples, for example <code>[0.001, 0.004, -0.002, …]</code>. These values represent the recorded signal; they have not yet been assigned sound labels.</p>
+<div class="step"><span>1</span><p><strong>Read and validate.</strong> <code>load_audio()</code> accepts a local WAV or FLAC, checks that it is nonempty and at most 30 seconds, and rejects non-finite or out-of-range PCM values.</p></div>
+<div class="step"><span>2</span><p><strong>Convert to mono.</strong> Multiple channels are averaged. A stereo sample becomes <code>(left + right) / 2</code>.</p></div>
+<div class="step"><span>3</span><p><strong>Resample to 16 kHz.</strong> SoXR HQ produces 16,000 samples per second while preserving duration. Changing the sample-rate label alone would not perform the conversion.</p></div>
+<div class="step"><span>4</span><p><strong>Normalize and create a tensor.</strong> The processor applies its configured waveform normalization and creates a PyTorch numerical array for inference.</p></div>
+<pre><code>normalized sample ≈ (sample − waveform mean)
+                    / waveform standard deviation</code></pre>
+<p>Normalization gives the model a consistent numerical scale. It does not remove noise or assess pronunciation quality.</p>
+<h3>Inside the neural network</h3>
+<p>Convolutional layers turn the waveform into a shorter sequence of learned acoustic representations. Transformer layers let those representations use surrounding audio as context. A classification head scores possible symbols at each output time step.</p>
+<table><thead><tr><th>Stage</th><th>Example shape</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Waveform</td><td><code>[1, 36226]</code></td><td>One recording with about 36,226 samples.</td></tr>
+<tr><td>Contextual features</td><td><code>[1, 112, 1024]</code></td><td>About 112 time steps, with 1,024 learned values each.</td></tr>
+<tr><td>Output logits</td><td><code>[1, 112, 55]</code></td><td>Scores for 55 possible symbols at each step.</td></tr>
+</tbody></table>
+<p class="small">Shapes illustrate the roughly 2.26-second synthetic sample and pinned architecture. Other durations produce different numbers of time steps. A tensor is a numerical array with a defined shape.</p>
+<div class="callout"><p><strong>Logits are raw scores.</strong> A larger score makes a symbol more competitive at a time step. The scores are not calibrated probabilities of transcription correctness.</p></div><footer><span>Source: audio.py · pasketti.py · config.json</span><span>04 / 09</span></footer></section>
+<section class="sheet" id="decoding"><header><strong>PronouncedFish / Ghoti</strong><span>Scores to phone sequences</span></header>
+<div class="eyebrow">04 · CTC decoding and tokenization</div>
+<h2>Many time steps become a few sounds</h2>
+<p>CTC stands for <strong>Connectionist Temporal Classification</strong>. A sound can span multiple time steps, so the model can predict a symbol repeatedly. It can also emit a special <strong>CTC blank</strong>. We use greedy decoding: select the highest-scoring symbol at each step, then let the CTC tokenizer collapse the sequence.</p>
+<pre><code>frame_ids = logits.argmax(dim=-1)
+transcription = processor.batch_decode(frame_ids)[0]</code></pre>
+<h3>Illustrative CTC sequence</h3>
+<div class="card"><p class="small">Winning labels across time</p>
+<p class="ipa">blank · ɹ · ɹ · blank · æ · æ · blank · b · b · ɪ · ɪ · t · t</p>
+<p class="small">Collapse consecutive repetitions, then remove blanks</p>
+<p class="big-ipa">ɹ æ b ɪ t</p></div>
+<p style="margin-top:14px">Blank is a “no label emitted here” alignment symbol; it does not necessarily mean silence. Blank-separated repeats survive: <code>t t blank t t</code> becomes two <span class="ipa">t</span> tokens.</p>
+<p>A word-separator symbol becomes spaces in the transcription. Those boundaries are predictions too. The current implementation does not return validated phone timestamps.</p>
+<h3>A phone is not always one Unicode character</h3>
+<p>For later comparison, our model-specific parser groups phonetic marks into complete units:</p>
+<table><thead><tr><th>Representation</th><th>Token interpretation</th></tr></thead><tbody>
+<tr><td class="ipa">ɹ</td><td>One simple sound symbol.</td></tr>
+<tr><td class="ipa">ʧ</td><td>One affricate in this model's spelling convention.</td></tr>
+<tr><td class="ipa">ẽ</td><td>One token: a vowel plus its nasalization mark.</td></tr>
+<tr><td class="ipa">e͡i</td><td>One token containing explicitly tied sounds.</td></tr>
+</tbody></table>
+<p>Untied adjacent vowels remain separate. Word spaces are preserved in the raw transcription but excluded from the phone list. Unsupported or malformed marks make a result unassessable while retaining the raw transcription for review.</p>
+<div class="callout quiet"><p><strong>The 55 output classes are symbols, not 55 English phonemes.</strong> They include blank, a word separator, sound symbols, and marks. The added tokenizer entry <code>&lt;unk&gt;</code> is outside the model's 55 output classes.</p></div><footer><span>Source: pasketti.py · phonetics.py · vocab.json</span><span>05 / 09</span></footer></section>
+<section class="sheet" id="results"><header><strong>PronouncedFish / Ghoti</strong><span>Result contract</span></header>
+<div class="eyebrow">05 · Reading the output</div>
+<h2>A prediction with explicit review status</h2>
+<p>The display-friendly string preserves word spaces; the phone list gives later algorithms complete sound units. This excerpt uses the observed synthetic phrase; the full result also includes the exact model revision and timing.</p>
+<pre><code>{
+  "status": "ok",
+  "recognized_phones": [
+    "ð", "ə", "ɹ", "æ", "b", "ɪ", "t", "s", "ɪ",
+    "t", "s", "ɪ", "n", "ð", "ə", "s", "ʌ", "n"
+  ],
+  "phonetic_transcription": "ðə ɹæbɪt sɪts ɪn ðə sʌn",
+  "confidence_status": "uncalibrated",
+  "requires_review": true
+}</code></pre>
+<table class="dense"><thead><tr><th style="width:35%">Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>status</code></td><td><code>ok</code>: nonempty, parseable phones were produced. <code>unassessable</code>: input/output could not be used under the current checks.</td></tr>
+<tr><td><code>recognized_phones</code></td><td>Estimated produced sounds, grouped into complete tokens.</td></tr>
+<tr><td><code>phonetic_transcription</code></td><td>Decoded IPA, including predicted word spaces.</td></tr>
+<tr><td><code>model_version</code></td><td>Model identity and exact pinned revision.</td></tr>
+<tr><td><code>inference_time_ms</code></td><td>Neural-network execution time; null if inference did not run.</td></tr>
+<tr><td><code>confidence_status</code></td><td><code>uncalibrated</code> after inference; <code>unavailable</code> if inference did not run.</td></tr>
+<tr><td><code>requires_review</code></td><td>Currently true for every result; not a learned confidence-threshold decision.</td></tr>
+<tr><td><code>review_reason</code></td><td>Explains the general review requirement or a specific unusable result.</td></tr>
+</tbody></table>
+<div class="callout"><p><strong>“ok” establishes successful execution, not transcription accuracy.</strong> A plausible-looking sequence may still be wrong. Numeric correctness probabilities are not reported because calibration has not been established.</p></div>
+<p>The recognizer flags extremely short, overly long, or near-silent input; non-finite scores; empty decodes; and malformed IPA. Invalid sample rate, buffer shape, or PCM values raise errors. Background noise, clipping within PCM bounds, and overlapping speakers need more complete quality handling.</p><footer><span>Source: recognition.py · pasketti.py</span><span>06 / 09</span></footer></section>
+<section class="sheet" id="performance"><header><strong>PronouncedFish / Ghoti</strong><span>Runtime lifecycle and locality</span></header>
+<div class="eyebrow">06 · Understanding timing</div>
+<h2>Load once, recognize many attempts</h2>
+<p>The CLI starts a new process and constructs a new model on every invocation. An application should retain its initialized recognizer and reuse it:</p>
+<pre><code>from pronouncedfish_engine import PaskettiRecognizer, load_audio
+
+# Once at development-application startup:
+recognizer = PaskettiRecognizer("models/pasketti-phonetic")
+
+def process_recording(path):
+    return recognizer.recognize(load_audio(path))</code></pre>
+<table class="dense"><thead><tr><th>Timing</th><th>Includes</th></tr></thead><tbody>
+<tr><td><code>model_load_ms</code></td><td>Library loading, asset checks, network construction, and loading weights.</td></tr>
+<tr><td><code>preprocessing_ms</code></td><td>Reading the file, channel conversion, and resampling.</td></tr>
+<tr><td><code>inference_time_ms</code></td><td>The neural-network forward pass.</td></tr>
+<tr><td><code>processing_ms</code></td><td>File preprocessing, input preparation, inference, validation, and decoding.</td></tr>
+</tbody></table>
+<p><code>processing_ms</code> already includes preprocessing and inference. Add model-load time to processing time for initialization plus processing; do not add all four fields together.</p>
+<h3>Latest recorded desktop smoke run</h3>
+<table class="dense"><thead><tr><th>Measurement</th><th>Observed</th></tr></thead><tbody>
+<tr><td>Model initialization</td><td>16,062.0 ms</td></tr>
+<tr><td>File preprocessing</td><td>5.3 ms</td></tr>
+<tr><td>Model forward pass</td><td>2,561.2 ms</td></tr>
+<tr><td>Processing after initialization</td><td>2,579.4 ms</td></tr>
+</tbody></table>
+<p class="small">Python 3.12 conda environment, CPU, 2.2641-second synthetic WAV. Initialization plus processing was about 18.64 seconds. These are single-run observations; timings varied. They do not establish the latency target or iPad performance.</p>
+<h3>Recent fixes and local execution</h3>
+<p>Direct SoXR HQ resampling removed librosa's large first-call resampling overhead while preserving the waveform and output-length convention. Omitting a redundant mask for one unpadded utterance removed the mixed-mask warning; regression checks preserved the decoded result. CLI JSON now displays readable UTF-8 IPA.</p>
+<p><code>download-model</code> retrieves static assets from Hugging Face and accepts no audio. Recognition uses verified local files. The library does not upload audio, automatically persist recordings, or log transcriptions. The CLI intentionally prints results to the local terminal.</p><footer><span>Source: cli.py · assets.py · recognition-verification.md</span><span>07 / 09</span></footer></section>
+<section class="sheet" id="integration"><header><strong>PronouncedFish / Ghoti</strong><span>Application boundaries</span></header>
+<div class="eyebrow">07 · How this fits into the app</div>
+<h2>Recognition and target analysis stay separate</h2>
+<p>The engine is a subproject under <code>src/engine/</code>. Future application code lives alongside it and consumes public interfaces. The engine does not depend on patient records, UI, authentication, or database code.</p>
+<h3>Future substitution-analysis example</h3>
+<pre><code>Target word:          rabbit
+Expected phonemes:    ["ɹ", "æ", "b", "ɪ", "t"]
+Recognized phones:    ["w", "æ", "b", "ɪ", "t"]
+
+Candidate: expected /ɹ/, produced [w], beginning</code></pre>
+<p>The analysis component will receive recognition, expected phonemes, SLP-approved acceptable variants, and an explicitly supported substitution inventory. It will align complete phone tokens and report supported candidates for review.</p>
+<p>No analysis module is included yet. When implemented, alignment must preserve unsupported differences without treating them as validated clinical findings. Define its API alongside the working algorithm.</p>
+<table><thead><tr><th>Component</th><th>Responsibility</th><th>Status</th></tr></thead><tbody>
+<tr><td>Python recognition</td><td>Waveform → estimated phones.</td><td>Implemented</td></tr>
+<tr><td>Pronunciation analysis</td><td>Compare phones with targets and approved variants.</td><td>Not implemented</td></tr>
+<tr><td>Browser engine</td><td>Local inference in the iPad web app.</td><td>Not implemented</td></tr>
+<tr><td>Application</td><td>Recording UI, practice flow, corrections, session storage.</td><td>Outside this engine milestone</td></tr>
+</tbody></table>
+<h3>Browser work will be added when implemented</h3>
+<p>The repository currently contains only the working Python engine. The earlier browser types and placeholder analysis definitions were removed because they had no runtime or consumer. No empty future-feature folders are needed.</p>
+<p>Browser deployment needs a compatible exported model, a local runtime such as ONNX Runtime Web, browser audio preparation, and validation on an actual iPad. Python and PyTorch are currently development tools; an inference server is not part of the planned production audio path.</p>
+<div class="callout quiet"><p><strong>Preserve original predictions when clinicians correct them.</strong> Future application code should retain provenance and pass corrected phones through analysis. Correction storage and provenance are not implemented yet.</p></div><footer><span>Source: README.md · pronouncedfish_engine/ · model-baseline.md</span><span>08 / 09</span></footer></section>
+<section class="sheet" id="setup"><header><strong>PronouncedFish / Ghoti</strong><span>Team setup and verification</span></header>
+<div class="eyebrow">08 · Working with the subproject</div>
+<h2>Run it, inspect it, then evaluate it</h2>
+<p>Run from <code>src/engine/</code>. New developers can first create the environment using <code>conda env create -f environment.yml</code>.</p>
+<pre><code>conda activate phoneme-engine
+python -m pip install -e ".[dev]"
+
+# Once per snapshot; about 1.26 GB of weights:
+python -m pronouncedfish_engine download-model
+
+# Authorized local development audio:
+python -m pronouncedfish_engine recognize sample.wav
+
+python -m pytest -q</code></pre>
+<p class="small">Windows users can generate the synthetic fixture with <code>scripts/New-SmokeAudio.ps1</code> (Microsoft David Desktop required). Model files are separate from the Python environment and can be reused across environments.</p>
+<table class="dense"><thead><tr><th style="width:34%">Tool / file</th><th>Role</th></tr></thead><tbody>
+<tr><td>Conda / Python 3.12</td><td>Interpreter and isolated installed libraries.</td></tr>
+<tr><td>PyTorch / Transformers</td><td>Model execution, WavLM implementation, and processor.</td></tr>
+<tr><td>NumPy / SoundFile / SoXR</td><td>Arrays, local audio decoding, and resampling.</td></tr>
+<tr><td><code>environment.yml</code></td><td>Conda creation and installation of engine extras.</td></tr>
+<tr><td><code>pyproject.toml</code></td><td>Package, direct dependency pins, and CLI entry point.</td></tr>
+<tr><td><code>tests/</code></td><td>Working regression checks and optional real-model inference test.</td></tr>
+</tbody></table>
+<h3>What the 35 passing checks establish</h3>
+<p>Checks cover audio validation/conversion, CTC decoding, phone grouping, and actual pretrained-model execution. Regression cases compare direct resampling with librosa and masked/unmasked decoding. The real-model check forbids network connections; it skips unless its model/audio environment variables are set.</p>
+<p><strong>Next evidence needed:</strong> human-annotated produced phones from the intended child population; token-level phone error rate and an agreed accuracy definition; substitution evaluation; confidence calibration; and iPad compatibility, memory, and latency testing. The SRS's 87% identification and under-10-second targets remain unverified.</p>
+<p class="small">Source code and model weights have separate licenses. Review <code>model-baseline.md</code> before redistributing model assets. This document contains no recordings or weights.</p>
+<h3>Further reading</h3>
+<ol class="refs">
+<li><a href="https://huggingface.co/drivendata/pasketti-phonetic">Pasketti model card · huggingface.co/drivendata/pasketti-phonetic</a></li>
+<li><a href="https://huggingface.co/docs/transformers/v4.57.1/model_doc/wavlm">Hugging Face WavLM documentation · Transformers v4.57.1</a></li>
+<li>Repository: <code>engine/README.md</code>, <code>docs/model-baseline.md</code>, and <code>docs/recognition-verification.md</code>. Source lives directly in <code>engine/pronouncedfish_engine/</code>.</li>
+</ol><footer><span>Snapshot reflects the implementation as of 28 October 2026</span><span>09 / 09</span></footer></section>
+</body></html>
+

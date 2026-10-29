@@ -1,0 +1,22 @@
+# Local environments and generated packages
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.verification/
+
+# Local datasets, recordings, model weights, and experiment outputs
+models/
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.webm
+*.onnx
+*.onnx.data
+*.pt
+*.pth
+*.safetensors
