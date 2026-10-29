@@ -190,3 +190,17 @@ UTF-8-to-cp437-to-UTF-16 redirection. A real PowerShell `recognize sample.wav >`
 temporary-file run followed by `analyze` returned `status="ok"`,
 `matches_target=true`, and zero substitutions, omissions, or additions against
 the synthetic sample's expected phones. The user's existing file was preserved.
+
+### Standalone frontend example
+
+`frontend-demo.html` embeds six actual `analyze()` outputs for illustrative phone
+inputs and needs no external assets, network, or server. Headless Chrome checks
+passed at desktop (1440 px), tablet (768 px), and mobile (390 px) widths without
+page overflow. Screenshots were inspected outside the source tree.
+
+Browser checks exercised all scenarios, phone selection, changed/all-feature
+views, correct IPA and distances (`ɹ` → `w`: 9; `d` → `t`: 2), keyboard focus,
+UTF-16 file input, malformed/recognition-only file errors, safe rendering of
+imported strings, and local synthetic-audio playback without changing analysis.
+No JavaScript runtime exceptions were observed. This verifies the prototype
+renderer, not live browser inference or clinical validity.
