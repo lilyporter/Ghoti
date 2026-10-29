@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A team walkthrough of the PronouncedFish recognition engine."><title>PronouncedFish — Recognition Engine Walkthrough</title><style>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A current team guide to recognition, target analysis, result contracts, and the frontend prototype."><title>PronouncedFish — Engine and Frontend Walkthrough</title><style>
 :root{--ink:#18313f;--muted:#526675;--teal:#087f8c;--line:#dce5eb;--pale:#eef7f8}
 *{box-sizing:border-box}
 body{margin:0;background:#e9eef2;color:var(--ink);font:9.8pt/1.42 "Segoe UI",Arial,sans-serif}
@@ -14,7 +14,7 @@ h3{font-size:12pt;margin:16px 0 8px}
 p{margin:0 0 9px}
 .lead{font-size:12pt;line-height:1.5;color:var(--muted);margin-bottom:20px}
 .eyebrow{color:var(--teal);font-size:8.6pt;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
-.cover{padding-top:.72in}.cover header{margin-bottom:60px}.cover .lead{font-size:13pt}
+.cover{padding-top:.72in}.cover header{margin-bottom:35px}.cover .lead{font-size:13pt}
 .tag{display:inline-block;padding:6px 10px;background:var(--pale);border-radius:5px;color:var(--teal);font-size:8.5pt;font-weight:600}
 .rule{height:4px;width:65px;background:var(--teal);margin:28px 0}
 .callout{background:var(--pale);border-left:4px solid var(--teal);padding:13px 16px;margin:16px 0;border-radius:0 6px 6px 0}
@@ -49,21 +49,22 @@ a{color:#315bc7;text-decoration:none}
 #decoding .card{padding:10px 14px}
 #decoding .big-ipa{padding:7px 0}
 #performance .dense,#setup .dense{font-size:8.4pt}
+.compact{font-size:9pt;line-height:1.35}.compact p{margin-bottom:8px}.compact h3{margin:12px 0 7px}.compact .lead{font-size:11pt;margin-bottom:14px}.compact table{font-size:8.3pt;margin:8px 0 11px}.compact td,.compact th{padding:5px 8px}.compact pre{font-size:8.1pt;line-height:1.35;padding:12px 14px;margin:9px 0 12px}.compact .callout{padding:10px 13px;margin:12px 0}.glossary table{font-size:8.1pt}.glossary td,.glossary th{padding:4px 7px}.heat0{background:#f0f3ec}.heat2{background:#c78835;color:white}.heatna{background:#edf0f3}.heatexample td{text-align:center}.heatexample td:first-child{text-align:left}
 @page{size:Letter;margin:0}
 @media print{body{background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.sheet{margin:0;width:8.5in;min-height:11in;box-shadow:none;break-after:page}.sheet:last-child{break-after:auto}h2,h3{break-after:avoid}pre,.callout,.card,tr{break-inside:avoid}}
 </style></head><body>
 <section class="sheet cover" id="overview"><header><strong>PronouncedFish / Ghoti</strong><span>Engineering team walkthrough</span></header>
 <div class="eyebrow">Implementation snapshot · 28 October 2026</div>
-<h1>Understanding the<br>recognition engine</h1>
-<p class="lead">How a local recording becomes a sequence of speech sounds—and how that capability fits into the application.</p>
-<span class="tag">Working Python baseline</span><div class="rule"></div>
-<p>The engine uses a pretrained phonetic speech model to estimate the sounds produced in a recording. Our code prepares audio, executes the model locally, decodes its predictions, and returns a reusable structured result.</p>
+<h1>Understanding the<br>engine and frontend</h1>
+<p class="lead">From local audio to recognized sounds, target comparisons, and an interactive feature heatmap.</p>
+<span class="tag">Recognition · Analysis · Frontend prototype</span><div class="rule"></div>
+<p>The engine uses a pretrained phonetic speech model to estimate the sounds produced in a recording. Our package prepares audio, runs the model locally, decodes complete phone tokens, and compares them against supplied targets. A standalone HTML prototype renders the analysis.</p>
 <div class="pipeline" aria-label="Recognition pipeline">
-<div><b>01 · Prepare</b>Local WAV/FLAC → mono waveform at 16 kHz</div>
-<div><b>02 · Recognize</b>Pasketti / WavLM → symbol scores across time</div>
-<div><b>03 · Decode</b>CTC decoding → IPA phone tokens and review status</div>
+<div><b>01 · Recognize</b>WAV/FLAC → IPA and complete phone tokens</div>
+<div><b>02 · Analyze</b>Target + phones → aligned pairs and feature differences</div>
+<div><b>03 · Review</b>Analysis JSON → interactive frontend heatmap</div>
 </div>
-<div class="callout"><p><strong>Implemented:</strong> real Python inference, local audio preprocessing, phone tokenization, a CLI, and 35 passing software checks.</p><p><strong>Next:</strong> target-based pronunciation analysis, evaluation on the intended child population, and browser/iPad inference. Source folders will be added when those features are implemented.</p></div>
+<div class="callout"><p><strong>Implemented:</strong> local recognition, descriptive target analysis, separate JSON results, a standalone frontend, and 63 passing software checks.</p><p><strong>Not established:</strong> intended-population accuracy, acoustic distortion detection, calibrated confidence, clinical severity, or iPad inference. The frontend is not connected to live recognition.</p></div>
 <h3>Read this document in order</h3>
 <nav class="contents">
 <a href="#purpose"><b>02</b> Purpose, terminology, and training</a>
@@ -72,21 +73,26 @@ a{color:#315bc7;text-decoration:none}
 <a href="#decoding"><b>05</b> CTC decoding and phone tokens</a>
 <a href="#results"><b>06</b> Interpreting recognition results</a>
 <a href="#performance"><b>07</b> Runtime, timing, and local execution</a>
-<a href="#integration"><b>08</b> Application and analysis integration</a>
-<a href="#setup"><b>09</b> Setup, validation, and next milestones</a>
-</nav><footer><span>Technical explanation · Shareable team reference</span><span>01 / 09</span></footer></section>
+<a href="#analysis"><b>08</b> Phone pairs, variants, and SODA candidates</a>
+<a href="#analysis-contract"><b>09</b> Complete analysis JSON contract</a>
+<a href="#features"><b>10</b> What the 24 feature labels mean</a>
+<a href="#heatmap"><b>11</b> Vectors, distance, and heatmap interpretation</a>
+<a href="#frontend"><b>12</b> Using the standalone frontend</a>
+<a href="#decisions"><b>13</b> Why the package exists; demo comparison</a>
+<a href="#setup"><b>14</b> Setup, evidence, and next milestones</a>
+</nav><footer><span>Technical explanation · Shareable team reference</span><span>01 / 14</span></footer></section>
 <section class="sheet" id="purpose"><header><strong>PronouncedFish / Ghoti</strong><span>Purpose and foundations</span></header>
 <div class="eyebrow">01 · The problem we are solving</div>
 <h2>Recognize the produced sounds</h2>
 <p class="lead">Recognition estimates what is in the audio. Pronunciation analysis compares that estimate with an intended target.</p>
 <div class="two">
 <div class="card"><h3>Phoneme</h3><p>An intended contrastive sound category. For “rabbit,” the target begins with <span class="ipa">/ɹ/</span>.</p></div>
-<div class="card"><h3>Phone</h3><p>The actual produced sound. A child might produce <span class="ipa">[w]</span>, giving a production resembling “wabbit.”</p></div>
+<div class="card"><h3>Phone</h3><p>An individual speech sound. The recognizer estimates it from audio; a child might produce <span class="ipa">[w]</span>, giving a production resembling “wabbit.”</p></div>
 </div>
 <h3>Two questions, two components</h3>
 <table><thead><tr><th>Question</th><th>Responsible component</th></tr></thead><tbody>
 <tr><td>What sounds appear in this recording?</td><td>Acoustic recognition—implemented in Python.</td></tr>
-<tr><td>How do those sounds differ from the target?</td><td>Pronunciation analysis—not implemented yet.</td></tr>
+<tr><td>How do those sounds differ from the target?</td><td>Target comparison—implemented in analysis.py; findings remain candidates.</td></tr>
 </tbody></table>
 <p>The recognition API receives audio alone, with no expected word or expected IPA:</p>
 <pre><code>result = recognizer.recognize(audio)</code></pre>
@@ -97,7 +103,7 @@ a{color:#315bc7;text-decoration:none}
 <tr><td>Training / fine-tuning</td><td>Examples and human references update model weights.</td><td>No project-specific fine-tuning yet.</td></tr>
 <tr><td>Inference</td><td>Fixed trained weights process new audio.</td><td>Implemented and exercised locally.</td></tr>
 </tbody></table>
-<div class="callout"><p><strong>A recording does not train the model.</strong> Weights stay fixed during inference. The engine does not automatically collect recordings for retraining.</p></div><footer><span>Source: recognition.py · pasketti.py · model-baseline.md</span><span>02 / 09</span></footer></section>
+<div class="callout"><p><strong>A recording does not train the model.</strong> Weights stay fixed during inference. The engine does not automatically collect recordings for retraining.</p></div><footer><span>Source: recognition.py · pasketti.py · model-baseline.md</span><span>02 / 14</span></footer></section>
 <section class="sheet" id="assets"><header><strong>PronouncedFish / Ghoti</strong><span>Assets and initialization</span></header>
 <div class="eyebrow">02 · What gets loaded</div>
 <h2>The model is a set of cooperating files</h2>
@@ -119,7 +125,7 @@ a{color:#315bc7;text-decoration:none}
 <p>The constructor verifies the local snapshot and checksums, loads the processor, constructs WavLM, loads its weights, rejects incomplete checkpoint loads, and places the model in evaluation mode on CPU or the requested CUDA device.</p>
 <p>A checksum is a fingerprint of file contents. It helps detect changed or corrupted files. The pinned revision identifies exactly which model produced a result.</p>
 <p><code>Wav2Vec2Processor</code> is the expected processor class for this <code>WavLMForCTC</code> model. They share audio-processing and tokenizer machinery. <a href="https://huggingface.co/docs/transformers/v4.57.1/model_doc/wavlm">[2]</a></p>
-<p class="small">The model runs in FP32. The publisher warns that half-precision WavLM calculations can produce non-finite values; reduced-precision deployment needs separate validation.</p><footer><span>Source: assets.py · pasketti.py · downloaded model configuration</span><span>03 / 09</span></footer></section>
+<p class="small">The model runs in FP32. The publisher warns that half-precision WavLM calculations can produce non-finite values; reduced-precision deployment needs separate validation.</p><footer><span>Source: assets.py · pasketti.py · downloaded model configuration</span><span>03 / 14</span></footer></section>
 <section class="sheet" id="audio"><header><strong>PronouncedFish / Ghoti</strong><span>Waveform to acoustic representation</span></header>
 <div class="eyebrow">03 · Audio preparation and inference</div>
 <h2>A recording starts as numbers</h2>
@@ -139,7 +145,7 @@ a{color:#315bc7;text-decoration:none}
 <tr><td>Output logits</td><td><code>[1, 112, 55]</code></td><td>Scores for 55 possible symbols at each step.</td></tr>
 </tbody></table>
 <p class="small">Shapes illustrate the roughly 2.26-second synthetic sample and pinned architecture. Other durations produce different numbers of time steps. A tensor is a numerical array with a defined shape.</p>
-<div class="callout"><p><strong>Logits are raw scores.</strong> A larger score makes a symbol more competitive at a time step. The scores are not calibrated probabilities of transcription correctness.</p></div><footer><span>Source: audio.py · pasketti.py · config.json</span><span>04 / 09</span></footer></section>
+<div class="callout"><p><strong>Logits are raw scores.</strong> A larger score makes a symbol more competitive at a time step. The scores are not calibrated probabilities of transcription correctness.</p></div><footer><span>Source: audio.py · pasketti.py · config.json</span><span>04 / 14</span></footer></section>
 <section class="sheet" id="decoding"><header><strong>PronouncedFish / Ghoti</strong><span>Scores to phone sequences</span></header>
 <div class="eyebrow">04 · CTC decoding and tokenization</div>
 <h2>Many time steps become a few sounds</h2>
@@ -162,7 +168,7 @@ transcription = processor.batch_decode(frame_ids)[0]</code></pre>
 <tr><td class="ipa">e͡i</td><td>One token containing explicitly tied sounds.</td></tr>
 </tbody></table>
 <p>Untied adjacent vowels remain separate. Word spaces are preserved in the raw transcription but excluded from the phone list. Unsupported or malformed marks make a result unassessable while retaining the raw transcription for review.</p>
-<div class="callout quiet"><p><strong>The 55 output classes are symbols, not 55 English phonemes.</strong> They include blank, a word separator, sound symbols, and marks. The added tokenizer entry <code>&lt;unk&gt;</code> is outside the model's 55 output classes.</p></div><footer><span>Source: pasketti.py · phonetics.py · vocab.json</span><span>05 / 09</span></footer></section>
+<div class="callout quiet"><p><strong>The 55 output classes are symbols, not 55 English phonemes.</strong> They include blank, a word separator, sound symbols, and marks. The added tokenizer entry <code>&lt;unk&gt;</code> is outside the model's 55 output classes.</p></div><footer><span>Source: pasketti.py · phonetics.py · vocab.json</span><span>05 / 14</span></footer></section>
 <section class="sheet" id="results"><header><strong>PronouncedFish / Ghoti</strong><span>Result contract</span></header>
 <div class="eyebrow">05 · Reading the output</div>
 <h2>A prediction with explicit review status</h2>
@@ -188,7 +194,7 @@ transcription = processor.batch_decode(frame_ids)[0]</code></pre>
 <tr><td><code>review_reason</code></td><td>Explains the general review requirement or a specific unusable result.</td></tr>
 </tbody></table>
 <div class="callout"><p><strong>“ok” establishes successful execution, not transcription accuracy.</strong> A plausible-looking sequence may still be wrong. Numeric correctness probabilities are not reported because calibration has not been established.</p></div>
-<p>The recognizer flags extremely short, overly long, or near-silent input; non-finite scores; empty decodes; and malformed IPA. Invalid sample rate, buffer shape, or PCM values raise errors. Background noise, clipping within PCM bounds, and overlapping speakers need more complete quality handling.</p><footer><span>Source: recognition.py · pasketti.py</span><span>06 / 09</span></footer></section>
+<p>The recognizer flags extremely short, overly long, or near-silent input; non-finite scores; empty decodes; and malformed IPA. Invalid sample rate, buffer shape, or PCM values raise errors. Background noise, clipping within PCM bounds, and overlapping speakers need more complete quality handling.</p><footer><span>Source: recognition.py · pasketti.py</span><span>06 / 14</span></footer></section>
 <section class="sheet" id="performance"><header><strong>PronouncedFish / Ghoti</strong><span>Runtime lifecycle and locality</span></header>
 <div class="eyebrow">06 · Understanding timing</div>
 <h2>Load once, recognize many attempts</h2>
@@ -206,8 +212,8 @@ def process_recording(path):
 <tr><td><code>inference_time_ms</code></td><td>The neural-network forward pass.</td></tr>
 <tr><td><code>processing_ms</code></td><td>File preprocessing, input preparation, inference, validation, and decoding.</td></tr>
 </tbody></table>
-<p><code>processing_ms</code> already includes preprocessing and inference. Add model-load time to processing time for initialization plus processing; do not add all four fields together.</p>
-<h3>Latest recorded desktop smoke run</h3>
+<p>Only <code>inference_time_ms</code> is in recognition JSON; the other timing values go to CLI stderr. <code>processing_ms</code> already includes preprocessing and inference. Add model-load time to processing time for initialization plus processing; do not add all four fields together.</p>
+<h3>Recorded desktop smoke observation</h3>
 <table class="dense"><thead><tr><th>Measurement</th><th>Observed</th></tr></thead><tbody>
 <tr><td>Model initialization</td><td>16,062.0 ms</td></tr>
 <tr><td>File preprocessing</td><td>5.3 ms</td></tr>
@@ -216,62 +222,138 @@ def process_recording(path):
 </tbody></table>
 <p class="small">Python 3.12 conda environment, CPU, 2.2641-second synthetic WAV. Initialization plus processing was about 18.64 seconds. These are single-run observations; timings varied. They do not establish the latency target or iPad performance.</p>
 <h3>Recent fixes and local execution</h3>
-<p>Direct SoXR HQ resampling removed librosa's large first-call resampling overhead while preserving the waveform and output-length convention. Omitting a redundant mask for one unpadded utterance removed the mixed-mask warning; regression checks preserved the decoded result. CLI JSON now displays readable UTF-8 IPA.</p>
-<p><code>download-model</code> retrieves static assets from Hugging Face and accepts no audio. Recognition uses verified local files. The library does not upload audio, automatically persist recordings, or log transcriptions. The CLI intentionally prints results to the local terminal.</p><footer><span>Source: cli.py · assets.py · recognition-verification.md</span><span>07 / 09</span></footer></section>
-<section class="sheet" id="integration"><header><strong>PronouncedFish / Ghoti</strong><span>Application boundaries</span></header>
-<div class="eyebrow">07 · How this fits into the app</div>
-<h2>Recognition and target analysis stay separate</h2>
-<p>The engine is a subproject under <code>src/engine/</code>. Future application code lives alongside it and consumes public interfaces. The engine does not depend on patient records, UI, authentication, or database code.</p>
-<h3>Future substitution-analysis example</h3>
-<pre><code>Target word:          rabbit
-Expected phonemes:    ["ɹ", "æ", "b", "ɪ", "t"]
-Recognized phones:    ["w", "æ", "b", "ɪ", "t"]
-
-Candidate: expected /ɹ/, produced [w], beginning</code></pre>
-<p>The analysis component will receive recognition, expected phonemes, SLP-approved acceptable variants, and an explicitly supported substitution inventory. It will align complete phone tokens and report supported candidates for review.</p>
-<p>No analysis module is included yet. When implemented, alignment must preserve unsupported differences without treating them as validated clinical findings. Define its API alongside the working algorithm.</p>
-<table><thead><tr><th>Component</th><th>Responsibility</th><th>Status</th></tr></thead><tbody>
-<tr><td>Python recognition</td><td>Waveform → estimated phones.</td><td>Implemented</td></tr>
-<tr><td>Pronunciation analysis</td><td>Compare phones with targets and approved variants.</td><td>Not implemented</td></tr>
-<tr><td>Browser engine</td><td>Local inference in the iPad web app.</td><td>Not implemented</td></tr>
-<tr><td>Application</td><td>Recording UI, practice flow, corrections, session storage.</td><td>Outside this engine milestone</td></tr>
+<p>Direct SoXR HQ resampling removed librosa's large first-call resampling overhead while preserving the waveform and output-length convention. Omitting a redundant mask for one unpadded utterance removed the mixed-mask warning; regression checks preserved the decoded result. Interactive JSON displays IPA. Redirected JSON uses Unicode escapes so Windows PowerShell cannot corrupt the symbols.</p>
+<p><code>download-model</code> retrieves static assets from Hugging Face and accepts no audio. Recognition uses verified local files. The library does not upload audio, automatically persist recordings, or log transcriptions. The CLI intentionally prints results to the local terminal.</p><footer><span>Source: cli.py · assets.py · recognition-verification.md</span><span>07 / 14</span></footer></section>
+<section class="sheet compact " id="analysis"><header><strong>PronouncedFish / Ghoti</strong><span>Target analysis</span></header><div class="eyebrow">Current implementation · Target analysis</div><h2>Phone pairs explain the comparison</h2>
+<p class="lead">Recognition asks what the model heard. Analysis compares that estimate with a supplied pronunciation.</p>
+<pre><code>comparison = analyze(
+    recognition_result,
+    expected_phones=["d", "ʌ", "k"],
+    acceptable_variants=[],
+    supported_substitutions=[],
+)</code></pre>
+<p>For target “duck” and recognition resembling “tuck,” alignment produces one row per phone pair:</p>
+<table><thead><tr><th>Expected</th><th>Recognized</th><th>Kind</th></tr></thead><tbody><tr><td class="ipa">d</td><td class="ipa">t</td><td>Candidate substitution</td></tr><tr><td class="ipa">ʌ</td><td class="ipa">ʌ</td><td>Match</td></tr><tr><td class="ipa">k</td><td class="ipa">k</td><td>Match</td></tr></tbody></table>
+<p>A phone pair is an alignment row, not an extra model. A gap has <code>null</code> on one side, displayed as <strong>∅</strong>. Aligning sequences allows later sounds to match after an addition or omission. Indices count complete tokens, not characters, words, or milliseconds.</p>
+<h3>What SODA means here</h3>
+<table><thead><tr><th>Category</th><th>Current behavior</th></tr></thead><tbody><tr><td>Substitution</td><td>Different aligned tokens. Inventory membership is supplied by the caller, directional, and false by default.</td></tr><tr><td>Omission</td><td>Expected token with no corresponding recognized token.</td></tr><tr><td>Distortion</td><td>Not assessed. Symbol alignment does not establish acoustic quality.</td></tr><tr><td>Addition</td><td>Recognized token with no corresponding expected token.</td></tr></tbody></table>
+<h3>Targets, variants, and spelling</h3>
+<p>The caller supplies the target and any acceptable complete pronunciations. Jiwer aligns complete phone tokens with unit edit costs. The engine selects the pronunciation with the fewest edits; ties prefer earlier variants. A matching acceptable variant does not become a substitution. Multiple equally minimal alignments may exist.</p>
+<p>Comparison uses NFD normalization and spelling aliases <code>g → ɡ</code>, <code>ʧ → t͡ʃ</code>, and <code>ʤ → d͡ʒ</code>. Original spellings remain in output. Nasalization, length, and <code>r</code> versus <code>ɹ</code> remain distinct.</p>
+<div class="callout"><p><strong>Candidate does not mean confirmed production error.</strong> A recognizer can mishear the child. SRS clinical substitution evaluation remains limited to an approved list; descriptive omissions/additions do not establish additional validated clinical scope.</p></div>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>08 / 14</span></footer></section>
+<section class="sheet compact " id="analysis-contract"><header><strong>PronouncedFish / Ghoti</strong><span>Analysis result contract</span></header><div class="eyebrow">Current implementation · Analysis result contract</div><h2>The second JSON result</h2>
+<p>Analysis is separate from recognition; it neither overwrites nor automatically wraps it. Python returns dictionaries; CLI redirection saves JSON files.</p>
+<table><thead><tr><th style="width:34%">Top-level field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>status</code></td><td><code>ok</code> or <code>unassessable</code>.</td></tr>
+<tr><td><code>expected_phones</code></td><td>The original primary target token array.</td></tr>
+<tr><td><code>selected_variant_index</code></td><td>Primary target is 0; supplied variants are 1, 2, etc.</td></tr>
+<tr><td><code>selected_expected_phones</code></td><td>The target or variant actually used for alignment.</td></tr>
+<tr><td><code>matches_target</code></td><td>Whether normalized token sequences match; not acoustic correctness.</td></tr>
+<tr><td><code>edit_counts</code></td><td>Integer <code>substitutions</code>, <code>omissions</code>, <code>additions</code>.</td></tr>
+<tr><td><code>alignment</code></td><td>Array of phone pairs or gaps, including matching pairs.</td></tr>
+<tr><td><code>feature_names</code></td><td>Ordered labels corresponding to the vector positions; currently 24.</td></tr>
+<tr><td><code>feature_source</code></td><td><code>panphon==0.22.2/spe+</code>.</td></tr>
+<tr><td><code>distortion_status</code></td><td>Always <code>not_assessed</code>.</td></tr>
+<tr><td><code>requires_review</code></td><td>Always true.</td></tr>
+<tr><td><code>review_reason</code></td><td>Candidate interpretation or unassessability explanation.</td></tr>
 </tbody></table>
-<h3>Browser work will be added when implemented</h3>
-<p>The repository currently contains only the working Python engine. The earlier browser types and placeholder analysis definitions were removed because they had no runtime or consumer. No empty future-feature folders are needed.</p>
-<p>Browser deployment needs a compatible exported model, a local runtime such as ONNX Runtime Web, browser audio preparation, and validation on an actual iPad. Python and PyTorch are currently development tools; an inference server is not part of the planned production audio path.</p>
-<div class="callout quiet"><p><strong>Preserve original predictions when clinicians correct them.</strong> Future application code should retain provenance and pass corrected phones through analysis. Correction storage and provenance are not implemented yet.</p></div><footer><span>Source: README.md · pronouncedfish_engine/ · model-baseline.md</span><span>08 / 09</span></footer></section>
-<section class="sheet" id="setup"><header><strong>PronouncedFish / Ghoti</strong><span>Team setup and verification</span></header>
-<div class="eyebrow">08 · Working with the subproject</div>
-<h2>Run it, inspect it, then evaluate it</h2>
-<p>Run from <code>src/engine/</code>. New developers can first create the environment using <code>conda env create -f environment.yml</code>.</p>
+<h3>Every alignment row</h3>
+<table><thead><tr><th style="width:34%">Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>kind</code></td><td><code>match</code>, <code>substitution</code>, <code>omission</code>, or <code>addition</code>.</td></tr>
+<tr><td><code>expected_index</code></td><td>Zero-based selected-target index; null for an addition.</td></tr>
+<tr><td><code>recognized_index</code></td><td>Zero-based original recognized-token index; null for an omission.</td></tr>
+<tr><td><code>expected_phone</code></td><td>Target token; null for an addition.</td></tr>
+<tr><td><code>recognized_phone</code></td><td>Recognized token; null for an omission.</td></tr>
+<tr><td><code>supported_substitution</code></td><td>Inventory membership boolean for substitutions; otherwise null. Membership is not clinical validation.</td></tr>
+<tr><td><code>feature_status</code></td><td><code>available</code>, <code>unavailable</code> for unknown mappings, or <code>not_applicable</code> for gaps.</td></tr>
+<tr><td><code>feature_comparison</code></td><td>Vectors/distance object when available; otherwise null.</td></tr>
+</tbody></table>
+<p>The comparison object contains <code>expected_vector</code>, <code>recognized_vector</code>, <code>absolute_differences</code>, and <code>manhattan_distance</code>. All arrays follow <code>feature_names</code> order.</p>
+<p class="small"><strong>Unassessable:</strong> selected variant, selected phones, match result, and counts are null; alignment and feature names are empty. No omitted sounds are inferred from unusable recognition. No audio, patient/session ID, validated timestamp, or numerical confidence is included.</p>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>09 / 14</span></footer></section>
+<section class="sheet compact glossary" id="features"><header><strong>PronouncedFish / Ghoti</strong><span>Feature glossary</span></header><div class="eyebrow">Current implementation · Feature glossary</div><h2>What “syllabic” and “sonorant” mean</h2>
+<p>These labels describe sound categories in PanPhon. A sound has multiple properties simultaneously. <code>+1</code> is positive, <code>−1</code> negative, and <code>0</code> unspecified/not applicable in the table—not missing data or a correctness score.</p>
+<table><thead><tr><th>Code</th><th>Feature</th><th>Plain-language guide</th></tr></thead><tbody><tr><td><code>syl</code></td><td>Syllabic</td><td>Syllable nucleus; usually a vowel. Not syllable count.</td></tr><tr><td><code>son</code></td><td>Sonorant</td><td>Resonant class: vowels, nasals, liquids, glides.</td></tr><tr><td><code>cons</code></td><td>Consonantal</td><td>Consonantal constriction; excludes vowels and glides.</td></tr><tr><td><code>cont</code></td><td>Continuant</td><td>Continuous oral airflow, unlike a stop closure.</td></tr><tr><td><code>delrel</code></td><td>Delayed release</td><td>Affricate-style release, as in t͡ʃ.</td></tr><tr><td><code>lat</code></td><td>Lateral</td><td>Lateral articulation, as in l.</td></tr><tr><td><code>nas</code></td><td>Nasal</td><td>Nasal airflow, as in m or n.</td></tr><tr><td><code>strid</code></td><td>Strident</td><td>Strong, noisy friction.</td></tr><tr><td><code>voi</code></td><td>Voiced</td><td>Vocal-fold vibration.</td></tr><tr><td><code>sg</code></td><td>Spread glottis</td><td>Open glottal configuration, e.g. aspiration.</td></tr><tr><td><code>cg</code></td><td>Constricted glottis</td><td>Constricted glottal configuration.</td></tr><tr><td><code>ant</code></td><td>Anterior</td><td>Articulation toward the front.</td></tr><tr><td><code>cor</code></td><td>Coronal</td><td>Tongue tip/blade articulation.</td></tr><tr><td><code>distr</code></td><td>Distributed</td><td>Extent of the coronal contact/constriction.</td></tr><tr><td><code>lab</code></td><td>Labial</td><td>Lip articulation.</td></tr><tr><td><code>hi</code></td><td>High</td><td>Raised tongue body.</td></tr><tr><td><code>lo</code></td><td>Low</td><td>Lowered tongue body.</td></tr><tr><td><code>back</code></td><td>Back</td><td>Posterior tongue-body position.</td></tr><tr><td><code>round</code></td><td>Rounded</td><td>Lip rounding.</td></tr><tr><td><code>velaric</code></td><td>Velaric</td><td>Velaric airstream, associated with clicks.</td></tr><tr><td><code>tense</code></td><td>Tense</td><td>Tongue-root/vowel-quality feature in this scheme.</td></tr><tr><td><code>long</code></td><td>Long</td><td>Length distinction.</td></tr><tr><td><code>hitone</code></td><td>High tone</td><td>High tonal specification.</td></tr><tr><td><code>hireg</code></td><td>High register</td><td>High tonal register.</td></tr></tbody></table>
+<p><strong>Sonorant is not the same as voiced.</strong> A <span class="ipa">d</span> is voiced but not sonorant: it includes a complete closure. Vowels and nasal sounds belong to the sonorant class. Feature definitions are a linguistic representation, not independent sensor measurements.</p>
+<p class="small">Glossary simplified from <a href="https://aclanthology.org/C16-1328/">Mortensen et al. (2016), PanPhon</a> and the <a href="https://github.com/dmort27/panphon">current feature data</a>. The original paper described 21 features; our pinned package provides the 24 columns listed above. All are retained for reproducibility, including features seldom relevant to this English prototype.</p>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>10 / 14</span></footer></section>
+<section class="sheet compact " id="heatmap"><header><strong>PronouncedFish / Ghoti</strong><span>Vectors and visualization</span></header><div class="eyebrow">Current implementation · Vectors and visualization</div><h2>How distance becomes a heatmap</h2>
+<p class="lead">The heatmap explains which encoded properties differ between two aligned sound categories.</p>
+<p>For expected <span class="ipa">/d/</span> and recognized <span class="ipa">/t/</span>, a few columns of the full vectors are:</p>
+<table class="heatexample"><thead><tr><th>Sound</th><th>syl</th><th>son</th><th>cons</th><th>voi</th></tr></thead><tbody><tr><td>Expected d</td><td>−1</td><td>−1</td><td>+1</td><td>+1</td></tr><tr><td>Recognized t</td><td>−1</td><td>−1</td><td>+1</td><td>−1</td></tr><tr><td>Absolute difference</td><td class="heat0">0</td><td class="heat0">0</td><td class="heat0">0</td><td class="heat2">2</td></tr></tbody></table>
+<pre><code>distance = Σ |expected_feature[i] − recognized_feature[i]|
+         = 0 + 0 + … + |+1 − (−1)| + … + 0
+         = 2</code></pre>
+<p>In the full 24-feature table, all other differences for this pair are zero. The raw Manhattan sum has no confidence or severity units.</p>
+<h3>Reading the frontend map</h3>
+<table class="heatexample"><thead><tr><th>Aligned pair</th><th>syl</th><th>son</th><th>cons</th><th>voi</th></tr></thead><tbody><tr><td>d → t</td><td class="heat0">0</td><td class="heat0">0</td><td class="heat0">0</td><td class="heat2">2</td></tr><tr><td>ʌ → ʌ</td><td class="heat0">0</td><td class="heat0">0</td><td class="heat0">0</td><td class="heat0">0</td></tr><tr><td>k → ∅</td><td class="heatna">—</td><td class="heatna">—</td><td class="heatna">—</td><td class="heatna">—</td></tr></tbody></table>
+<p>Rows are phone pairs; columns are features; cells are absolute differences of 0, 1, or 2. The example above shows four columns only. A gap or unknown exact segment mapping has no vector comparison, rather than a fabricated zero distance. Tied sequences without a single entry are not silently split into several vectors.</p>
+<h3>Which kind of vector?</h3>
+<p><strong>Used here:</strong> a symbolic 24-feature lookup based on the IPA label. <strong>Different concept:</strong> WavLM's learned 1,024-value representations across audio time steps. Comparing acoustic embeddings would need its own reference recordings, temporal alignment, and validation; it is not implemented.</p>
+<p>A confusion matrix would count how often a target is recognized as each sound. That is different from a fixed sound-pair distance or this per-attempt feature map, and session aggregation is not implemented.</p>
+<div class="callout"><p><strong>Zero distance does not prove correct articulation.</strong> A distorted sound can receive the same IPA label as the target. Recognizer errors also propagate into the feature comparison. Accepted variants are handled before interpreting candidate differences.</p></div>
+<p class="small">The SRS explicitly describes {−1, 0, +1} feature vectors, Manhattan distance, and FR-RDV5's heatmap. The current renderer demonstrates that symbolic calculation; clinical interpretation remains unvalidated.</p>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>11 / 14</span></footer></section>
+<section class="sheet compact " id="frontend"><header><strong>PronouncedFish / Ghoti</strong><span>Frontend prototype</span></header><div class="eyebrow">Current implementation · Frontend prototype</div><h2>One file teammates can open</h2>
+<p class="lead"><a href="frontend-demo.html">Open frontend-demo.html</a> directly in a browser. Everything needed for the prototype is inside that file.</p>
+<table><thead><tr><th>Interaction</th><th>What it does</th></tr></thead><tbody>
+<tr><td>Select an example</td><td>Six illustrative phone-input cases with actual engine analysis: rabbit, voicing, match, gaps, variant, unassessable.</td></tr>
+<tr><td>Select a sound pair</td><td>Updates the selected pair, feature values, and total distance.</td></tr>
+<tr><td>Change the map view</td><td>Shows changed features only or all features. If none differ, all are shown.</td></tr>
+<tr><td>Open analysis JSON</td><td>Reads local analysis output; validates its structure and vector consistency. Accepts standalone analysis or an object with an analysis member.</td></tr>
+<tr><td>Save result</td><td>Downloads the currently displayed analysis JSON.</td></tr>
+<tr><td>Choose audio</td><td>Local playback only. Does not recognize audio or change the displayed comparison.</td></tr>
+</tbody></table>
+<h3>Make a result file</h3>
+<p>From <code>src/engine/</code>, after generating <code>sample.wav</code>:</p>
+<pre><code>python -m pronouncedfish_engine recognize sample.wav &gt; recognition.json
+python -m pronouncedfish_engine analyze recognition.json --expected-phones ð ə ɹ æ b ɪ t s ɪ t s ɪ n ð ə s ʌ n &gt; analysis.json</code></pre>
+<p>Use <strong>Open analysis JSON</strong> and select <code>analysis.json</code>. Recognition-only JSON receives an explanatory error because it contains no target comparison. The frontend supports UTF-8 and BOM-marked UTF-16. Example data is illustrative, not inferred from a child recording.</p>
+<h3>What is connected today?</h3>
+<p>The Python engine and HTML renderer are connected through saved files. There is no live HTTP endpoint, browser model runtime, microphone inference, patient/session database, authentication, or correction-history storage in this prototype. It makes no network requests and has no persistent session storage; explicit file downloads remain possible.</p>
+<p>A future development application could call the Python engine through a backend and pass its analysis object into a view. A backend bridge would not satisfy a requirement for production inference entirely on the user's iPad; that requires a separately validated browser model/runtime.</p>
+<div class="callout quiet"><p><strong>Colors have an explicit legend.</strong> Alignment colors distinguish match/substitution/omission/addition. Heatmap colors encode feature differences. Neither color scheme is a validated clinical traffic-light score.</p></div>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>12 / 14</span></footer></section>
+<section class="sheet compact " id="decisions"><header><strong>PronouncedFish / Ghoti</strong><span>Design decisions and discussion</span></header><div class="eyebrow">Current implementation · Design decisions and discussion</div><h2>What the extra code adds</h2>
+<p class="lead">Pasketti supplies the learned recognition ability. The surrounding package supplies a reusable application boundary.</p>
+<table><thead><tr><th>Concern</th><th>Implemented decision</th></tr></thead><tbody>
+<tr><td>Audio compatibility</td><td>Local WAV/FLAC validation, mono conversion, direct SoXR HQ resampling, then model normalization.</td></tr>
+<tr><td>Repeatability</td><td>Pinned revision and file hashes; explicit download; local-only model loading.</td></tr>
+<tr><td>Usable output</td><td>Complete phone tokens, exact model identity, explicit unassessable/review states.</td></tr>
+<tr><td>Target comparison</td><td>Jiwer alignment and PanPhon data; no second trained model and no custom edit-distance implementation.</td></tr>
+<tr><td>Frontend illustration</td><td>One standalone HTML renderer rather than a framework or a new service.</td></tr>
+</tbody></table>
+<h3>Does this improve the underlying model?</h3>
+<p>No. Wrapping Pasketti does not improve its recognition accuracy. The code makes its input/output predictable, traceable, and useful for comparing practice items. Project-specific training, calibration, and population evaluation have not been performed.</p>
+<h3>What the official Pasketti demo already does</h3>
+<p>The publisher's <a href="https://colab.research.google.com/drive/1Gj64XMfPThMuqCw1YD2CaYWLW6kg8hAH">Colab notebook</a> presents child examples and a Jiwer comparison against human transcription of the same recording. Its legend uses yellow for model substitutions, red for missed sounds, and green for extra model sounds. Green does not mean correct child pronunciation.</p>
+<table><thead><tr><th>Comparison</th><th>Question answered</th></tr></thead><tbody><tr><td>Human produced-phone reference ↔ model</td><td>Did recognition transcribe this production accurately?</td></tr><tr><td>Practice target ↔ recognized phones</td><td>How does the estimated production differ from an acceptable target?</td></tr></tbody></table>
+<p>A perfect transcription of “wabbit” can still differ from “rabbit.” The notebook does not implement PanPhon vector heatmaps. Its browser UI sends audio to the Colab kernel for inference; it is not evidence of on-device browser inference. Its separate word-recognition model is unnecessary for a known target supplied by our practice workflow.</p>
+<h3>Why there is no browser package or empty scaffold</h3>
+<p>Unused browser types, generic recognizer interfaces, and speculative folders were removed. Source lives in <code>engine/pronouncedfish_engine/</code>; the working demo is in <code>engine/docs/</code>. Downloaded config/tokenizer JSON files are required model assets. Ignored caches, generated metadata, and external conda libraries are not application modules.</p>
+<p class="small">Relevant tools: <a href="https://jitsi.github.io/jiwer/usage/">Jiwer alignment</a>, <a href="https://github.com/dmort27/panphon">PanPhon</a>, and <a href="https://huggingface.co/drivendata/pasketti-phonetic">the Pasketti model card</a>. Source code and model assets have separate licenses; see model-baseline.md.</p>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>13 / 14</span></footer></section>
+<section class="sheet compact " id="setup"><header><strong>PronouncedFish / Ghoti</strong><span>Setup and evidence</span></header><div class="eyebrow">Current implementation · Setup and evidence</div><h2>Run the current project</h2>
+<p>Run from <code>src/engine/</code>. For a fresh environment, first use <code>conda env create -f environment.yml</code>. Existing environments can install the extras below.</p>
 <pre><code>conda activate phoneme-engine
-python -m pip install -e ".[dev]"
-
-# Once per snapshot; about 1.26 GB of weights:
+python -m pip install -e ".[dev,analysis]"
 python -m pronouncedfish_engine download-model
-
-# Authorized local development audio:
-python -m pronouncedfish_engine recognize sample.wav
-
+.\scripts\New-SmokeAudio.ps1
+python -m pronouncedfish_engine recognize sample.wav &gt; recognition.json
+# Use the target-phone analysis command on page 12.
 python -m pytest -q</code></pre>
-<p class="small">Windows users can generate the synthetic fixture with <code>scripts/New-SmokeAudio.ps1</code> (Microsoft David Desktop required). Model files are separate from the Python environment and can be reused across environments.</p>
-<table class="dense"><thead><tr><th style="width:34%">Tool / file</th><th>Role</th></tr></thead><tbody>
-<tr><td>Conda / Python 3.12</td><td>Interpreter and isolated installed libraries.</td></tr>
-<tr><td>PyTorch / Transformers</td><td>Model execution, WavLM implementation, and processor.</td></tr>
-<tr><td>NumPy / SoundFile / SoXR</td><td>Arrays, local audio decoding, and resampling.</td></tr>
-<tr><td><code>environment.yml</code></td><td>Conda creation and installation of engine extras.</td></tr>
-<tr><td><code>pyproject.toml</code></td><td>Package, direct dependency pins, and CLI entry point.</td></tr>
-<tr><td><code>tests/</code></td><td>Working regression checks and optional real-model inference test.</td></tr>
-</tbody></table>
-<h3>What the 35 passing checks establish</h3>
-<p>Checks cover audio validation/conversion, CTC decoding, phone grouping, and actual pretrained-model execution. Regression cases compare direct resampling with librosa and masked/unmasked decoding. The real-model check forbids network connections; it skips unless its model/audio environment variables are set.</p>
-<p><strong>Next evidence needed:</strong> human-annotated produced phones from the intended child population; token-level phone error rate and an agreed accuracy definition; substitution evaluation; confidence calibration; and iPad compatibility, memory, and latency testing. The SRS's 87% identification and under-10-second targets remain unverified.</p>
-<p class="small">Source code and model weights have separate licenses. Review <code>model-baseline.md</code> before redistributing model assets. This document contains no recordings or weights.</p>
-<h3>Further reading</h3>
-<ol class="refs">
-<li><a href="https://huggingface.co/drivendata/pasketti-phonetic">Pasketti model card · huggingface.co/drivendata/pasketti-phonetic</a></li>
-<li><a href="https://huggingface.co/docs/transformers/v4.57.1/model_doc/wavlm">Hugging Face WavLM documentation · Transformers v4.57.1</a></li>
-<li>Repository: <code>engine/README.md</code>, <code>docs/model-baseline.md</code>, and <code>docs/recognition-verification.md</code>. Source lives directly in <code>engine/pronouncedfish_engine/</code>.</li>
-</ol><footer><span>Snapshot reflects the implementation as of 28 October 2026</span><span>09 / 09</span></footer></section>
+<p class="small">The Windows sample generator requires Microsoft David Desktop. Core recognition installs with <code>-e .</code>; <code>.[analysis]</code> adds Jiwer/PanPhon; <code>.[dev]</code> adds test tools and the librosa waveform reference. Conda selects Python 3.12; package pins support Python 3.9–3.12.</p>
+<h3>Include real-weight inference in the tests</h3>
+<pre><code>$env:PRONOUNCEDFISH_MODEL_DIR = (Resolve-Path models\pasketti-phonetic).Path
+$env:PRONOUNCEDFISH_SMOKE_AUDIO = (Resolve-Path sample.wav).Path
+python -m pytest -q</code></pre>
+<p><strong>Current full run: 63 tests passed in 25.71 seconds.</strong> This includes real-model recognition with network connections blocked. Analysis covers token alignment, variants, features, gaps, unknown mappings, offline loading, and CLI encodings. Chrome checks exercised the frontend at desktop, tablet, and mobile widths. These checks establish software behavior, not clinical accuracy.</p>
+<h3>PowerShell and result files</h3>
+<p><code>--expected-phones</code> is required because analysis needs a target. Redirected JSON uses Unicode escapes; JSON readers recover IPA. The analysis CLI detects UTF-8/16/32; the frontend handles UTF-8 and BOM-marked UTF-16. An old file whose IPA was corrupted during PowerShell redirection must be regenerated; converting its encoding alone cannot reconstruct the sounds.</p>
+<p>CLI exit codes are 0 for an assessable result, 2 for unassessable, and 1 for execution errors. Missing required arguments are rejected by the argument parser. Timings/errors go to stderr; avoid merging them into a saved JSON result.</p>
+<h3>Remaining work and acceptance</h3>
+<p>Supply reviewed target items, acceptable variants, and an approved substitution inventory. Evaluate recognition and candidate differences on annotated speech from the intended population. Define accuracy/PER conventions and confidence calibration. Add recording/session/correction workflows; measure browser/iPad compatibility, memory, and latency. The SRS's 87% phoneme-identification and under-10-second targets remain unverified.</p>
+<p class="small">FR-SA3's numerical confidence threshold and FR-SA1's word-position labels are not implemented. Preserve original predictions when future clinician corrections are stored. For exact contracts and commands see <a href="../README.md">engine/README.md</a>; for historical and current checks see <a href="recognition-verification.md">recognition-verification.md</a>; for pinned model/licensing notes see <a href="model-baseline.md">model-baseline.md</a>.</p>
+<footer><span>Engine and frontend walkthrough · 28 October 2026</span><span>14 / 14</span></footer></section>
 </body></html>
-

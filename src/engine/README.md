@@ -123,8 +123,8 @@ Output is JSON-compatible and includes:
   directional `(expected, recognized)` inventory. Defaults to false for all
   substitutions until an approved inventory is provided; it is not validation.
 - `feature_names` and each row's `feature_comparison`: target/recognized vectors,
-  per-feature absolute differences, and their sum (Manhattan distance). A future
-  UI can plot alignment rows against feature columns to make a heatmap.
+  per-feature absolute differences, and their sum (Manhattan distance). The
+  standalone frontend plots alignment rows against feature columns as a heatmap.
 
 Features use PanPhon's `-1`, `0`, `+1` values; `0` is a feature specification, not
 missing data. Gaps have `feature_status="not_applicable"` and no distance. Phones
@@ -152,6 +152,150 @@ See [Jiwer's alignment documentation](https://jitsi.github.io/jiwer/usage/) and
 [PanPhon](https://github.com/dmort27/panphon) for the reused tools/data. In research,
 cite [Mortensen et al. (2016)](https://aclanthology.org/C16-1328/).
 
+## Result contracts
+
+Recognition and analysis return separate JSON-compatible dictionaries. The CLI
+prints one result per invocation; a file is created when you redirect that output.
+Analysis does not overwrite or attach itself to the recognition dictionary.
+
+### Recognition fields
+
+| Field | Type / current meaning |
+| --- | --- |
+| `status` | `"ok"` or `"unassessable"`; successful parsing does not establish accuracy. |
+| `recognized_phones` | Array of complete phone tokens in recognized order. |
+| `phonetic_transcription` | Raw decoded IPA string, retaining predicted word spacing. |
+| `model_version` | Model ID plus pinned revision. |
+| `inference_time_ms` | Neural-network forward-pass duration, or `null` if inference did not run. |
+| `confidence_status` | Currently `"uncalibrated"` after inference or `"unavailable"` without inference. The declared type also allows `"calibrated"`, but the baseline never emits it. |
+| `requires_review` | Currently always `true`. |
+| `review_reason` | Review explanation; the declared type allows `null`, but the baseline supplies a reason. |
+
+### Analysis fields
+
+| Field | Type / current meaning |
+| --- | --- |
+| `status` | `"ok"` or `"unassessable"`. |
+| `expected_phones` | Original primary target token array supplied by the caller. |
+| `selected_variant_index` | Integer: primary target is 0; supplied variants follow in order. `null` if unassessable. |
+| `selected_expected_phones` | Target/variant actually used for alignment; `null` if unassessable. |
+| `matches_target` | Boolean token-match result after spelling normalization; `null` if unassessable. |
+| `edit_counts` | Object with integer `substitutions`, `omissions`, and `additions`; `null` if unassessable. |
+| `alignment` | Array of phone-pair/gap objects; empty if unassessable. |
+| `feature_names` | Ordered names for the positions in feature vectors; 24 when assessable, empty if unassessable. |
+| `feature_source` | `"panphon==0.22.2/spe+"`. |
+| `distortion_status` | Always `"not_assessed"`. |
+| `requires_review` | Always `true`. |
+| `review_reason` | Explanation of candidate interpretation or unassessability. |
+
+Every `alignment` entry contains these fields:
+
+| Field | Meaning |
+| --- | --- |
+| `kind` | `"match"`, `"substitution"`, `"omission"`, or `"addition"`. |
+| `expected_index` | Zero-based index into `selected_expected_phones`; `null` for an addition. |
+| `recognized_index` | Zero-based index into the original recognized sequence; `null` for an omission. |
+| `expected_phone` | Target token, or `null` for an addition. |
+| `recognized_phone` | Recognized token, or `null` for an omission. |
+| `supported_substitution` | For substitutions, membership in the supplied directional inventory; otherwise `null`. |
+| `feature_status` | `"available"`, `"unavailable"` for an unknown exact mapping, or `"not_applicable"` for a gap. |
+| `feature_comparison` | Object described below, or `null` when no distance can be calculated. |
+
+`feature_comparison` contains `expected_vector`, `recognized_vector`,
+`absolute_differences`, and `manhattan_distance`. The three arrays correspond
+position-for-position with `feature_names`; the distance sums absolute differences.
+Vector values are `-1`, `0`, or `+1`; differences are `0`, `1`, or `2`.
+
+The output contains no recording, patient/session ID, validated phone timestamp,
+numerical confidence probability, or clinical severity score. `model_load_ms`,
+`preprocessing_ms`, and `processing_ms` are recognition CLI stderr diagnostics,
+not JSON fields. `processing_ms` includes preprocessing and inference; do not add
+those timings again when calculating initialization plus processing.
+
+An application may explicitly keep both results together:
+
+```python
+response = {"recognition": result, "analysis": comparison}
+```
+
+That wrapper is an integration choice, not a third engine result or an existing
+HTTP endpoint. The standalone frontend accepts analysis alone or an object with
+an `analysis` member.
+
+## Phone pairs, SODA, and the heatmap
+
+A phone pair is one aligned target sound and recognized sound. For target
+`["d", "ʌ", "k"]` and recognition `["t", "ʌ", "k"]`, the pairs are:
+
+| Expected | Recognized | Interpretation |
+| --- | --- | --- |
+| `d` | `t` | Candidate substitution. |
+| `ʌ` | `ʌ` | Matching tokens. |
+| `k` | `k` | Matching tokens. |
+
+An omission has a target phone and `null` recognized phone; an addition has the
+reverse. The frontend displays gaps as `∅`. Alignment allows subsequent sounds to
+remain matched after an insertion/deletion. Multiple minimum-edit explanations
+can exist, so the returned alignment is one candidate explanation. Indices are
+token positions, not word-initial/medial/final labels or audio timestamps.
+
+SODA means **substitution, omission, distortion, addition**. The engine reports
+candidate S/O/A differences; distortion is explicitly unassessed. The SRS proof of
+concept scopes clinical substitution evaluation to a predetermined inventory.
+Descriptive omissions/additions do not expand the validated clinical scope. Even
+a listed substitution can originate in recognition error rather than production.
+
+Features describe sounds, not correctness. The following are plain-language
+introductions to the [PanPhon definitions](https://aclanthology.org/C16-1328/):
+
+| Code | Feature | Interpretation / example |
+| --- | --- | --- |
+| `syl` | Syllabic | Forms a syllable's core; usually a vowel. Not a syllable count. |
+| `son` | Sonorant | Relatively unobstructed, resonant production; vowels, nasals, liquids, and glides. |
+| `cons` | Consonantal | Consonantal constriction; excludes vowels and glides in this system. |
+| `cont` | Continuant | Continuous oral airflow, such as `s`; a stop such as `t` has closure. |
+| `nas` | Nasal | Nasal airflow, as in `m` or `n`. |
+| `voi` | Voiced | Vocal-fold vibration; `d` is positive, `t` negative. |
+| `lab` | Labial | Lip involvement, such as `p`, `b`, or `m`. |
+| `round` | Rounded | Lip rounding, such as `u`. |
+
+The full 24-feature glossary is in the [team walkthrough](docs/PronouncedFish-Engine-Walkthrough.html#features).
+Sonorant is not synonymous with voiced: `d` is voiced but not sonorant. Feature
+values encode positive/negative/unspecified categories, not more/less correct.
+
+For `d` → `t`, only voicing changes: `+1` → `-1`, giving absolute difference 2.
+The other 23 feature differences are zero. In the heatmap, rows are phone pairs,
+columns are features, and cells are absolute differences. Gaps and unavailable
+mappings display `—`. A fixed distance map and a session confusion matrix are
+different: a confusion matrix would count observed target/recognized combinations;
+it is not implemented here.
+
+These are symbolic lookup vectors derived from IPA, not WavLM's learned acoustic
+embeddings. The model does not separately measure every feature from the audio.
+If an acoustic distortion is still transcribed as the target IPA symbol, the
+lookup vectors can be identical. Distance is neither confidence nor severity.
+
+## Why use a package around Pasketti?
+
+Pasketti supplies the trained recognition ability; our package does not improve
+its accuracy by wrapping it. The package provides reusable audio preparation,
+pinned/verified local assets, complete-token decoding, explicit result/review
+states, and the target comparison consumed by the demo. Jiwer provides alignment;
+PanPhon provides feature data. We reuse both rather than training another model
+or implementing an edit-distance algorithm.
+
+The official notebook's comparison answers **model versus human transcription of
+the same production**. Our target analysis answers **recognized production versus
+supplied practice pronunciation**. A correct transcription of “wabbit” can still
+differ from the target “rabbit.” In the notebook's legend, green means an extra
+model sound; it does not mean correct child production.
+
+There is one Python package and one standalone frontend file. The previous unused
+browser types, speculative interfaces, and empty future-feature folders were
+removed. Downloaded model JSON files are upstream assets, not additional services.
+No frontend framework, HTTP service, database, training pipeline, or browser model
+runtime was added for this milestone.
+
 ## Standalone frontend example
 
 Open [frontend-demo.html](docs/frontend-demo.html) directly in a browser. This
@@ -164,6 +308,12 @@ then choose **Open analysis JSON**. UTF-8 and BOM-marked UTF-16 files are suppor
 The optional audio picker only plays a local file; it does not run recognition or
 change the displayed analysis. The page makes no network requests or persistent
 session writes. **How this frontend connects to the engine** explains integration.
+
+If `analyze` reports that `--expected-phones` is missing, supply the target tokens;
+the engine does not infer a practice target from the recording. If an older
+PowerShell-generated JSON file has damaged IPA, regenerate it with the current
+recognition CLI. Merely converting that file's encoding cannot recover sounds
+already replaced or corrupted during redirection.
 
 ## Check it
 
@@ -192,7 +342,8 @@ the active development environment is the external conda environment.
 
 See [model and license notes](docs/model-baseline.md),
 [verification results](docs/recognition-verification.md), and the
-[team walkthrough of the earlier recognition-only baseline](docs/PronouncedFish-Engine-Walkthrough.html).
+[current team walkthrough](docs/PronouncedFish-Engine-Walkthrough.html), with a
+locally generated PDF beside it (ignored by Git).
 Next: measure recognition and candidate analysis against annotated child speech.
 Browser/iPad inference and production application integration are not implemented.
 The standalone frontend example demonstrates the interactive heatmap locally.

@@ -51,6 +51,32 @@ Pasketti's published evaluation normalizes several marks and approximates PER
 with character error rate. Our future evaluation must define token-level PER
 explicitly; do not compare the two scores as if their conventions were identical.
 
+## Analysis and frontend built on the recognition baseline
+
+The recognition model remains unchanged. `analysis.py` adds descriptive comparison
+of its complete phone tokens with caller-supplied target pronunciations. Jiwer
+4.0.0 supplies token alignment, and PanPhon 0.22.2 supplies the 24-column feature
+table. Both are optional `analysis` dependencies; no second model is loaded.
+
+PanPhon data is read directly from its installed CSV as UTF-8 because the default
+loader fails on Windows cp1252. The vectors are symbolic descriptions of IPA
+categories, not WavLM's learned acoustic representations. Feature normalization
+is explicit and confined to comparison: NFD plus `g`/`ɡ`, `ʧ`/`t͡ʃ`, and
+`ʤ`/`d͡ʒ` spelling equivalences. Recognition output is preserved.
+
+The official [Pasketti notebook](https://colab.research.google.com/drive/1Gj64XMfPThMuqCw1YD2CaYWLW6kg8hAH)
+uses human produced-phone references for model-error comparisons. Its colors and
+phone error rate do not measure a child's difference from a practice target.
+Our analysis uses caller-supplied targets/variants and reports candidate S/O/A
+differences; acoustic distortions are not assessed. No clinical severity or
+calibrated probability follows from a feature distance.
+
+`docs/frontend-demo.html` is an offline renderer of six illustrative engine
+outputs and imported JSON. Audio selection enables playback only; it does not
+perform inference. The notebook's Colab-backed inference and our static demo
+are not browser/iPad inference implementations. See the
+[team walkthrough](PronouncedFish-Engine-Walkthrough.html) for the full discussion.
+
 ## Licensing and deployment limits
 
 The model card declares **BigCode OpenRAIL-M**, separate from the repository's

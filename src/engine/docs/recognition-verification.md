@@ -4,6 +4,26 @@ The first Python audio-to-phone baseline executed successfully using the real
 Pasketti checkpoint. This record concerns execution and software behavior, not
 clinical accuracy or acceptance of the 87% recognition requirement.
 
+## Current state at documentation refresh
+
+The complete current conda suite passed **63 tests in 25.71 seconds**, including
+real-weight recognition with network connections forbidden. This supersedes the
+earlier test counts below. It includes 28 analysis cases after the PowerShell
+encoding fix. No runtime changes were made for this documentation refresh.
+
+| Area | Evidence and limits |
+| --- | --- |
+| Recognition | Actual pinned weights run on the local synthetic sample; no intended-population accuracy claim. |
+| Analysis | Token alignment, variants, S/O/A candidates, exact feature lookup, and JSON behavior tested; no acoustic distortion detection or clinical severity. |
+| Frontend | Six engine-generated illustrative examples, file import/export, interactive map, and local playback; Chrome desktop/tablet/mobile checks recorded below. No live inference connection. |
+| Deployment | Python CPU development baseline; iPad/browser inference and production integration remain unverified/unimplemented. |
+
+The sections below preserve the order of earlier measurements and fixes. Older
+paths, environments, dependency extras, and timings describe those historical
+runs. Use the [current README](../README.md) for installation and commands, and
+the [updated walkthrough](PronouncedFish-Engine-Walkthrough.html) for the current
+end-to-end explanation and complete result contracts.
+
 ## Environment and sample
 
 - Windows build 26200; Intel64 Family 6 Model 154 Stepping 3; CPU inference.
@@ -13,7 +33,8 @@ clinical accuracy or acceptance of the 87% recognition requirement.
 - Audio: locally synthesized Windows `System.Speech` reading
   “The rabbit sits in the sun.” No microphone or patient recording was used.
 - Source WAV: 22,050 Hz, mono, 49,923 frames (2.2641 seconds), resampled to 16 kHz.
-- Local generated assets remain under ignored `.verification/` and `models/`.
+- At this stage, generated assets were under ignored `.verification/` and `models/`.
+  The synthetic recording now lives at `engine/sample.wav`; `.verification/` was removed.
 
 ## Observed result
 
@@ -170,11 +191,12 @@ Manhattan distance 2, entirely in `voi`. Gaps and unknown phones receive no
 distance. PanPhon's default loader failed under Windows cp1252; the implementation
 reads its installed CSV explicitly as UTF-8 without modifying the library.
 
-No acoustic distortion detector, clinical severity score, heatmap UI, approved
+At this analysis-only stage, no acoustic distortion detector, clinical severity score, heatmap UI, approved
 practice-item dictionary, or validated substitution inventory was added. Those
-remain distinct from descriptive target comparison. The older HTML/PDF walkthrough
-documents the recognition-only baseline; the [README](../README.md) describes
-the current analysis API and its limits.
+remain distinct from descriptive target comparison. The subsequent standalone
+frontend adds a heatmap prototype. The HTML/PDF walkthrough has now been refreshed
+to cover recognition, analysis, and that prototype; the [README](../README.md)
+describes the current API and its limits.
 
 ### Windows PowerShell JSON redirection fix
 
