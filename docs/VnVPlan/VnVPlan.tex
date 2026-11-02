@@ -290,6 +290,9 @@ How test will be performed:
 
 \subsubsection{Accuracy and responsiveness}
 
+Use a consistent evaluation set so measurements can be compared across
+model changes, as required by the Development Plan.
+
 \paragraph{Measure phoneme detection accuracy}
 \begin{enumerate}
     \item \textbf{ST-N01}\\
@@ -337,6 +340,34 @@ How test will be performed:
     Development Plan Section~10.5 adds real-time factor and end to end
     latency.
 \end{enumerate}
+
+\subsubsection{Usability and patient protection}
+
+Use SLP task observations for navigation and efficiency. Assess the child-facing boundary
+separately from clinician access.
+
+\paragraph{Learn the workflow within one hour}
+\begin{enumerate}
+    \item \textbf{ST-N04}\\
+
+    Type: Dynamic, Manual
+
+    Initial State: An SLP unfamiliar with the application has standard
+    onboarding material and synthetic data.
+
+    Input/Condition: Within a one hour session, ask the SLP to configure
+    practice, record audio and analyze it, override a result, inspect
+    charts and observe patient history.
+
+    Output/Result: The SLP completes the core navigation tasks independently
+    within one hour of use (NFR-USA1). Record task times, assistance, failures
+    and comments.
+
+    How test will be performed: The UI/UX Lead observes without guiding the
+    final task run. They record mistakes, time to complete each task, and any questions or comments.
+    The SLP is asked to provide feedback on the experience.
+\end{enumerate}
+
 
 \subsubsection{Area of Testing1}
 		
