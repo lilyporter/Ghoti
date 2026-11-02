@@ -368,6 +368,52 @@ separately from clinician access.
     The SLP is asked to provide feedback on the experience.
 \end{enumerate}
 
+\paragraph{Compare workflow time with manual tools}
+\begin{enumerate}
+    \item \textbf{ST-N06}\\
+    Type: Dynamic, Manual comparative measurement
+
+    Initial State: An SLP has learned the application and has equivalent paper
+    or spreadsheet tools.
+
+    Input/Condition: Complete matched session and after-session documentation
+    tasks with identical attempts using software and manual tools.
+
+    Output/Result: Total software task time is lower than manual task time,
+    with equivalent completed records (NFR-USA3). Report paired times,
+    corrections and assistance; a faster incomplete record does not pass.
+
+    How test will be performed: The UI/UX Lead checks
+    where multiple participants are available and records session and
+    after-session times separately and together. Report sample size and
+    learning effects. Basis: NFR-USA3 requires less time than equivalent manual
+    tools, including work outside the session.
+\end{enumerate}
+
+\paragraph{Restrict the child-facing experience}
+\begin{enumerate}
+    \item \textbf{ST-N07}\\
+
+    Type: Dynamic, Mixed manual and automatic
+
+    Initial State: Child practice mode is active; clinician functions require
+    the configured access boundary.
+
+    Input/Condition: Try visible controls, back navigation, direct clinician
+    URLs and direct API requests from the child context.
+
+    Output/Result: The child can use the gamified experience but cannot access
+    patient records, analytics administration or clinician controls beyond
+    that experience (NFR-USA4). Direct navigation and API calls do not bypass
+    restrictions.
+
+    How test will be performed: The Systems Architect/Development Lead tests
+    each route with the UI/UX Lead and captures denied requests and
+    screenshots. Verify returning to clinician mode requires the configured
+    authorization. Basis: NFR-USA4 limits the child's access to the practice
+    experience.
+\end{enumerate}
+
 
 \subsubsection{Area of Testing1}
 		
