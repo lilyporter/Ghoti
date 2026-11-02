@@ -414,6 +414,37 @@ separately from clinician access.
     experience.
 \end{enumerate}
 
+\subsubsection{Maintainability and portability}
+
+Checks supported hardware and software environments.
+
+\paragraph{Verify platform and browser compatibility}
+\begin{enumerate}
+    \item \textbf{ST-N09}\\
+
+    Type: Dynamic, Manual
+
+    Initial State: A versioned compatibility matrix is recorded with physical
+    devices for microphone checks.
+
+    Input/Condition: Exercise Windows with Chrome, Firefox and Edge; macOS with
+    Safari, Chrome and Firefox; iPad/iOS with Safari; and Android tablet with
+    Chrome. Include desktop, laptop and tablet form factors.
+
+    Output/Result: Setup, microphone permission and capture, analysis, SLP
+    controls, IPA, charts and history operate without blocking layout or
+    functional defects in every tested combination (NFR-POR1, NFR-POR2,
+    NFR-POR3; FR-RDV9).
+
+    How test will be performed: Repeat a compact ST-F01/F03/F08/F09/F11
+    workflow in each matrix entry; inspect orientation and touch controls on
+    tablets; test microphone functionality. Add any other claimed supported combination to the matrix before
+    declaring support. Basis: The SRS lists four operating systems, four
+    browsers and three device types; the matrix is a representative test plan,
+    not proof of every OS-browser combination.
+\end{enumerate}
+
+
 
 \subsubsection{Area of Testing1}
 		
