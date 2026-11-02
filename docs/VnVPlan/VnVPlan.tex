@@ -416,7 +416,27 @@ separately from clinician access.
 
 \subsubsection{Maintainability and portability}
 
-Checks supported hardware and software environments.
+Checks supported hardware and software environments. Check deployment, patching, and extension.
+
+\begin{enumerate}
+    \item \textbf{ST-N}\\
+
+    Type: Dynamic performance check
+
+    Initial State: A clean build environment and a prepared patch exist, and
+    the approved build and deployment pipeline is available.
+
+    Input/Condition: Apply a representative patch and run the pipeline from
+    build start to a completed deployment, timing each stage.
+
+    Output/Result: Building and deploying the patch completes successfully in
+    less than 30 minutes (NFR-MAI3).
+
+    How test will be performed: The Development Lead and an independent
+    reviewer time the pipeline run from pipeline logs and repeat it three
+    times. Record durations and any failures; review is blocked if the
+    pipeline is unavailable. Basis: NFR-MAI3.
+\end{enumerate}
 
 \paragraph{Verify platform and browser compatibility}
 \begin{enumerate}
@@ -442,6 +462,90 @@ Checks supported hardware and software environments.
     declaring support. Basis: The SRS lists four operating systems, four
     browsers and three device types; the matrix is a representative test plan,
     not proof of every OS-browser combination.
+\end{enumerate}
+
+\subsubsection{Reliability, security and release review}
+
+These checks address operational hazards, including data loss, and unauthorized access.
+
+\paragraph{Verify operating periods and maintenance scheduling}
+\begin{enumerate}
+    \item \textbf{ST-N10}\\
+
+    Type: Mixed Dynamic and Static
+
+    Initial State: Deployment operating timezone, full and minimal service
+    definitions, load and maintenance policy are approved.
+
+    Input/Condition: Exercise login, storage, retrieval and analysis around
+    06:00 and 00:00; run an accelerated schedule check and inspect the
+    maintenance calendar.
+
+    Output/Result: The approved full service level operates from 06:00 to
+    00:00 and the approved minimum remains available from 00:00 to 06:00.
+    Routine maintenance is scheduled in minimal hours at the approved
+    interpretation of the one to two month interval (NFR-REL2, NFR-REL3,
+    NFR-REL4).
+    Check server latency and ensure it is under 10 seconds for this period (NFR-REL1).
+
+    How test will be performed: Use a controlled clock and scheduler
+    inspection, then planned observation under the approved workload.
+\end{enumerate}
+
+\paragraph{Protect data and secure communications}
+\begin{enumerate}
+    \item \textbf{ST-N11}\\
+
+    Type: Static inspection and Dynamic security checks
+
+    Initial State: The approved PHI inventory and encryption baseline identify
+    every component and storage location.
+
+    Input/Condition: Create and transfer synthetic PHI; inspect browser-to-API,
+    service-to-service and database traffic, persistent stores, logs,
+    temporary files and backups.
+
+    Output/Result: PHI is encrypted from collection through its approved
+    storage lifecycle; intercomponent traffic uses the approved secure
+    protocol (NFR-SAP1, NFR-SAP2; NFR-LAL1). No unintended plaintext PHI
+    appears in inspected storage or traffic. Approved key access and
+    certificate validation controls are active.
+
+    How test will be performed: The Systems Architect/Development Lead and an
+    independent team reviewer inspect configuration, packet traces and
+    synthetic storage samples. Test denial of an untrusted certificate and an
+    insecure endpoint. Record coverage and gaps; review is blocked if the
+    baseline is absent. Basis: NFR-SAP1 and NFR-SAP2 require encryption; exact
+    cryptographic acceptance comes from an approved security baseline, not this
+    plan.
+\end{enumerate}
+
+\subsection{Legal and Licensing}
+
+Checks to ensure that the system is PHIPA compliant and open source.
+
+\begin{enumerate}
+    \item \textbf{ST-N12}\\
+
+    Type: Static inspection and Dynamic security checks
+
+    Initial State: The approved PHIPA checklist and deployment region list
+    exist.
+
+    Input/Condition: Process synthetic patient records through storage,
+    transfer and access paths; attempt access with unauthorized roles; review
+    the repository license and dependency manifest.
+
+    Output/Result: Synthetic PHI is stored, transferred and accessed only as
+    the PHIPA checklist permits, and stays in approved residency locations
+    (NFR-LAL1). Unauthorized access is denied. The repository includes the
+    GNU GPL text and all dependencies are GPL-compatible (NFR-LAL2).
+
+    How test will be performed: The Development Lead and an independent
+    reviewer compare configuration, storage locations and access logs against
+    the checklist, and run a dependency license scan. Record findings; review
+    is blocked if the checklist is absent. Basis: NFR-LAL1 and NFR-LAL2; legal
+    sign-off is outside this plan.
 \end{enumerate}
 
 
