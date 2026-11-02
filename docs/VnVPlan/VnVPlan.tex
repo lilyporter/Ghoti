@@ -298,19 +298,44 @@ How test will be performed:
 
     Initial State: A set of labelled children's speech clips from TalkBank
     (e.g.\ PhonBank), with reference phoneme transcriptions, is loaded.
-    Clips used for confidence tuning are excluded.
+    Clips used for tuning are excluded.
 
     Input/Condition: Run every clip through the recognizer and compare the
     output phonemes against the labelled reference phonemes.
 
     Output/Result: Phoneme identification accuracy is at least 87\%
     (NFR-ACCU1; FR-SA1, FR-SA2, FR-SA3). Report accuracy overall and per
-    target phoneme, with raw counts.
+    target phoneme.
 
     How test will be performed: Align recognized and reference phonemes for
     each clip. Accuracy is the number of correctly identified phonemes divided
     by the total number of reference phonemes. Rerun the same clip set after
     each model change.
+\end{enumerate}
+
+\paragraph{Measure processing time from audio capture to phoneme estimation}
+\begin{enumerate}
+    \item \textbf{ST-N02}\\
+
+    Type: Dynamic, Automatic measurement
+
+    Initial State: The device and software are
+    configured to record speech and process it.
+
+    Input/Condition: Input audio file for a particular word.
+
+    Output/Result: For each case, phonemic estimation results are
+    visible in less than 10 seconds (NFR-PER1). Record duration for each processing completion and categorize by the specific phrase. Report all observations plus processing time divided by audio
+    duration, median, and maximum.
+
+    How test will be performed: Measure from completed audio
+    capture/submission to rendered result, including transfer and rendering,
+    with at least 30 runs per representative condition as a planned sampling
+    choice. Log hardware, network, clip duration and model size. Resolve
+    whether capture time belongs in the requirement's timing boundary before
+    acceptance. Basis: NFR-PER1 sets a strict less than 10 seconds criterion;
+    Development Plan Section~10.5 adds real-time factor and end to end
+    latency.
 \end{enumerate}
 
 \subsubsection{Area of Testing1}
