@@ -288,26 +288,30 @@ How test will be performed:
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+\subsubsection{Accuracy and responsiveness}
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
+\paragraph{Measure phoneme detection accuracy}
+\begin{enumerate}
+    \item \textbf{ST-N01}\\
 
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
+    Type: Dynamic, Automatic
 
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
+    Initial State: A set of labelled children's speech clips from TalkBank
+    (e.g.\ PhonBank), with reference phoneme transcriptions, is loaded.
+    Clips used for confidence tuning are excluded.
 
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
+    Input/Condition: Run every clip through the recognizer and compare the
+    output phonemes against the labelled reference phonemes.
+
+    Output/Result: Phoneme identification accuracy is at least 87\%
+    (NFR-ACCU1; FR-SA1, FR-SA2, FR-SA3). Report accuracy overall and per
+    target phoneme, with raw counts.
+
+    How test will be performed: Align recognized and reference phonemes for
+    each clip. Accuracy is the number of correctly identified phonemes divided
+    by the total number of reference phonemes. Rerun the same clip set after
+    each model change.
+\end{enumerate}
 
 \subsubsection{Area of Testing1}
 		
