@@ -348,7 +348,7 @@ separately from clinician access.
 
 \paragraph{Learn the workflow within one hour}
 \begin{enumerate}
-    \item \textbf{ST-N04}\\
+    \item \textbf{ST-N03}\\
 
     Type: Dynamic, Manual
 
@@ -368,9 +368,36 @@ separately from clinician access.
     The SLP is asked to provide feedback on the experience.
 \end{enumerate}
 
+\begin{enumerate}
+    \item \textbf{ST-N04}\\
+
+    Type: Dynamic usability and recovery checks
+
+    Initial State: A test SLP account exists with synthetic critical data
+    (for example, patient records and session recordings).
+
+    Input/Condition: As the SLP, attempt to delete each type of critical data
+    item. Where a confirmation prompt appears, test both cancelling and
+    confirming. Where deletion is allowed without a prompt, attempt recovery
+    at several points within 72 hours and again after 72 hours have elapsed.
+
+    Output/Result: No critical data item is permanently deleted without
+    either a confirmation step or a recovery option (NFR-USA2). Cancelling a
+    confirmation leaves the data unchanged. Deleted data is fully restored
+    when recovery is requested within 72 hours, with contents identical to
+    the original.
+
+    How test will be performed: The Development Lead and an independent
+    reviewer walk through each data type, automated script compares restored contents
+    against the original synthetic data, and check the system clock or
+    retention settings to verify the 72-hour window. Record any data type
+    that can be lost without a safeguard; review is blocked if the critical
+    data list is absent. Basis: NFR-USA2.
+\end{enumerate}
+
 \paragraph{Compare workflow time with manual tools}
 \begin{enumerate}
-    \item \textbf{ST-N06}\\
+    \item \textbf{ST-N05}\\
     Type: Dynamic, Manual comparative measurement
 
     Initial State: An SLP has learned the application and has equivalent paper
@@ -392,7 +419,7 @@ separately from clinician access.
 
 \paragraph{Restrict the child-facing experience}
 \begin{enumerate}
-    \item \textbf{ST-N07}\\
+    \item \textbf{ST-N06}\\
 
     Type: Dynamic, Mixed manual and automatic
 
@@ -419,7 +446,7 @@ separately from clinician access.
 Checks supported hardware and software environments. Check deployment, patching, and extension.
 
 \begin{enumerate}
-    \item \textbf{ST-N}\\
+    \item \textbf{ST-N07}\\
 
     Type: Dynamic performance check
 
@@ -440,7 +467,7 @@ Checks supported hardware and software environments. Check deployment, patching,
 
 \paragraph{Verify platform and browser compatibility}
 \begin{enumerate}
-    \item \textbf{ST-N09}\\
+    \item \textbf{ST-N08}\\
 
     Type: Dynamic, Manual
 
@@ -470,7 +497,7 @@ These checks address operational hazards, including data loss, and unauthorized 
 
 \paragraph{Verify operating periods and maintenance scheduling}
 \begin{enumerate}
-    \item \textbf{ST-N10}\\
+    \item \textbf{ST-N09}\\
 
     Type: Mixed Dynamic and Static
 
@@ -494,7 +521,7 @@ These checks address operational hazards, including data loss, and unauthorized 
 
 \paragraph{Protect data and secure communications}
 \begin{enumerate}
-    \item \textbf{ST-N11}\\
+    \item \textbf{ST-N10}\\
 
     Type: Static inspection and Dynamic security checks
 
@@ -525,7 +552,7 @@ These checks address operational hazards, including data loss, and unauthorized 
 Checks to ensure that the system is PHIPA compliant and open source.
 
 \begin{enumerate}
-    \item \textbf{ST-N12}\\
+    \item \textbf{ST-N11}\\
 
     Type: Static inspection and Dynamic security checks
 
