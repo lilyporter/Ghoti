@@ -55,18 +55,51 @@ November 2nd, 2026 & 1.0 & Initial Revision of VnV Plan\\
 \section{Symbols, Abbreviations, and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
+\begin{longtable}{l l}
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
 
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\
+    \midrule
+    \endhead
 
-\wss{Remove this section if it isn't needed}
+    \bottomrule
+    \endfoot
+
+    AC & Audio Capture \\
+    ACCU & Accuracy \\
+    dB & Decibel \\
+    DMR & Progress and Data Management Requirements \\
+    FR & Functional Requirement \\
+    GPL & GNU General Public License \\
+    HA & Hazard Analysis \\
+    IPA & International Phonetic Alphabet \\
+    LAL & Legal and Licensing \\
+    MAI & Maintainability \\
+    MIS & Module Interface Specification \\
+    NFR & Non-Functional Requirement \\
+    PAR & Practice Activities Requirements \\
+    PER & Performance \\
+    PHI & Personal Health Information \\
+    PHIPA & Personal Health Information Protection Act \\
+    POR & Portability \\
+    RDV & Results and Data Visualization \\
+    REL & Reliability \\
+    SA & Speech Analysis \\
+    SAP & Security and Privacy \\
+    SLP & Speech-Language Pathologist \\
+    SM & Session Management \\
+    SRS & Software Requirements Specification \\
+    SSD/SSDs & Speech Sound Disorder(s) \\
+    ST & System Test \\
+    USA & Usability \\
+    UI & User Interface \\
+    UX & User Experience \\
+    VnV & Verification and Validation \\
+\end{longtable}
 
 \newpage
 
@@ -1406,6 +1439,7 @@ In general, generative AI was used to help with LaTeX formatting and writing ass
 4 & (4) System Tests & Used the AI for ideation and brainstorming of system tests given the SRS requirements. This was done to cover a broad scope of testing in addition to the manually brainstormed tests. All generated tests were meticulously edited to match all characteristics desired of PronouncedFish. \\
 5 & (2) General Information & Used for language assistance and writing refinement. This helped to improve the clarity and coherence of the document. \\
 6 & (2) General Information & Used to add requirement references from the SRS. Task was quick to do for the LLM and saved significant time in the writing process. \\
+7 & (1) Symbols, Abbreviations, and Acronyms & Used to extract all acronyms from the document and put them into a LaTeX table. All acronyms were then reviewed and edited for accuracy. \\
 \bottomrule
 \end{tabularx}
 \end{table}
