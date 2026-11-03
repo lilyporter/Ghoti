@@ -21,7 +21,7 @@ for clarification where we were unsure. }
 \textbf{Many of the requirements were inspired by conversations with our supervisors. Their input was really valuable in refining 
 our scope and identifying what would actually be useful to an SLP during a session.}
   \item Which of the courses you have taken, or are currently taking, will help
-  your team to be successful with your capstone project.
+  your team to be successful with your capstone project. \\
 \textbf{Our Human Computer Interfaces course will help us design an interface that supports the SLP's workflow and that is usable 
 for young children. Our Requirements Engineering course has helped us write clear requirements and will continue to help us trace 
 them through the project. Our Software Architecture course will help us with the structure of the system and design decisions.}
@@ -31,14 +31,14 @@ them through the project. Our Software Architecture course will help us with the
   application, or software engineering knowledge, mechatronics knowledge or
   computer science knowledge.  Skills may be related to technology, or writing,
   or presentation, or team management, etc.  You should look to identify at
-  least one item for each team member.
+  least one item for each team member. \\
 \textbf{The team will need to acquire the following knowledge and skills:\\ Phonetics and child speech challenges, speech 
 analysis models, evaluaiton of speech analysis accuracy, healthcare privacy and secure data handling, and audio capture. 
 The team will split these 5 skills areas amongst each other.}
   \item For each of the knowledge areas and skills identified in the previous
   question, what are at least two approaches to acquiring the knowledge or
   mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
+  member pursue, and why did they make this choice? \\
 \textbf{For phonetics and child speech challenges, we will ask our supervisors for details on the international pheonetic alphabet 
 and research introductory phoentics information. For speech analysis models, we will work with existing models and documentation to
 build our knowledge and research other projects that have been done on speech analysis. For evaluation of speech analysis accuracy, 
