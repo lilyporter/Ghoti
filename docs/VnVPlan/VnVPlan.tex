@@ -3,6 +3,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{longtable}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -36,19 +37,6 @@ Date 2 & 1.1 & Notes\\
 \end{tabularx}
 
 ~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
-
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
 
 \newpage
 
@@ -232,9 +220,6 @@ the contents of the subsections.}
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
-
 The subsections below outline all necessary system tests associated with the functional 
 requirements of PronouncedFish.
 
@@ -265,7 +250,7 @@ Initial State: A patient session is active; microphone is configured; no speech 
 					
 Input: Two different single word recordings/attempts.
 					
-Output: Each attempt has it's own audio and corresponding analysis. Audio is used only for its own attempt.
+Output: Each attempt has its own audio and corresponding analysis. Audio is used only for its own attempt.
 
 Test Case Derivation: Audio is analyzed based only on the corresponding attempt as specified in \textbf{FR-AC2}.
 
@@ -287,7 +272,7 @@ Test Case Derivation: Unclean audio is correctly flagged, which can be signaled 
 How test will be performed: Record or submit audio that is noisy, clipped, or too short/long through the session UI, and confirm each is 
 flagged to the SLP and not analyzed. Then record a clean attempt to confirm it is accepted.
 
-\item{ST-F05 Recording retry\\}
+\item{ST-F04 Recording retry\\}
 
 Control: Manual
 
@@ -309,7 +294,7 @@ Retry the attempt with clean audio and confirm the retry succeeds.
 
 \begin{enumerate}
 
-\item{ST-F04 Configure a session\\}
+\item{ST-F05 Configure a session\\}
 
 Control: Manual
 
@@ -328,13 +313,13 @@ How test will be performed: Use the system UI to select a patient, target phonem
 invalid phoneme and confirm it is not selectable or is rejected. Inspect the created session record to verify the stored patient, 
 phonemes, and items.
 
-\item{ST-F05 Attempt and session controls\\}
+\item{ST-F06 Attempt and session controls\\}
 
 Control: Manual
 
 Initial State: A patient session is active.
 
-Input: Attempts are started, repeated, skiped, and ended; the session is ended.
+Input: Attempts are started, repeated, skipped, and ended; the session is ended.
 
 Output: Start begins an attempt; repeat repeats the current attempt; skip advances without recording a valid attempt; end attempt closes 
 the attempt; end session closes the session and prevents further attempts.
@@ -345,13 +330,13 @@ session.
 How test will be performed: Execute each control in order through the session UI. After each action, inspect the UI state and backend 
 attempt/session status to confirm the expected state change.
 
-\item{ST-F06 Record support level per attempt\\}
+\item{ST-F07 Record support level per attempt\\}
 
 Control: Manual
 
 Initial State: A patient session is active with three attempts recorded.
 
-Input: The the support level for each attempt is recorded as independent, semantic cue, and/or repetition.
+Input: The support level for each attempt is recorded as independent, semantic cue, and/or repetition.
 
 Output: Each attempt stores its selected support level and associates it with the correct attempt.
 
@@ -361,7 +346,7 @@ or after repetition.
 How test will be performed: Set the support level for each attempt through the UI. Query the attempt records and verify each stored 
 support level matches the attempt it was entered for.
 
-\item{ST-F07 SLP override of classification\\}
+\item{ST-F08 SLP override of classification\\}
 
 Control: Manual
 
@@ -377,7 +362,7 @@ The system is meant to be assistive, not diagnostic.
 How test will be performed: Use the override control in the UI. Inspect the stored attempt and the result view to confirm the SLP 
 override is applied and the original system classification is still recorded.
 
-\item{ST-F08 Two-factor authentication and password recovery\\}
+\item{ST-F09 Two-factor authentication and password recovery\\}
 
 Control: Manual
 
@@ -394,7 +379,7 @@ Test Case Derivation: \textbf{FR-HA6} requires the system to have two-factor aut
 How test will be performed: Attempt login without the second factor and confirm denial. Complete two-factor authentication and 
 confirm access. Run the password recovery flow with the test account and confirm the password reset completes.
 
-\item{ST-F09 Patient consent code before recording\\}
+\item{ST-F10 Patient consent code before recording\\}
 
 Control: Manual
 
@@ -412,13 +397,13 @@ SLP interface before authorizing any audio recordings.
 How test will be performed: Use a mock trusted device to receive the code. Attempt recording without the code and confirm it is blocked. 
 Enter the code and confirm recording is allowed. Reuse the same code and confirm it is rejected.
 
-\end{enumerate}.	
+\end{enumerate}
 
 \subsubsection{Speech Analysis}
 
 \begin{enumerate}
 
-\item{ST-F10 Identify listed substitution with position\\}
+\item{ST-F11 Identify listed substitution with position\\}
 
 Control: Automatic
 
@@ -436,7 +421,7 @@ phoneme, produced phoneme, and word position.
 How test will be performed: Inject the audio through the microphone. Inspect the result and UI to verify the expected phoneme, 
 produced phoneme, and word position fields.
 
-\item{ST-F11 Acceptable variant is not a substitution\\}
+\item{ST-F12 Acceptable variant is not a substitution\\}
 
 Control: Automatic
 
@@ -453,7 +438,7 @@ variant defined for the target item.
 How test will be performed: Configure the acceptable variant in the test data. Inject the matching audio and inspect the result to 
 confirm no substitution is flagged.
 
-\item{ST-F12 Confidence reporting and unclassifiable result\\}
+\item{ST-F13 Confidence reporting and unclassifiable result\\}
 
 Control: Automatic
 
@@ -476,7 +461,7 @@ verify the threshold behavior.
 
 \begin{enumerate}
 
-\item{ST-F13 Expected vs recognized phonemes, errors, position, and IPA\\}
+\item{ST-F14 Expected vs recognized phonemes, errors, position, and IPA\\}
 
 Control: Manual
 
@@ -494,7 +479,7 @@ position. \textbf{FR-RDV9} requires phonemes to be presented as IPA symbols.
 How test will be performed: Open the result view and compare the displayed expected and recognized sequences. Verify the substitution 
 label, the position visualization, and the IPA rendering.
 
-\item{ST-F14 Session summary, heat map, and live update\\}
+\item{ST-F15 Session summary, heat map, and live update\\}
 
 Control: Manual
 
@@ -512,7 +497,7 @@ visualizations to update as the session is completed.
 How test will be performed: Perform attempts through the UI. Capture the visualization before and after the final attempt and 
 verify the counts, the heat-map presence, and the update behavior.
 
-\item{ST-F15 Assistive disclaimer and non-discouraging error display\\}
+\item{ST-F16 Assistive disclaimer and non-discouraging error display\\}
 
 Control: Manual
 
@@ -536,7 +521,7 @@ review of the error wording and visuals to confirm they are not discouraging.
 
 \begin{enumerate}
 
-\item{ST-F16 Patient record, session record, and patient association\\}
+\item{ST-F17 Patient record, session record, and patient association\\}
 
 Control: Manual
 
@@ -554,7 +539,7 @@ Test Case Derivation: \textbf{FR-DMR1} requires a record of identifying informat
 How test will be performed: Create both patients and run a session for one. Inspect the database and export to verify all required 
 session fields are present and no data from the other patient is linked.
 
-\item{ST-F17 Support level, correction, override, and cue/repetition flag\\}
+\item{ST-F18 Support level, correction, override, and cue/repetition flag\\}
 
 Control: Manual
 
@@ -574,7 +559,7 @@ correct practiced item required additional cues or repetition.
 How test will be performed: Perform each SLP action through the UI and query the attempt records to verify the stored support level, 
 correction, override, and cue/repetition flag.
 
-\item{ST-F18 Audit log creation, retrieval, and copying\\}
+\item{ST-F19 Audit log creation, retrieval, and copying\\}
 
 Control: Manual
 
@@ -593,7 +578,7 @@ manipulations.
 How test will be performed: Perform each record action and inspect the audit log. Verify the required fields and timestamps. Retrieve 
 and copy the log as an authorized user.
 
-\item{ST-F19 Longitudinal performance tracking and comparison\\}
+\item{ST-F20 Longitudinal performance tracking and comparison\\}
 
 Control: Manual
 
@@ -611,7 +596,7 @@ improvement and those with persistent errors.
 How test will be performed: Seed session data for the patient. Open the progress and comparison views and verify the trends, comparison 
 outputs, and improving/persistent classifications.
 
-\item{ST-F20 Session-end backup and failure alert\\}
+\item{ST-F21 Session-end backup and failure alert\\}
 
 Control: Automatic
 
@@ -633,7 +618,7 @@ alert to confirm the failure is surfaced.
 
 \begin{enumerate}
 
-\item{ST-F21 Practice items, quantity, and standardized set\\}
+\item{ST-F22 Practice items, quantity, and standardized set\\}
 
 Control: Automatic
 
@@ -651,7 +636,7 @@ for the supported age range and drawn from a standardized set of words.
 How test will be performed: Query the catalog or API and count items per target and position. Review the metadata and source labels for 
 standardized-set and age-appropriateness.
 
-\item{ST-F22 Selection by target/position and SLP practice controls\\}
+\item{ST-F23 Selection by target/position and SLP practice controls\\}
 
 Control: Manual
 
@@ -667,7 +652,7 @@ allows the SLP to move to the next item, repeat an item, skip an item, or end pr
 How test will be performed: Use the filter controls and verify the displayed items. Execute each practice control and verify the session 
 state.
 
-\item{ST-F23 Image-cue prompt, appropriateness, and engagement\\}
+\item{ST-F24 Image-cue prompt, appropriateness, and engagement\\}
 
 Control: Manual
 
@@ -691,7 +676,7 @@ SLP modeling and verify the engagement elements are present.
 
 \begin{enumerate}
 
-\item{ST-F24 WiFi instability alert and offline audio recording\\}
+\item{ST-F25 WiFi instability alert and offline audio recording\\}
 
 Control: Automatic
 
@@ -708,7 +693,7 @@ that records patient audio for when WiFi recovers.
 How test will be performed: Throttle or disconnect the network and observe the alert. Record audio offline and restore the network. 
 Verify the queued audio is uploaded or processed.
 
-\item{ST-F25 Online-to-offline transfer cannot be blocked\\}
+\item{ST-F26 Online-to-offline transfer cannot be blocked\\}
 
 Control: Automatic
 
@@ -924,7 +909,7 @@ Checks supported hardware and software environments. Check deployment, patching,
     functional defects in every tested combination (NFR-POR1, NFR-POR2,
     NFR-POR3; FR-RDV9).
 
-    How test will be performed: Repeat a compact ST-F01/F03/F08/F09/F11
+    How test will be performed: Repeat a compact ST-F01/F03/F09/F10/F12
     workflow in each matrix entry; inspect orientation and touch controls on
     tablets; test microphone functionality. Add any other claimed supported combination to the matrix before
     declaring support. Basis: The SRS lists four operating systems, four
@@ -988,9 +973,9 @@ These checks address operational hazards, including data loss, and unauthorized 
     plan.
 \end{enumerate}
 
-\subsection{Legal and Licensing}
+\subsubsection{Legal and Licensing}
 
-Checks to ensure that the system is PHIPA compliant and open source.
+These checks assess the system against the approved PHIPA checklist and verify the project's open-source licensing requirements.
 
 \begin{enumerate}
     \item \textbf{ST-N11}\\
@@ -1011,53 +996,83 @@ Checks to ensure that the system is PHIPA compliant and open source.
 
     How test will be performed: The Development Lead and an independent
     reviewer compare configuration, storage locations and access logs against
-    the checklist, and run a dependency license scan. Record findings; review
-    is blocked if the checklist is absent. Basis: NFR-LAL1 and NFR-LAL2; legal
-    sign-off is outside this plan.
+    the checklist, and run a dependency license scan and manually review flagged 
+    or unknown licenses for compatibility with the project's chosen GPL version. 
+    Record findings; review is blocked if the checklist is absent. Basis: NFR-LAL1 
+    and NFR-LAL2; legal sign-off is outside this plan.
 \end{enumerate}
-
-
-
-\subsubsection{Area of Testing1}
-		
-\paragraph{Title for Test}
-
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Area of Testing2}
-
-...
 
 \subsection{Traceability Between Test Cases and Requirements}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+The following matrix maps system test cases to the requirements
+they support. Inclusion in the matrix indicates planned test
+coverage, not successful execution.
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.65\textwidth}@{}}
+\caption{Traceability Between System Tests and Requirements}
+\label{tab:system-test-traceability}\\
+
+\toprule
+\textbf{Test Case} & \textbf{Requirement(s)} \\
+\midrule
+\endfirsthead
+
+\multicolumn{2}{l}{\textit{Table continued}}\\
+\toprule
+\textbf{Test Case} & \textbf{Requirement(s)} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{2}{r}{\textit{Continued on next page}}\\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+ST-F01 & FR-AC1 \\
+ST-F02 & FR-AC2 \\
+ST-F03 & FR-AC3 \\
+ST-F04 & FR-HA1 \\
+ST-F05 & FR-SM1, FR-SA1 \\
+ST-F06 & FR-SM2 \\
+ST-F07 & FR-SM3 \\
+ST-F08 & FR-SM4 \\
+ST-F09 & FR-HA6 \\
+ST-F10 & FR-HA8 \\
+ST-F11 & FR-SA1 \\
+ST-F12 & FR-SA2 \\
+ST-F13 & FR-SA3, FR-HA3 \\
+ST-F14 & FR-RDV1, FR-RDV2, FR-RDV3, FR-RDV9 \\
+ST-F15 & FR-RDV4, FR-RDV5, FR-RDV6 \\
+ST-F16 & FR-RDV7, FR-RDV8, FR-HA7 \\
+ST-F17 & FR-DMR1, FR-DMR6, FR-DMR7 \\
+ST-F18 & FR-DMR2, FR-DMR2.1, FR-DMR3,
+         FR-DMR3.1, FR-DMR11 \\
+ST-F19 & FR-DMR4, FR-DMR5, FR-HA9 \\
+ST-F20 & FR-DMR8, FR-DMR9, FR-DMR10 \\
+ST-F21 & FR-HA2 \\
+ST-F22 & FR-PAR1, FR-PAR2, FR-PAR4 \\
+ST-F23 & FR-PAR3, FR-PAR6 \\
+ST-F24 & FR-PAR5, FR-PAR5.1, FR-PAR5.2, FR-PAR7 \\
+ST-F25 & FR-HA4 \\
+ST-F26 & FR-HA5 \\
+
+\midrule
+
+ST-N01 & NFR-ACCU1, FR-SA1, FR-SA2, FR-SA3 \\
+ST-N02 & NFR-PER1 \\
+ST-N03 & NFR-USA1 \\
+ST-N04 & NFR-USA2 \\
+ST-N05 & NFR-USA3 \\
+ST-N06 & NFR-USA4 \\
+ST-N07 & NFR-MAI3 \\
+ST-N08 & NFR-POR1, NFR-POR2, NFR-POR3, FR-RDV9 \\
+ST-N09 & NFR-REL1, NFR-REL2, NFR-REL3, NFR-REL4 \\
+ST-N10 & NFR-SAP1, NFR-SAP2, NFR-LAL1 \\
+ST-N11 & NFR-LAL1, NFR-LAL2 \\
+
+\end{longtable}
 
 \section{Unit Test Description}
 
