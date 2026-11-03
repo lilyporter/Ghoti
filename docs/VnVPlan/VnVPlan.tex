@@ -809,18 +809,54 @@ graduate attribute of Lifelong Learning.
 \input{../Reflection.text}
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
+  \item What went well while writing this deliverable? \newline
+  Many of our requirements were specific and measurable, which made it straightforward to derive test cases for both our functional and non-functional requirements.
+  Our usability requirements in particular came with concrete, verifiable targets.
+  For example, one requirement states that a speech-language pathologist (SLP) should be able to fully learn the system within an hour. Because each requirement had a clear pass/fail criterion, we could map requirements to tests with very little ambiguity or debate. This also gave us confidence that our test plan covers what the system is actually supposed to do, and it will make it easier to show traceability from requirements to tests later in the project.
   \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
+    did you resolve them? \newline
+    Writing a test plan requires at least a basic understanding of the whole system in order to anticipate which tests will be needed, and it was difficult to hold the entire system in our heads at once.
+    This made it easy to overlook interactions between components or to focus too heavily on one area. To address this, we drew diagrams of the system and walked through them together.
+    The diagrams gave us a shared view of how the pieces fit together and helped us identify specific points of contention, meaning the places where components interact or where failures are most likely, so we could direct our testing effort there.
   \item What knowledge and skills will the team collectively need to acquire to
   successfully complete the verification and validation of your project?
   Examples of possible knowledge and skills include dynamic testing knowledge,
   static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
+  identify at least one item for each team member. \newline
+  To successfully complete verification and validation, our team will need to learn \textbf{pytest}, \textbf{usability testing methods}, and \textbf{CI/CD automation}.
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{pytest} will be our main tool for automating functional tests, so we will need to learn how to structure test suites, write clear test cases, and use features such as fixtures and parametrization.
+    \item \textbf{Usability testing methods} are needed to validate requirements that depend on real users, such as the SLP learning the system within an hour. We will need to understand how to design test sessions, define tasks, and collect meaningful results.
+    \item \textbf{CI/CD automation} will let our tests run automatically on every change. We already have a CI/CD pipeline, but we will need to expand it. To do that, we first need to understand how the current pipeline works, including its stages, configuration, and triggers, so that we can extend it to run our tests reliably without breaking existing behaviour.
+\end{itemize}
   \item For each of the knowledge areas and skills identified in the previous
   question, what are at least two approaches to acquiring the knowledge or
   mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
+  member pursue, and why did they make this choice? \newline
+  To successfully complete verification and validation, our team will need to learn \textbf{pytest}, \textbf{usability testing methods}, and \textbf{CI/CD automation}.
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{pytest} will be our main tool for automating functional tests, so we will need to learn how to structure test suites, write clear test cases, and use features such as fixtures and parametrization.
+    \item \textbf{Usability testing methods} are needed to validate requirements that depend on real users, such as the SLP learning the system within an hour.
+    We will need to understand how to design test sessions, define tasks, and collect meaningful results.
+    \item \textbf{CI/CD automation} will let our tests run automatically on every change. We already have a CI/CD pipeline, but we will need to expand it.
+    To do that, we first need to understand how the current pipeline works, including its stages, configuration, and triggers, so that we can extend it to run our tests reliably without breaking existing behaviour.
+\end{itemize}
 \end{enumerate}
 
 \end{document}
+
+
+2. What pain points did you experience during this deliverable, and how did you resolve them?
+
+Writing a test plan requires at least a basic understanding of the whole system in order to anticipate which tests will be needed, and it was difficult to hold the entire system in our heads at once. To address this, we drew diagrams of the system, which helped us identify specific points of contention and areas where testing would need the most attention.
+3. What knowledge and skills will the team collectively need?
+
+To successfully complete verification and validation, our team will need to learn pytest, usability testing methods, and CI/CD automation. For CI/CD in particular, we will need to expand our current pipeline and first develop a solid understanding of how it works, so that we can extend it to run our tests automatically and reliably.
+
+4. Approaches to acquiring each skill
+
+pytest: We can find examples online of well-structured pytest suites and use them as a model for writing our own tests, following established conventions and best practices.
+CI/CD automation: We can write documentation for our CI/CD pipeline as we learn it. Documenting how each stage works will deepen our understanding and give the whole team a shared reference.
+Usability testing methods: We can review lecture material from our HCI course, which covers the methods we will need to validate requirements such as the SLP learning the system within an hour.
