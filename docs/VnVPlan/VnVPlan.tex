@@ -253,25 +253,49 @@ complementary tool.
 
 \subsection{Verification and Validation Plan Verification}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+The Validation and Verification plan will be verified by a mixture of formal 
+and informal methods. For the SRS VnV plan, the team members will verify that 
+each requirement from the SRS has a traceable verification or validation 
+method assigned to it. All software classes must have a corresponding test 
+suite for unit, integration, system, and regression testing as well. To ensure 
+that this test suite is complete, it must achieve complete test coverage 
+(see 3.6 for a definition of complete), and successfully report failures upon 
+mutation testing. Mutation testing will be conducted by the assigned tester 
+from 3.1. Clear acceptance criteria and metrics for non-functional 
+requirements must be present, and approved by the supervisors. Once this is 
+all done, the peer review team will verify the VnV plan using a checklist 
+outlining the noted elements in detail.
 
 \subsection{Implementation Verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+The implementation will be verified by using tests of varying granularity. At 
+the lowest level, unit tests shall be introduced to test each component in 
+isolation. These tests must cover all branches of execution to make sure the 
+unit is fully covered by using mocks and stubs to abstract out dependencies 
+on other classes. Moving up one level, there must be integration tests to 
+connect each element of the code to make sure they work with each other 
+correctly. For example, if some class is written to take measurements in the 
+imperial system and another in the metric system, then individually their 
+expected outputs will be correct. However, when working with each other, the 
+components will fail. At the highest level, there should be system tests to 
+test the main modules as a whole. The assigned tester will be responsible for 
+writing these tests for their corresponding developer from 3.1. 
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+Beyond the code level, the implementation must also match what is desired by 
+the stakeholders. This overlaps with design verification, but will be done by 
+demonstrating the system to the supervisors and letting them play around with 
+it. This will help them catch any usability mistakes or quality of life 
+enhancements that they expected, but were not reflected by the implementation. 
+Static analysis tools will also be useful to ensure all coding standards and 
+conventions are met. Ruff and Prettier will be used to lint the corresponding 
+Python / JavaScript code. The team will also perform code reviews during the 
+integration stages. This lets the developers of each module iron out any 
+inconsistencies between their code and to ensure it is of an acceptable 
+standard, without making it too frequent. 
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+All code based tests will be run with Github continuous integration to ensure 
+that no component interactions are broken when pushing new code to the main 
+branch.
 
 \subsection{Automated Testing and Verification Tools}
 
