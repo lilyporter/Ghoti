@@ -288,26 +288,294 @@ How test will be performed:
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+\subsubsection{Accuracy and responsiveness}
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
+Use a consistent evaluation set so measurements can be compared across
+model changes, as required by the Development Plan.
 
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
+\paragraph{Measure phoneme detection accuracy}
+\begin{enumerate}
+    \item \textbf{ST-N01}\\
 
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
+    Type: Dynamic, Automatic
 
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
+    Initial State: A set of labelled children's speech clips from TalkBank
+    (e.g.\ PhonBank), with reference phoneme transcriptions, is loaded.
+    Clips used for tuning are excluded.
+
+    Input/Condition: Run every clip through the recognizer and compare the
+    output phonemes against the labelled reference phonemes.
+
+    Output/Result: Phoneme identification accuracy is at least 87\%
+    (NFR-ACCU1; FR-SA1, FR-SA2, FR-SA3). Report accuracy overall and per
+    target phoneme.
+
+    How test will be performed: Align recognized and reference phonemes for
+    each clip. Accuracy is the number of correctly identified phonemes divided
+    by the total number of reference phonemes. Rerun the same clip set after
+    each model change.
+\end{enumerate}
+
+\paragraph{Measure processing time from audio capture to phoneme estimation}
+\begin{enumerate}
+    \item \textbf{ST-N02}\\
+
+    Type: Dynamic, Automatic measurement
+
+    Initial State: The device and software are
+    configured to record speech and process it.
+
+    Input/Condition: Input audio file for a particular word.
+
+    Output/Result: For each case, phonemic estimation results are
+    visible in less than 10 seconds (NFR-PER1). Record duration for each processing completion and categorize by the specific phrase. Report all observations plus processing time divided by audio
+    duration, median, and maximum.
+
+    How test will be performed: Measure from completed audio
+    capture/submission to rendered result, including transfer and rendering,
+    with at least 30 runs per representative condition as a planned sampling
+    choice. Log hardware, network, clip duration and model size. Resolve
+    whether capture time belongs in the requirement's timing boundary before
+    acceptance. Basis: NFR-PER1 sets a strict less than 10 seconds criterion;
+    Development Plan Section~10.5 adds real-time factor and end to end
+    latency.
+\end{enumerate}
+
+\subsubsection{Usability and patient protection}
+
+Use SLP task observations for navigation and efficiency. Assess the child-facing boundary
+separately from clinician access.
+
+\paragraph{Learn the workflow within one hour}
+\begin{enumerate}
+    \item \textbf{ST-N03}\\
+
+    Type: Dynamic, Manual
+
+    Initial State: An SLP unfamiliar with the application has standard
+    onboarding material and synthetic data.
+
+    Input/Condition: Within a one hour session, ask the SLP to configure
+    practice, record audio and analyze it, override a result, inspect
+    charts and observe patient history.
+
+    Output/Result: The SLP completes the core navigation tasks independently
+    within one hour of use (NFR-USA1). Record task times, assistance, failures
+    and comments.
+
+    How test will be performed: The UI/UX Lead observes without guiding the
+    final task run. They record mistakes, time to complete each task, and any questions or comments.
+    The SLP is asked to provide feedback on the experience.
+\end{enumerate}
+
+\begin{enumerate}
+    \item \textbf{ST-N04}\\
+
+    Type: Dynamic usability and recovery checks
+
+    Initial State: A test SLP account exists with synthetic critical data
+    (for example, patient records and session recordings).
+
+    Input/Condition: As the SLP, attempt to delete each type of critical data
+    item. Where a confirmation prompt appears, test both cancelling and
+    confirming. Where deletion is allowed without a prompt, attempt recovery
+    at several points within 72 hours and again after 72 hours have elapsed.
+
+    Output/Result: No critical data item is permanently deleted without
+    either a confirmation step or a recovery option (NFR-USA2). Cancelling a
+    confirmation leaves the data unchanged. Deleted data is fully restored
+    when recovery is requested within 72 hours, with contents identical to
+    the original.
+
+    How test will be performed: The Development Lead and an independent
+    reviewer walk through each data type, automated script compares restored contents
+    against the original synthetic data, and check the system clock or
+    retention settings to verify the 72-hour window. Record any data type
+    that can be lost without a safeguard; review is blocked if the critical
+    data list is absent. Basis: NFR-USA2.
+\end{enumerate}
+
+\paragraph{Compare workflow time with manual tools}
+\begin{enumerate}
+    \item \textbf{ST-N05}\\
+    Type: Dynamic, Manual comparative measurement
+
+    Initial State: An SLP has learned the application and has equivalent paper
+    or spreadsheet tools.
+
+    Input/Condition: Complete matched session and after-session documentation
+    tasks with identical attempts using software and manual tools.
+
+    Output/Result: Total software task time is lower than manual task time,
+    with equivalent completed records (NFR-USA3). Report paired times,
+    corrections and assistance; a faster incomplete record does not pass.
+
+    How test will be performed: The UI/UX Lead checks
+    where multiple participants are available and records session and
+    after-session times separately and together. Report sample size and
+    learning effects. Basis: NFR-USA3 requires less time than equivalent manual
+    tools, including work outside the session.
+\end{enumerate}
+
+\paragraph{Restrict the child-facing experience}
+\begin{enumerate}
+    \item \textbf{ST-N06}\\
+
+    Type: Dynamic, Mixed manual and automatic
+
+    Initial State: Child practice mode is active; clinician functions require
+    the configured access boundary.
+
+    Input/Condition: Try visible controls, back navigation, direct clinician
+    URLs and direct API requests from the child context.
+
+    Output/Result: The child can use the gamified experience but cannot access
+    patient records, analytics administration or clinician controls beyond
+    that experience (NFR-USA4). Direct navigation and API calls do not bypass
+    restrictions.
+
+    How test will be performed: The Systems Architect/Development Lead tests
+    each route with the UI/UX Lead and captures denied requests and
+    screenshots. Verify returning to clinician mode requires the configured
+    authorization. Basis: NFR-USA4 limits the child's access to the practice
+    experience.
+\end{enumerate}
+
+\subsubsection{Maintainability and portability}
+
+Checks supported hardware and software environments. Check deployment, patching, and extension.
+
+\begin{enumerate}
+    \item \textbf{ST-N07}\\
+
+    Type: Dynamic performance check
+
+    Initial State: A clean build environment and a prepared patch exist, and
+    the approved build and deployment pipeline is available.
+
+    Input/Condition: Apply a representative patch and run the pipeline from
+    build start to a completed deployment, timing each stage.
+
+    Output/Result: Building and deploying the patch completes successfully in
+    less than 30 minutes (NFR-MAI3).
+
+    How test will be performed: The Development Lead and an independent
+    reviewer time the pipeline run from pipeline logs and repeat it three
+    times. Record durations and any failures; review is blocked if the
+    pipeline is unavailable. Basis: NFR-MAI3.
+\end{enumerate}
+
+\paragraph{Verify platform and browser compatibility}
+\begin{enumerate}
+    \item \textbf{ST-N08}\\
+
+    Type: Dynamic, Manual
+
+    Initial State: A versioned compatibility matrix is recorded with physical
+    devices for microphone checks.
+
+    Input/Condition: Exercise Windows with Chrome, Firefox and Edge; macOS with
+    Safari, Chrome and Firefox; iPad/iOS with Safari; and Android tablet with
+    Chrome. Include desktop, laptop and tablet form factors.
+
+    Output/Result: Setup, microphone permission and capture, analysis, SLP
+    controls, IPA, charts and history operate without blocking layout or
+    functional defects in every tested combination (NFR-POR1, NFR-POR2,
+    NFR-POR3; FR-RDV9).
+
+    How test will be performed: Repeat a compact ST-F01/F03/F08/F09/F11
+    workflow in each matrix entry; inspect orientation and touch controls on
+    tablets; test microphone functionality. Add any other claimed supported combination to the matrix before
+    declaring support. Basis: The SRS lists four operating systems, four
+    browsers and three device types; the matrix is a representative test plan,
+    not proof of every OS-browser combination.
+\end{enumerate}
+
+\subsubsection{Reliability, security and release review}
+
+These checks address operational hazards, including data loss, and unauthorized access.
+
+\paragraph{Verify operating periods and maintenance scheduling}
+\begin{enumerate}
+    \item \textbf{ST-N09}\\
+
+    Type: Mixed Dynamic and Static
+
+    Initial State: Deployment operating timezone, full and minimal service
+    definitions, load and maintenance policy are approved.
+
+    Input/Condition: Exercise login, storage, retrieval and analysis around
+    06:00 and 00:00; run an accelerated schedule check and inspect the
+    maintenance calendar.
+
+    Output/Result: The approved full service level operates from 06:00 to
+    00:00 and the approved minimum remains available from 00:00 to 06:00.
+    Routine maintenance is scheduled in minimal hours at the approved
+    interpretation of the one to two month interval (NFR-REL2, NFR-REL3,
+    NFR-REL4).
+    Check server latency and ensure it is under 10 seconds for this period (NFR-REL1).
+
+    How test will be performed: Use a controlled clock and scheduler
+    inspection, then planned observation under the approved workload.
+\end{enumerate}
+
+\paragraph{Protect data and secure communications}
+\begin{enumerate}
+    \item \textbf{ST-N10}\\
+
+    Type: Static inspection and Dynamic security checks
+
+    Initial State: The approved PHI inventory and encryption baseline identify
+    every component and storage location.
+
+    Input/Condition: Create and transfer synthetic PHI; inspect browser-to-API,
+    service-to-service and database traffic, persistent stores, logs,
+    temporary files and backups.
+
+    Output/Result: PHI is encrypted from collection through its approved
+    storage lifecycle; intercomponent traffic uses the approved secure
+    protocol (NFR-SAP1, NFR-SAP2; NFR-LAL1). No unintended plaintext PHI
+    appears in inspected storage or traffic. Approved key access and
+    certificate validation controls are active.
+
+    How test will be performed: The Systems Architect/Development Lead and an
+    independent team reviewer inspect configuration, packet traces and
+    synthetic storage samples. Test denial of an untrusted certificate and an
+    insecure endpoint. Record coverage and gaps; review is blocked if the
+    baseline is absent. Basis: NFR-SAP1 and NFR-SAP2 require encryption; exact
+    cryptographic acceptance comes from an approved security baseline, not this
+    plan.
+\end{enumerate}
+
+\subsection{Legal and Licensing}
+
+Checks to ensure that the system is PHIPA compliant and open source.
+
+\begin{enumerate}
+    \item \textbf{ST-N11}\\
+
+    Type: Static inspection and Dynamic security checks
+
+    Initial State: The approved PHIPA checklist and deployment region list
+    exist.
+
+    Input/Condition: Process synthetic patient records through storage,
+    transfer and access paths; attempt access with unauthorized roles; review
+    the repository license and dependency manifest.
+
+    Output/Result: Synthetic PHI is stored, transferred and accessed only as
+    the PHIPA checklist permits, and stays in approved residency locations
+    (NFR-LAL1). Unauthorized access is denied. The repository includes the
+    GNU GPL text and all dependencies are GPL-compatible (NFR-LAL2).
+
+    How test will be performed: The Development Lead and an independent
+    reviewer compare configuration, storage locations and access logs against
+    the checklist, and run a dependency license scan. Record findings; review
+    is blocked if the checklist is absent. Basis: NFR-LAL1 and NFR-LAL2; legal
+    sign-off is outside this plan.
+\end{enumerate}
+
+
 
 \subsubsection{Area of Testing1}
 		
