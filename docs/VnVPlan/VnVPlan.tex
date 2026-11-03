@@ -322,23 +322,27 @@ verification phase.
 
 \subsection{Software Validation}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+To validate that the product is being built right, it must first ensure that 
+it is built for the correct user group. While the system architecture will 
+support adding multiple SLP interfaces, the main focus is on child SLPs. 
+Therefore, all validation will be done using openly available child audio data 
+from TalkBank. This is a well reputable platform used by researchers to share 
+data and has high quality annotated speech datasets. Their privacy 
+requirements will be strictly followed. Some of the data may be used to train 
+a speech recognition model, but some will be explicitly separated off for 
+validation and test phases. 
 
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
+Next, it is important to ensure that SLPs actually want the visualizations 
+and features provided. This can be validated by going over a mixed task based 
+inspection of the SRS and corresponding implementation demonstration with the 
+supervisors. For example, if visualization A is described in the SRS, the 
+corresponding implementation will be shown and approved or rejected by the 
+supervisor. 
 
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
+Every small matter mentioned within this section will not be explicitly 
+checked with the supervisors. There is limited time with them, so the 
+mentioned strategies will be used when appropriate and for key checkpoints. 
 
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
-
-\wss{This section might reference back to the SRS verification section.}
 
 \section{System Tests}
 
