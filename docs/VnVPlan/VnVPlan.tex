@@ -474,7 +474,65 @@ verify the threshold behavior.
 
 \end{enumerate}
 
+\subsubsection{Results and Data Visualization}
 
+\begin{enumerate}
+
+\item{ST-F14 Expected vs recognized phonemes, errors, position, and IPA\\}
+
+Control: Manual
+
+Initial State: An attempt with an identified error at the beginning of the word is available.
+
+Input: Open the attempt result view/visualization.
+
+Output: Expected phonemes and recognized phonemes are shown side by side; the word position visualization indicates "beginning"; phonemes 
+are displayed as IPA symbols.
+
+Test Case Derivation: \textbf{FR-RDV1} requires expected and recognized phonemes to be presented. \textbf{FR-RDV2} requires substitution 
+errors to indicate which expected phoneme was replaced by which produced phoneme. \textbf{FR-RDV3} requires a visualization of word 
+position. \textbf{FR-RDV9} requires phonemes to be presented as IPA symbols.
+
+How test will be performed: Open the result view and compare the displayed expected and recognized sequences. Verify the substitution 
+label, the position visualization, and the IPA rendering.
+
+\item{ST-F15 Session summary, heat map, and live update\\}
+
+Control: Manual
+
+Initial State: A patient session is active with several correct/incorrect and independent/cued attempts; heat-map data is available.
+
+Input: Complete attempts; open the session visualization; complete one more attempt.
+
+Output: The session visualization reports correct/incorrect counts and independent/cued counts; the heat map indicates the closeness of 
+the produced phoneme to the expected phoneme; the visualization updates as the session progresses and completes.
+
+Test Case Derivation: \textbf{FR-RDV4} requires a session visualization of correct/incorrect and independent/cued attempts. 
+\textbf{FR-RDV5} requires a heat-map visualization of produced versus expected phoneme closeness. \textbf{FR-RDV6} requires 
+visualizations to update as the session is completed.
+
+How test will be performed: Perform attempts through the UI. Capture the visualization before and after the final attempt and 
+verify the counts, the heat-map presence, and the update behavior.
+
+\item{ST-F16 Assistive disclaimer and non-discouraging error display\\}
+
+Control: Manual
+
+Initial State: Session visualizations are available.
+
+Input: View all deduction and analytics screens; inspect the disclaimer and the error presentation.
+
+Output: All visualizations are identified as assistive and not diagnostic; a disclaimer or acknowledgement precedes deductions and 
+analytics; error information is not presented in a way that discourages the patient.
+
+Test Case Derivation: \textbf{FR-RDV7} requires all visualizations to be identified as assistive and not diagnostic. \textbf{FR-RDV8} 
+requires the system not to present error information in a way that discourages the patient. \textbf{FR-HA7} requires all deductions and 
+analytics to be prefaced with an acknowledgement that they may be incorrect and may only be accepted under the discretion of an SLP.
+
+How test will be performed: Review each visualization screen and verify the disclaimer text appears before results. Conduct an SLP 
+review of the error wording and visuals to confirm they are not discouraging.
+
+\end{enumerate}
 ...
 
 \subsection{Tests for Nonfunctional Requirements}
