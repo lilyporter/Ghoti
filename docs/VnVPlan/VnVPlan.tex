@@ -256,8 +256,8 @@ Output: One audio recording is captured and linked to the session, patient and o
 
 Test Case Derivation: \textbf{FR-AC1} specifies the capture of a patient's spoken response for each attempt.
 					
-How test will be performed: Record an attempt through the session UI, then open the attempt's saved record and play the audio back. Confirm the recording is linked to the 
-correct session, patient, and attempt only.
+How test will be performed: Record an attempt through the session UI, then open the attempt's saved record and play the audio back. 
+Confirm the recording is linked to the correct session, patient, and attempt only.
 					
 \item{ST-F02 Isolate attempts\\}
 
@@ -271,8 +271,8 @@ Output: Each attempt has it's own audio and corresponding analysis. Audio is use
 
 Test Case Derivation: Audio is analyzed based only on the corresponding attempt as specified in \textbf{FR-AC2}.
 
-How test will be performed: Record two different attempts through the session UI, then open each attempt's saved record. Confirm each attempt has its own audio and its own 
-analysis, and that neither attempt's audio appears in the other's analysis.
+How test will be performed: Record two different attempts through the session UI, then open each attempt's saved record. Confirm each 
+attempt has its own audio and its own analysis, and that neither attempt's audio appears in the other's analysis.
 
 \item{ST-F03 Reject unusable recordings\\}
 
@@ -282,16 +282,198 @@ Initial State: A patient session is active; thresholds exist for clean audio for
 					
 Input: An unclean audio recording/attempt. A clean audio recording/attempt.
 					
-Output: Noisy, clips or duration failures in attempts are correctly flagged. 
+Output: Noisy, clips or duration failures in attempts are correctly flagged and rejected.
 
 Test Case Derivation: Unclean audio is correctly flagged, which can be signaled to the SLP, as specified in \textbf{FR-AC3}.
 
-How test will be performed: Record or submit audio that is noisy, clipped, or too short/long through the session UI, and confirm each is flagged to the SLP and not analyzed. 
-Then record a clean attempt to confirm it is accepted.
+How test will be performed: Record or submit audio that is noisy, clipped, or too short/long through the session UI, and confirm each is 
+flagged to the SLP and not analyzed. Then record a clean attempt to confirm it is accepted.
+
+\item{ST-F05 Recording retry\\}
+
+Control: Manual
+
+Initial State: A patient session is active; microphone is configured.
+
+Input: An unclean audio recording/attempt.
+
+Output: System prompts that the input is flagged as unclean and rejected; the system prompts a retry option.
+
+Test Case Derivation: \textbf{FR-HA1} requires the system to prompt the user when noisy (less than 15 dB) microphone inputs are passed 
+in, and allow them to retry that input.
+
+How test will be performed: Play the noisy sample through the microphone during an attempt. Confirm the attempt is not accepted. 
+Retry the attempt with clean audio and confirm the retry succeeds.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Session Management}
+
+\begin{enumerate}
+
+\item{ST-F04 Configure a session\\}
+
+Control: Manual
+
+Initial State: A patient session is active; microphone is configured; no speech attempts have been made.
+
+Input: Select a patient from a list, add corresponding target phonemes and items. Attempt to select a phoneme that is not on the 
+predetermined list.
+
+Output: The session definition accurately contains the selected patient, the target phonemes and items. Selectable phonemes are limited 
+to the predetermined list.
+
+Test Case Derivation: \textbf{FR-SM1} specifies that session setup requires patient selection and selection of target phonemes and items. 
+Selectable phonemes are limited to those covered by the predetermined speech-challenge list, as specified in \textbf{FR-SA1}.
+
+How test will be performed: Use the system UI to select a patient, target phoneme, and target item. Attempt to select an 
+invalid phoneme and confirm it is not selectable or is rejected. Inspect the created session record to verify the stored patient, 
+phonemes, and items.
+
+\item{ST-F05 Attempt and session controls\\}
+
+Control: Manual
+
+Initial State: A patient session is active.
+
+Input: Attempts are started, repeated, skiped, and ended; the session is ended.
+
+Output: Start begins an attempt; repeat repeats the current attempt; skip advances without recording a valid attempt; end attempt closes 
+the attempt; end session closes the session and prevents further attempts.
+
+Test Case Derivation: \textbf{FR-SM2} requires the system to allow the SLP to start, repeat, skip, and end each attempt, and to end the 
+session.
+
+How test will be performed: Execute each control in order through the session UI. After each action, inspect the UI state and backend 
+attempt/session status to confirm the expected state change.
+
+\item{ST-F06 Record support level per attempt\\}
+
+Control: Manual
+
+Initial State: A patient session is active with three attempts recorded.
+
+Input: The the support level for each attempt is recorded as independent, semantic cue, and/or repetition.
+
+Output: Each attempt stores its selected support level and associates it with the correct attempt.
+
+Test Case Derivation: \textbf{FR-SM3} requires the system to record whether the target was produced independently, after a semantic cue, 
+or after repetition.
+
+How test will be performed: Set the support level for each attempt through the UI. Query the attempt records and verify each stored 
+support level matches the attempt it was entered for.
+
+\item{ST-F07 SLP override of classification\\}
+
+Control: Manual
+
+Initial State: An attempt has been classified by the system to contain a speech error.
+
+Input: The classification is overridden to be marked as "correct" instead.
+
+Output: The attempt is stored and displayed as overridden.
+
+Test Case Derivation: \textbf{FR-SM4} requires the system to allow the SLP to override the system's classification of any attempt. 
+The system is meant to be assistive, not diagnostic.
+
+How test will be performed: Use the override control in the UI. Inspect the stored attempt and the result view to confirm the SLP 
+override is applied and the original system classification is still recorded.
+
+\item{ST-F08 Two-factor authentication and password recovery\\}
+
+Control: Manual
+
+Initial State: An SLP account exists with two-factor authentication enrolled and a recovery contact configured.
+
+Input: Log in with the correct password but without the second factor; then provide a valid second factor. Initiate the password 
+recovery flow.
+
+Output: Access is denied before the second factor is provided; access is granted after a valid second factor; the password recovery 
+flow is available and completes successfully.
+
+Test Case Derivation: \textbf{FR-HA6} requires the system to have two-factor authentication and a password recovery system in place.
+
+How test will be performed: Attempt login without the second factor and confirm denial. Complete two-factor authentication and 
+confirm access. Run the password recovery flow with the test account and confirm the password reset completes.
+
+\item{ST-F09 Patient consent code before recording\\}
+
+Control: Manual
+
+Initial State: A patient session is started; a mock trusted device is available to receive a one-time code; recording is not 
+yet authorized.
+
+Input: Attempt to authorize recording before entering the code; then enter the valid one-time code into the interface; start 
+recording; attempt to reuse the same code.
+
+Output: Recording is blocked until the valid one-time code is entered; after entry, recording is authorized; a reused code is rejected.
+
+Test Case Derivation: \textbf{FR-HA8} requires a one-time confirmation code sent to the patient's trusted device to be entered into the 
+SLP interface before authorizing any audio recordings.
+
+How test will be performed: Use a mock trusted device to receive the code. Attempt recording without the code and confirm it is blocked. 
+Enter the code and confirm recording is allowed. Reuse the same code and confirm it is rejected.
+
+\end{enumerate}.	
+
+\subsubsection{Speech Analysis}
+
+\begin{enumerate}
+
+\item{ST-F11 Identify listed substitution with position\\}
+
+Control: Automatic
+
+Initial State: A patient session is active; target item is selected; the predetermined speech-error list is available; an attempt has 
+been made.
+
+Input: Audio recording/attempt producing a speech error.
+
+Output: The system identifies the error from the predetermined list and reports the affected phoneme, the produced phoneme, and the 
+word position.
+
+Test Case Derivation: \textbf{FR-SA1} requires the system to identify speech-errors from a predetermined list and report the expected 
+phoneme, produced phoneme, and word position.
+
+How test will be performed: Inject the audio through the microphone. Inspect the result and UI to verify the expected phoneme, 
+produced phoneme, and word position fields.
+
+\item{ST-F12 Acceptable variant is not a substitution\\}
+
+Control: Automatic
+
+Initial State: A patient session is active; A test target item is configured with an acceptable phoneme variant at a given position; 
+audio matching that variant is available.
+
+Input: Audio recording/attempt whose produced phoneme matches the configured acceptable variant.
+
+Output: The system does not identify a substitution and does not report an error for that position.
+
+Test Case Derivation: \textbf{FR-SA2} requires the system not to identify a substitution when the produced phoneme matches any acceptable 
+variant defined for the target item.
+
+How test will be performed: Configure the acceptable variant in the test data. Inject the matching audio and inspect the result to 
+confirm no substitution is flagged.
+
+\item{ST-F13 Confidence reporting and unclassifiable result\\}
+
+Control: Automatic
+
+Initial State: A patient session is active; A confidence threshold is configured.
+
+Input: Analyze a high-confidence sample/recording; analyze a low-confidence sample/recording.
+
+Output: The high-confidence result reports a confidence value and is classified; the low-confidence result is classified as 
+"unclassifiable"; each phoneme deduction includes a confidence percentage.
+
+Test Case Derivation: \textbf{FR-SA3} requires a confidence value with each result and an ``unclassifiable'' classification below the 
+confidence threshold. \textbf{FR-HA3} requires the speech engine to provide a confidence percentage for each phoneme deduction.
+
+How test will be performed: Inject both samples. Inspect the result fields for per-phoneme confidence and classification status, and 
+verify the threshold behavior.
+
+\end{enumerate}
+
 
 ...
 
