@@ -299,20 +299,26 @@ branch.
 
 \subsection{Automated Testing and Verification Tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+The coding standards and linting are mentioned in the Development Plan document. 
+To recall:
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+\begin{itemize}
+  \item Python: PEP 8, enforced with Ruff for Linting
+  \item JavaScript: the Airbnb JavaScript Style Guide, enforced with Prettier
+\end{itemize}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+Unit testing and Integration testing will be done using the Pytest framework. 
+This framework is picked due to its ability to support both unit and 
+integration testing rather than one or the other. These tools will be 
+continuously enforced using Github CI/CD on every pull request. Tests are 
+expected to achieve complete coverage, along with coverage of relevant edge 
+cases and erroneous cases. This will be measured by using the Pytest-Cov 
+coverage frameworks, which provides a report of line, branch, and function 
+coverage. The goal is to achieve 90-100\% statement coverage, and 80\% branch 
+coverage in general. Critical components should achieve 100\% branch coverage. 
+Relevant cases will be verified beforehand during the implementation 
+verification phase. 
+
 
 \subsection{Software Validation}
 
