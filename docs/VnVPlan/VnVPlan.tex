@@ -45,16 +45,13 @@ November 2nd, 2026 & 1.0 & Initial Revision of VnV Plan\\
 \tableofcontents
 
 \listoftables
-\wss{Remove this section if it isn't needed}
-
-\listoffigures
-\wss{Remove this section if it isn't needed}
 
 \newpage
 
 \section{Symbols, Abbreviations, and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
+
 \begin{longtable}{l l}
     \toprule
     \textbf{Symbol} & \textbf{Description} \\
@@ -105,8 +102,14 @@ November 2nd, 2026 & 1.0 & Initial Revision of VnV Plan\\
 
 \pagenumbering{arabic}
 
+
 This document describes the Verification and Validation Plan for the 
-PronouncedFish software. Section 1 defines some acronyms used within this 
+PronouncedFish software developed by Ghoti. It describes how the team will confirm 
+that PronouncedFish meets the requirements in the SRS and is suitable for its 
+intended users, speech-language pathologists (SLPs) and the children they treat. 
+The plan covers functional correctness, phonemic identification accuracy, 
+responsiveness, usability, portability, and PHIPA compliance. 
+Section 1 defines some acronyms used within this 
 document. Section 2 introduces a summary of the project, its VnV plan, and 
 the custom documents relevant to this project. Section 3 outlines a high 
 level plan to verify the SRS, design, VnV plan and implementation. It also 
@@ -114,7 +117,7 @@ touches on some automated testing tools and ways to validate the final
 system itself. Section 4 goes in depth on the system tests used for each 
 SRS requirement, and provides a traceability matrix to describe all of these 
 relations. Section 5 covers some unit testing requirements for this project, 
-and will be updated after the MIS document. The remaining appendix sections 
+and will be updated after the MIS document is completed. The remaining appendix sections 
 touch on some symbolic parameters used, the generative AI disclosure, and 
 the reflection for this document. 
 
@@ -411,9 +414,6 @@ mentioned strategies will be used when appropriate and for key checkpoints.
 
 
 \section{System Tests}
-
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
 
 \subsection{Tests for Functional Requirements}
 
@@ -1014,8 +1014,8 @@ separately from clinician access.
     reviewer walk through each data type, automated script compares restored contents
     against the original synthetic data, and check the system clock or
     retention settings to verify the 72-hour window. Record any data type
-    that can be lost without a safeguard; review is blocked if the critical
-    data list is absent. Basis: NFR-USA2.
+    that can be lost without a safeguard; review is blocked if the
+    critical data list is absent. Basis: NFR-USA2.
 \end{enumerate}
 
 \paragraph{Compare workflow time with manual tools}
@@ -1273,129 +1273,14 @@ ST-N11 & NFR-LAL1, NFR-LAL2 \\
 
 \section{Unit Test Description}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
-
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
-
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
-
 \subsection{Unit Testing Scope}
-
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
-
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
-
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-
-\item{...\\}
-    
-\end{enumerate}
-
-\subsubsection{Module 2}
-
-...
-
 \subsection{Tests for Nonfunctional Requirements}
-
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
-
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Module ?}
-
-...
 
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all modules have been considered.}
-				
 \bibliographystyle{plainnat}
 
 \bibliography{../../refs/References}
@@ -1475,9 +1360,6 @@ LLM generated one.
 
 \section{Appendix --- Reflection}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
-
 \input{../Reflection.text}
 
 \begin{enumerate}
@@ -1503,13 +1385,10 @@ graduate attribute of Lifelong Learning.
   question, what are at least two approaches to acquiring the knowledge or
   mastering the skill?  Of the identified approaches, which will each team
   member pursue, and why did they make this choice? \newline
-  To successfully complete verification and validation, our team will need to learn \textbf{pytest}, \textbf{usability testing methods}, and \textbf{CI/CD automation}.
-
-    \item \textbf{pytest} will be our main tool for automating functional tests, so we will need to learn how to structure test suites, write clear test cases, and use features such as fixtures and parametrization.
-    \item \textbf{Usability testing methods} are needed to validate requirements that depend on real users, such as the SLP learning the system within an hour.
-    We will need to understand how to design test sessions, define tasks, and collect meaningful results.
-    \item \textbf{CI/CD automation} will let our tests run automatically on every change. We already have a CI/CD pipeline, but we will need to expand it.
-    To do that, we first need to understand how the current pipeline works, including its stages, configuration, and triggers, so that we can extend it to run our tests reliably without breaking existing behaviour.
+    \item \textbf{pytest:} We can find examples online of well-written pytest suites and use them as a reference for our own tests. Studying how others organize their tests, name them, and use fixtures will help us adopt good practices from the start rather than discovering them through trial and error.
+    \item \textbf{CI/CD automation:} We can write documentation for our CI/CD pipeline as we learn it. Documenting how each stage works forces us to understand it properly, and it leaves the whole team with a shared reference that makes future changes easier and safer.
+    \item \textbf{Usability testing methods:} We can review lecture material from our HCI course, which already covers the methods and principles we need. This lets us build on content we have seen, and apply it directly to validating our usability requirements.
+  
 \end{enumerate}
 
 \end{document}
