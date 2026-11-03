@@ -232,59 +232,500 @@ the contents of the subsections.}
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
-
 \wss{Include a blurb here to explain why the subsections below
   cover the requirements.  References to the SRS would be good here.}
 
-\subsubsection{Area of Testing1}
+The subsections below outline all necessary system tests associated with the functional 
+requirements of PronouncedFish.
 
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
-		
-\paragraph{Title for Test}
+\subsubsection{Audio capture}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{ST-F01 Capture audio\\}
 
-Control: Manual versus Automatic
+Control: Manual
 					
-Initial State: 
+Initial State: A patient session is active; microphone is configured; no speech attempts have been made.
 					
-Input: 
+Input: An attempt is recorded for a target word.
 					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
+Output: One audio recording is captured and linked to the session, patient and only the corresponding attempt. 
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Test Case Derivation: \textbf{FR-AC1} specifies the capture of a patient's spoken response for each attempt.
 					
-How test will be performed: 
+How test will be performed: Record an attempt through the session UI, then open the attempt's saved record and play the audio back. 
+Confirm the recording is linked to the correct session, patient, and attempt only.
 					
-\item{test-id2\\}
+\item{ST-F02 Isolate attempts\\}
 
-Control: Manual versus Automatic
+Control: Manual
 					
-Initial State: 
+Initial State: A patient session is active; microphone is configured; no speech attempts have been made.
 					
-Input: 
+Input: Two different single word recordings/attempts.
 					
-Output: \wss{The expected result for the given inputs}
+Output: Each attempt has it's own audio and corresponding analysis. Audio is used only for its own attempt.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Test Case Derivation: Audio is analyzed based only on the corresponding attempt as specified in \textbf{FR-AC2}.
 
-How test will be performed: 
+How test will be performed: Record two different attempts through the session UI, then open each attempt's saved record. Confirm each 
+attempt has its own audio and its own analysis, and that neither attempt's audio appears in the other's analysis.
+
+\item{ST-F03 Reject unusable recordings\\}
+
+Control: Automatic
+					
+Initial State: A patient session is active; thresholds exist for clean audio for noise, clipping, and duration.
+					
+Input: An unclean audio recording/attempt. A clean audio recording/attempt.
+					
+Output: Noisy, clips or duration failures in attempts are correctly flagged and rejected.
+
+Test Case Derivation: Unclean audio is correctly flagged, which can be signaled to the SLP, as specified in \textbf{FR-AC3}.
+
+How test will be performed: Record or submit audio that is noisy, clipped, or too short/long through the session UI, and confirm each is 
+flagged to the SLP and not analyzed. Then record a clean attempt to confirm it is accepted.
+
+\item{ST-F05 Recording retry\\}
+
+Control: Manual
+
+Initial State: A patient session is active; microphone is configured.
+
+Input: An unclean audio recording/attempt.
+
+Output: System prompts that the input is flagged as unclean and rejected; the system prompts a retry option.
+
+Test Case Derivation: \textbf{FR-HA1} requires the system to prompt the user when noisy (less than 15 dB) microphone inputs are passed 
+in, and allow them to retry that input.
+
+How test will be performed: Play the noisy sample through the microphone during an attempt. Confirm the attempt is not accepted. 
+Retry the attempt with clean audio and confirm the retry succeeds.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Session Management}
 
-...
+\begin{enumerate}
+
+\item{ST-F04 Configure a session\\}
+
+Control: Manual
+
+Initial State: A patient session is active; microphone is configured; no speech attempts have been made.
+
+Input: Select a patient from a list, add corresponding target phonemes and items. Attempt to select a phoneme that is not on the 
+predetermined list.
+
+Output: The session definition accurately contains the selected patient, the target phonemes and items. Selectable phonemes are limited 
+to the predetermined list.
+
+Test Case Derivation: \textbf{FR-SM1} specifies that session setup requires patient selection and selection of target phonemes and items. 
+Selectable phonemes are limited to those covered by the predetermined speech-challenge list, as specified in \textbf{FR-SA1}.
+
+How test will be performed: Use the system UI to select a patient, target phoneme, and target item. Attempt to select an 
+invalid phoneme and confirm it is not selectable or is rejected. Inspect the created session record to verify the stored patient, 
+phonemes, and items.
+
+\item{ST-F05 Attempt and session controls\\}
+
+Control: Manual
+
+Initial State: A patient session is active.
+
+Input: Attempts are started, repeated, skiped, and ended; the session is ended.
+
+Output: Start begins an attempt; repeat repeats the current attempt; skip advances without recording a valid attempt; end attempt closes 
+the attempt; end session closes the session and prevents further attempts.
+
+Test Case Derivation: \textbf{FR-SM2} requires the system to allow the SLP to start, repeat, skip, and end each attempt, and to end the 
+session.
+
+How test will be performed: Execute each control in order through the session UI. After each action, inspect the UI state and backend 
+attempt/session status to confirm the expected state change.
+
+\item{ST-F06 Record support level per attempt\\}
+
+Control: Manual
+
+Initial State: A patient session is active with three attempts recorded.
+
+Input: The the support level for each attempt is recorded as independent, semantic cue, and/or repetition.
+
+Output: Each attempt stores its selected support level and associates it with the correct attempt.
+
+Test Case Derivation: \textbf{FR-SM3} requires the system to record whether the target was produced independently, after a semantic cue, 
+or after repetition.
+
+How test will be performed: Set the support level for each attempt through the UI. Query the attempt records and verify each stored 
+support level matches the attempt it was entered for.
+
+\item{ST-F07 SLP override of classification\\}
+
+Control: Manual
+
+Initial State: An attempt has been classified by the system to contain a speech error.
+
+Input: The classification is overridden to be marked as "correct" instead.
+
+Output: The attempt is stored and displayed as overridden.
+
+Test Case Derivation: \textbf{FR-SM4} requires the system to allow the SLP to override the system's classification of any attempt. 
+The system is meant to be assistive, not diagnostic.
+
+How test will be performed: Use the override control in the UI. Inspect the stored attempt and the result view to confirm the SLP 
+override is applied and the original system classification is still recorded.
+
+\item{ST-F08 Two-factor authentication and password recovery\\}
+
+Control: Manual
+
+Initial State: An SLP account exists with two-factor authentication enrolled and a recovery contact configured.
+
+Input: Log in with the correct password but without the second factor; then provide a valid second factor. Initiate the password 
+recovery flow.
+
+Output: Access is denied before the second factor is provided; access is granted after a valid second factor; the password recovery 
+flow is available and completes successfully.
+
+Test Case Derivation: \textbf{FR-HA6} requires the system to have two-factor authentication and a password recovery system in place.
+
+How test will be performed: Attempt login without the second factor and confirm denial. Complete two-factor authentication and 
+confirm access. Run the password recovery flow with the test account and confirm the password reset completes.
+
+\item{ST-F09 Patient consent code before recording\\}
+
+Control: Manual
+
+Initial State: A patient session is started; a mock trusted device is available to receive a one-time code; recording is not 
+yet authorized.
+
+Input: Attempt to authorize recording before entering the code; then enter the valid one-time code into the interface; start 
+recording; attempt to reuse the same code.
+
+Output: Recording is blocked until the valid one-time code is entered; after entry, recording is authorized; a reused code is rejected.
+
+Test Case Derivation: \textbf{FR-HA8} requires a one-time confirmation code sent to the patient's trusted device to be entered into the 
+SLP interface before authorizing any audio recordings.
+
+How test will be performed: Use a mock trusted device to receive the code. Attempt recording without the code and confirm it is blocked. 
+Enter the code and confirm recording is allowed. Reuse the same code and confirm it is rejected.
+
+\end{enumerate}.	
+
+\subsubsection{Speech Analysis}
+
+\begin{enumerate}
+
+\item{ST-F10 Identify listed substitution with position\\}
+
+Control: Automatic
+
+Initial State: A patient session is active; target item is selected; the predetermined speech-error list is available; an attempt has 
+been made.
+
+Input: Audio recording/attempt producing a speech error.
+
+Output: The system identifies the error from the predetermined list and reports the affected phoneme, the produced phoneme, and the 
+word position.
+
+Test Case Derivation: \textbf{FR-SA1} requires the system to identify speech-errors from a predetermined list and report the expected 
+phoneme, produced phoneme, and word position.
+
+How test will be performed: Inject the audio through the microphone. Inspect the result and UI to verify the expected phoneme, 
+produced phoneme, and word position fields.
+
+\item{ST-F11 Acceptable variant is not a substitution\\}
+
+Control: Automatic
+
+Initial State: A patient session is active; A test target item is configured with an acceptable phoneme variant at a given position; 
+audio matching that variant is available.
+
+Input: Audio recording/attempt whose produced phoneme matches the configured acceptable variant.
+
+Output: The system does not identify a substitution and does not report an error for that position.
+
+Test Case Derivation: \textbf{FR-SA2} requires the system not to identify a substitution when the produced phoneme matches any acceptable 
+variant defined for the target item.
+
+How test will be performed: Configure the acceptable variant in the test data. Inject the matching audio and inspect the result to 
+confirm no substitution is flagged.
+
+\item{ST-F12 Confidence reporting and unclassifiable result\\}
+
+Control: Automatic
+
+Initial State: A patient session is active; A confidence threshold is configured.
+
+Input: Analyze a high-confidence sample/recording; analyze a low-confidence sample/recording.
+
+Output: The high-confidence result reports a confidence value and is classified; the low-confidence result is classified as 
+"unclassifiable"; each phoneme deduction includes a confidence percentage.
+
+Test Case Derivation: \textbf{FR-SA3} requires a confidence value with each result and an ``unclassifiable'' classification below the 
+confidence threshold. \textbf{FR-HA3} requires the speech engine to provide a confidence percentage for each phoneme deduction.
+
+How test will be performed: Inject both samples. Inspect the result fields for per-phoneme confidence and classification status, and 
+verify the threshold behavior.
+
+\end{enumerate}
+
+\subsubsection{Results and Data Visualization}
+
+\begin{enumerate}
+
+\item{ST-F13 Expected vs recognized phonemes, errors, position, and IPA\\}
+
+Control: Manual
+
+Initial State: An attempt with an identified error at the beginning of the word is available.
+
+Input: Open the attempt result view/visualization.
+
+Output: Expected phonemes and recognized phonemes are shown side by side; the word position visualization indicates "beginning"; phonemes 
+are displayed as IPA symbols.
+
+Test Case Derivation: \textbf{FR-RDV1} requires expected and recognized phonemes to be presented. \textbf{FR-RDV2} requires substitution 
+errors to indicate which expected phoneme was replaced by which produced phoneme. \textbf{FR-RDV3} requires a visualization of word 
+position. \textbf{FR-RDV9} requires phonemes to be presented as IPA symbols.
+
+How test will be performed: Open the result view and compare the displayed expected and recognized sequences. Verify the substitution 
+label, the position visualization, and the IPA rendering.
+
+\item{ST-F14 Session summary, heat map, and live update\\}
+
+Control: Manual
+
+Initial State: A patient session is active with several correct/incorrect and independent/cued attempts; heat-map data is available.
+
+Input: Complete attempts; open the session visualization; complete one more attempt.
+
+Output: The session visualization reports correct/incorrect counts and independent/cued counts; the heat map indicates the closeness of 
+the produced phoneme to the expected phoneme; the visualization updates as the session progresses and completes.
+
+Test Case Derivation: \textbf{FR-RDV4} requires a session visualization of correct/incorrect and independent/cued attempts. 
+\textbf{FR-RDV5} requires a heat-map visualization of produced versus expected phoneme closeness. \textbf{FR-RDV6} requires 
+visualizations to update as the session is completed.
+
+How test will be performed: Perform attempts through the UI. Capture the visualization before and after the final attempt and 
+verify the counts, the heat-map presence, and the update behavior.
+
+\item{ST-F15 Assistive disclaimer and non-discouraging error display\\}
+
+Control: Manual
+
+Initial State: Session visualizations are available.
+
+Input: View all deduction and analytics screens; inspect the disclaimer and the error presentation.
+
+Output: All visualizations are identified as assistive and not diagnostic; a disclaimer or acknowledgement precedes deductions and 
+analytics; error information is not presented in a way that discourages the patient.
+
+Test Case Derivation: \textbf{FR-RDV7} requires all visualizations to be identified as assistive and not diagnostic. \textbf{FR-RDV8} 
+requires the system not to present error information in a way that discourages the patient. \textbf{FR-HA7} requires all deductions and 
+analytics to be prefaced with an acknowledgement that they may be incorrect and may only be accepted under the discretion of an SLP.
+
+How test will be performed: Review each visualization screen and verify the disclaimer text appears before results. Conduct an SLP 
+review of the error wording and visuals to confirm they are not discouraging.
+
+\end{enumerate}
+
+\subsubsection{Progress and Data Management}
+
+\begin{enumerate}
+
+\item{ST-F16 Patient record, session record, and patient association\\}
+
+Control: Manual
+
+Initial State: Two patients exist; a session is run for one of them.
+
+Input: Create and view a patient record; run a session with targets and SLP inputs; view and export the session history.
+
+Output: The patient's identifying information and session history are maintained; the session record includes the date, SLP, target 
+phonemes/words, session results, and SLP inputs; the session results are associated only with the session patient.
+
+Test Case Derivation: \textbf{FR-DMR1} requires a record of identifying information and session history for each patient. 
+\textbf{FR-DMR6} requires each session to record the date, SLP, target phonemes and words, session results, and SLP inputs. 
+\textbf{FR-DMR7} requires session results to be associated only with the session patient.
+
+How test will be performed: Create both patients and run a session for one. Inspect the database and export to verify all required 
+session fields are present and no data from the other patient is linked.
+
+\item{ST-F17 Support level, correction, override, and cue/repetition flag\\}
+
+Control: Manual
+
+Initial State: A session is active with attempts classified by the system.
+
+Input: The SLP inputs a support level; corrects the system output; marks an attempt correct or incorrect regardless of system output; 
+records whether a correct item required cues or repetition.
+
+Output: The support level is stored with the correct attempt; the correction and override are stored; the cue/repetition flag is 
+recorded for the correct practiced item.
+
+Test Case Derivation: \textbf{FR-DMR2} requires the support level to be recorded with the attempt it applies to. \textbf{FR-DMR2.1} 
+allows the SLP to input the level of support per attempt. \textbf{FR-DMR3} allows the SLP to correct system output. \textbf{FR-DMR3.1} 
+allows the SLP to mark an attempt correct or incorrect regardless of recognized output. \textbf{FR-DMR11} requires recording whether a 
+correct practiced item required additional cues or repetition.
+
+How test will be performed: Perform each SLP action through the UI and query the attempt records to verify the stored support level, 
+correction, override, and cue/repetition flag.
+
+\item{ST-F18 Audit log creation, retrieval, and copying\\}
+
+Control: Manual
+
+Initial State: An authorized SLP or admin account exists; a patient record exists.
+
+Input: View, create, modify, export, and delete a patient record; retrieve the audit log; copy the audit log.
+
+Output: Each event creates an audit entry containing the information type, date and time, user identity, and patient identity; an 
+authorized user can retrieve and copy the audit log.
+
+Test Case Derivation: \textbf{FR-DMR4} requires an audit entry for every view, creation, modification, export, or deletion of a patient 
+record, including the information type, date and time, user identity, and patient identity. \textbf{FR-DMR5} allows authorized users to 
+retrieve and copy the audit log. \textbf{FR-HA9} requires an audit trail detailing the user, action, and time of all data accesses and 
+manipulations.
+
+How test will be performed: Perform each record action and inspect the audit log. Verify the required fields and timestamps. Retrieve 
+and copy the log as an authorized user.
+
+\item{ST-F19 Longitudinal performance tracking and comparison\\}
+
+Control: Manual
+
+Initial State: A patient has sessions over multiple dates with one target phoneme improving and another showing persistent errors.
+
+Input: Open the progress view; compare sessions.
+
+Output: The system tracks performance on target phonemes over time; the SLP can compare performance between sessions; the system 
+identifies improving target phonemes and persistent errors.
+
+Test Case Derivation: \textbf{FR-DMR8} requires tracking each patient's performance on target phonemes over time. \textbf{FR-DMR9} 
+allows the SLP to compare performance between sessions. \textbf{FR-DMR10} requires tracking and identifying target phonemes showing 
+improvement and those with persistent errors.
+
+How test will be performed: Seed session data for the patient. Open the progress and comparison views and verify the trends, comparison 
+outputs, and improving/persistent classifications.
+
+\item{ST-F20 Session-end backup and failure alert\\}
+
+Control: Automatic
+
+Initial State: A patient session with progress data is active; backup storage is available; a backup failure can be injected.
+
+Input: End the session normally; end a second session with backup failure injected.
+
+Output: All patient progress data and analytics are backed up at the end of the session; if the backup fails, the user is alerted.
+
+Test Case Derivation: \textbf{FR-HA2} requires the system to back up all patient progress data and analytics at the end of each session 
+and to alert the user if the backup fails.
+
+How test will be performed: End a normal session and verify the backup. Inject a backup failure, end another session, and observe the 
+alert to confirm the failure is surfaced.
+
+\end{enumerate}
+
+\subsubsection{Practice Activities}
+
+\begin{enumerate}
+
+\item{ST-F21 Practice items, quantity, and standardized set\\}
+
+Control: Automatic
+
+Initial State: The practice item catalog is loaded.
+
+Input: Query the catalog for a target phoneme in a given word position; inspect item metadata and counts.
+
+Output: Each item is associated with its target phoneme(s) and word position; at least three items exist per target phoneme per word 
+position; items are appropriate for ages 4--6 and drawn from a standardized word set.
+
+Test Case Derivation: \textbf{FR-PAR1} requires practice items associated with the target phoneme(s) and word position. \textbf{FR-PAR2} 
+requires at least three practice items for each target phoneme in each word position. \textbf{FR-PAR4} requires items to be appropriate 
+for the supported age range and drawn from a standardized set of words.
+
+How test will be performed: Query the catalog or API and count items per target and position. Review the metadata and source labels for 
+standardized-set and age-appropriateness.
+
+\item{ST-F22 Selection by target/position and SLP practice controls\\}
+
+Control: Manual
+
+Initial State: The practice catalog is loaded; a session is active.
+
+Input: Practice items are selected by target phoneme and word position; then the next, repeat, skip, and end practice controls are used.
+
+Output: Selection filters items correctly; the SLP can move to the next item, repeat an item, skip an item, or end practice at any time.
+
+Test Case Derivation: \textbf{FR-PAR3} requires the SLP to select practice items by target phoneme and word position. \textbf{FR-PAR6} 
+allows the SLP to move to the next item, repeat an item, skip an item, or end practice at any time.
+
+How test will be performed: Use the filter controls and verify the displayed items. Execute each practice control and verify the session 
+state.
+
+\item{ST-F23 Image-cue prompt, appropriateness, and engagement\\}
+
+Control: Manual
+
+Initial State: A practice item is selected; prompt assets are available.
+
+Input: Display the prompt; have the child respond without the SLP modeling the item; inspect engagement elements.
+
+Output: The prompt is an image cue rather than a written word; the prompt is recognizable and appropriate; it elicits production without 
+the SLP saying the item first; engagement elements are present.
+
+Test Case Derivation: \textbf{FR-PAR5} requires a prompt that elicits the child to produce the item without the SLP saying it first. 
+\textbf{FR-PAR5.1} requires prompts in the form of image cues rather than written words. \textbf{FR-PAR5.2} requires prompts to be 
+recognizable and appropriate. \textbf{FR-PAR7} requires elements that keep patients engaged during practice.
+
+How test will be performed: Review the prompt assets and conduct an SLP review for appropriateness. Observe a child responding without 
+SLP modeling and verify the engagement elements are present.
+
+\end{enumerate}
+
+\subsubsection{Reliability and Offline Behavior}
+
+\begin{enumerate}
+
+\item{ST-F24 WiFi instability alert and offline audio recording\\}
+
+Control: Automatic
+
+Initial State: An online session is active with stable WiFi; offline mode is available.
+
+Input: Degrade the WiFi to unstable; attempt recording; restore WiFi.
+
+Output: The system alerts the user that WiFi is unstable; the offline version records patient audio while offline; the recorded audio 
+is available for processing when WiFi recovers.
+
+Test Case Derivation: \textbf{FR-HA4} requires the system to alert the user when WiFi becomes unstable and to provide an offline version 
+that records patient audio for when WiFi recovers.
+
+How test will be performed: Throttle or disconnect the network and observe the alert. Record audio offline and restore the network. 
+Verify the queued audio is uploaded or processed.
+
+\item{ST-F25 Online-to-offline transfer cannot be blocked\\}
+
+Control: Automatic
+
+Initial State: The system is online; a session is active; offline mode is available.
+
+Input: Force a network drop during operation; inject an interface malfunction during the online-to-offline transfer.
+
+Output: The system transfers from online to offline at all times; the transfer is not blocked by network or interface malfunction; the 
+session continues with limited functionality and fails gracefully.
+
+Test Case Derivation: \textbf{FR-HA5} requires the system to transfer from online to offline mode at all times, with the transfer unable 
+to be blocked by network or interface malfunctions.
+
+How test will be performed: Toggle the network and mock an interface failure. Observe the mode transition and verify the session remains 
+usable for limited functions without freezing.
+
+\end{enumerate}
 
 \subsection{Tests for Nonfunctional Requirements}
 
