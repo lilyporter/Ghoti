@@ -79,49 +79,82 @@ This document ... \wss{provide an introductory blurb and roadmap of the
 
 \subsection{Summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+PronouncedFish is an assistive tool intended for SLPs to streamline their workflow in diagnosing and treating patients with speech sound disorders (SSDs). It can help manage treatment sessions and offer complementary insights to assist with their consultations. The important features that PronouncedFish provides are real-time analysis of patient speech to detect SSDs at the phonemic level; Management, storage, and analysis of treatment sessions; providing practice material for patients to use in a session; and tracking of patient speech data overtime that can be used to guide the focus of future treatment sessions.
 
 \subsection{Objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+With this VnV Plan, Ghoti aims to discuss how it will validate the correctness, quality, robustness, and efficiency of PronouncedFish. With this comes the objectives that Ghoti wants to achieve for this document. 
 
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
+\subsubsection{Full Functionality of the System}
+Each component of the system we implement in code needs to be tested for correctness. These components include:
+\begin{itemize}
+    \item Audio Management: The audio management component should be tested to see if it can take the audio provided by a patient and process it to be as clear as possible to be used by other components in the system. (FR-AC1, FR-AC2, FR-AC3)
+    \item Audio Analysis: The audio analysis component should be tested to see if it can take a piece of audio, usually some kind of sentence, and return a set of predicted phonemes that corresponds to the productions made by the patient. Should the analysis fail, notifications of failure should be broadcast throughout the system and to the SLP. (FR-SA1, FR-SA2, FR-SA3, FR-AC3)
+    \item Session Management: The session management component should be tested to see if it can create, delete, and modify sessions. It should also be able to take data from a session and provide it to the rest of the system for later analysis by the SLP. (FR-SM1, FR-SM2, FR-SM3, FR-SM4, FR-DMR6, FR-DMR7)
+    \item Practice Item Management: The practice item management component should be tested to see if it can create, delete, and modify practice materials that a patient would use in a session. It should also only respond to SLPs authorized with the system and software maintenance teams. (FR-PAR1, FR-PAR2, FR-PAR3, FR-PAR4, FR-PAR5, FR-PAR6, FR-PAR7)
+    \item Progress Tracking: The progress tracking component should be tested to see if it can store patient data to later be used by SLPs for analysis. (FR-DMR1, FR-DMR6, FR-DMR8, FR-DMR9, FR-DMR10, FR-DMR11)
+    \item Data Visualization: The data visualization component should be tested to see if it can take existing data for a patient and output it in a visual, human-readable format for SLPs. (FR-RDV1, FR-RDV2, FR-RDV3, FR-RDV4, FR-RDV5, FR-RDV6, FR-RDV7, FR-RDV8, FR-RDV9)
+\end{itemize}
 
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+\subsubsection{Personal Health Information Protection Act (PHIPA) Compliance}
+The VnV plan should ensure that each component is within compliance of PHIPA to protect sensitive personal health information (PHI). PHIPA compliance comes with a few categories:
+\begin{itemize}
+    \item Data Encryption: The system should ensure that any PHI that is stored or passed around in the system must be encrypted to prevent sensitive data from being exposed. (NFR-SAP1, NFR-SAP2)
+    \item The system should ensure that any time PHI is accessed, edited, or deleted, an immutable log of when the data was accessed is stored in the system for traceability. (FR-DMR4, FR-DMR5)
+    \item The system should ensure that anywhere PHI is stored, it can only be accessed by authorized users like an SLP. (NFR-USA4, NFR-LAL1)
+\end{itemize}
+
+\subsubsection{High Accuracy of the Phonemic Identification Model}
+
+For the model we use for phonemic identification within the system, experts in the field including our supervisors have mentioned that the model should be 80\% accurate. (NFR-ACCU1)
+
+\subsubsection{High Responsiveness of the System}
+
+The system should have a response time of less than or equal to 10 seconds. 10 seconds was chosen as our metric due to this paper by \cite{software_response_times} which mentions that most people will on average have an attention span of about 10 seconds before wanting to perform other tasks. Multiple elements of the system will have a strong impact on the response time including the processing time of the phonemic identification model and communications with local servers. The tests will ensure that any action taken by the user will fall within this 10 second response time. (NFR-PER1, NFR-REL1)
+
+\subsubsection{Great User Experience for Patients}
+
+User experience is a key focus in our project since some of the primary stakeholders of PronouncedFish are children. If the patient gets bored, frustrated, or upset by the system it can have a significant impact on the effectiveness of the session. Thus, we want user ratings of PronouncedFish to be high and frustrations low (NFR-USA1, NFR-USA3, NFR-USA4, FR-PAR7, FR-RDV8)
+
+\subsubsection{Portability Across Hardware and Operating Systems}
+
+Stakeholders will not all be using the same hardware, therefore, there is a need for the system to work across multiple kinds of hardware and operating systems. Our tests and software should work with most popular operating systems (Linux, Windows, iOS, macOS, android) and on multiple different kinds of hardware (laptop, desktop, iPad, android device, etc.). This will be tested manually through running PronouncedFish on a variety of devices. (NFR-POR1, NFR-POR2, NFR-POR3)
+
+\subsection{Out-of-Scope Objectives}
+
+\subsubsection{Long-Term Maintenance Testing}
+
+The system will require updates and long-term maintenance to run at optimal capacity. Unfortunately for the duration of this capstone, Ghoti does not have an extensive period of time to properly test how regular maintenance and updates would look in a real setting. Assumed testing would be update and maintenance logs showing what parts of the system were updated and at what time. (NFR-MAI3, NFR-REL4)
+
+\subsubsection{External Library Functionality Testing}
+
+The system will be using external libraries to function; however, we assume the libraries are always providing the services that they advertised and do not need to be independently checked for successful functionality. Assumed testing would be to go through every possible unit path in the provided services from the library.
 
 \subsection{Custom Documents}
 
-\wss{Summarize the CDs (Custom Documents) that were tackled by this project.  CDs 
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  CDs should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your CDs (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+\subsubsection{User/Stakeholder Interview Report}
+
+The User/Stakeholder Interview Report serves as an important document for visualizing SLP workflows and eliciting specific requirements for PronouncedFish. By conducting structured interviews with our supervisor SLPs, we ensure that the system’s design follows clinical best practices and integrates smoothly with an SLP's daily operations. These key insights will help us ensure core functionalities are met and follow the strict rules from PHIPA surrounding the protection of PHI. (FR-SM1, FR-SA1, FR-PAR1, FR-DMR8, NFR-LAL1)
+
+\subsubsection{Usability Report}
+
+The Usability Report is designed to validate the system's user experience (UX) before the completion of the capstone. After developing a functional prototype, the students of Ghoti's supervisors will be able to experiment with using PronouncedFish. The primary goal of this document is not just feedback collection, but quantifying key performance indicators such as response time and the accuracy of the machine learning model when identifying phonemes. This ensures that the design meets high standards of intuitive functionality, validating our objective to provide a positive user experience critical for clinical adoption. (NFR-USA1, NFR-USA3, NFR-PER1, NFR-ACCU1)
 
 \subsection{Relevant Documentation}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
+This section outlines the primary documents that govern the system's scope, constraints, and core functional requirements. These documents act as foundational references against which all development progress and testing validation are measured, ensuring comprehensive traceability between goals, requirements, and implementation. 
 
-\citet{SRS}
+\subsubsection{Software Requirements Specification (SRS)}
 
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
+The SRS serves as the formal blueprint for the entire application and is the definitive source of truth for all functional and non-functional system expectations. All requirements being tested will be sourced from here.
+
+\subsubsection{Development Plan}
+
+Details the project roadmap, risk assessment, technology stack selection (libraries and frameworks), and overall architectural approach used in the system's implementation. (This document establishes the context for performance and feasibility testing.)
+
+\subsubsection{Module Interface Specification (MIS)}
+
+Provides fine-grained technical design details for core modules, defining specific access functions, execution sequences, and serves as primary source of information for creating unit tests.
 
 \section{Plan}
 
@@ -1347,13 +1380,15 @@ Not applicable at the moment.
 1 & ChatGPT & GPT 5 Thinking Mini \\
 2 & Claude & Sonnet 5 \\
 3 & ChatGPT & GPT 6 Astra \\
+4 & Google Deepmind & Gemma 4 \\
+5 & ChatGPT & GPT 5.4 mini \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{How and Where Used}
 
-In general, generative AI was used to help with LaTeX formatting. More specific uses may be noted in the table below. 
+In general, generative AI was used to help with LaTeX formatting and writing assistance in the document. More specific uses may be noted in the table below. 
 
 \begin{table}[H]
 \caption{Usage Details for All AI Tools Used} \label{aiToolUsageDetails}
@@ -1366,9 +1401,11 @@ In general, generative AI was used to help with LaTeX formatting. More specific 
 \textbf{Tool Number} & \textbf{Location} & \textbf{Details} \\
 \midrule
 1 & (3) Plan & Explained what the difference between each section was because some sections were slightly confusing (3.4, 3.7). \\
-1 & (3) Plan & Gave the LLM the write-up for 3.4, 3.5, 3.6, and asked if there were any key strategies missed. \\
-2 & (8) Reflection & Gave the AI a rough draft and bullet points for the reflection answers. Asked it to generate it into a nice paragraph, and edited the generated paragraph manually. \\
-3 & (4) System Tests & Used the AI for ideation and brainstorming of system tests given the SRS requirements. This was done to cover a broad scope of testing in addition to the manually brainstormed tests. All generated tests were meticulously edited to match all characteristics desired of PronouncedFish. \\
+2 & (3) Plan & Gave the LLM the write-up for 3.4, 3.5, 3.6, and asked if there were any key strategies missed. \\
+3 & (8) Reflection & Gave the AI a rough draft and bullet points for the reflection answers. Asked it to generate it into a nice paragraph, and edited the generated paragraph manually. \\
+4 & (4) System Tests & Used the AI for ideation and brainstorming of system tests given the SRS requirements. This was done to cover a broad scope of testing in addition to the manually brainstormed tests. All generated tests were meticulously edited to match all characteristics desired of PronouncedFish. \\
+5 & (2) General Information & Used for language assistance and writing refinement. This helped to improve the clarity and coherence of the document. \\
+6 & (2) General Information & Used to add requirement references from the SRS. Task was quick to do for the LLM and saved significant time in the writing process. \\
 \bottomrule
 \end{tabularx}
 \end{table}
