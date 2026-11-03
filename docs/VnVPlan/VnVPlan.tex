@@ -4,6 +4,7 @@
 \usepackage{tabularx}
 \usepackage{hyperref}
 \usepackage{longtable}
+\usepackage{float}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -12,6 +13,8 @@
     urlcolor=blue
 }
 \usepackage[round]{natbib}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
 
 \input{../Comments.text}
 \input{../Common.text}
@@ -123,95 +126,214 @@ how they relate to your VnV efforts.}
 
 \section{Plan}
 
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+The following section outlines a high-level verification and validation plan 
+for PronouncedFish. Section 3.1 covers the verification and validation team, 
+and a general description of each person’s role. Section 3.2 and 3.3 go into 
+the techniques used for SRS and Design verification (respectively). Section 
+3.4 details the steps used to verify the verification and validation plan 
+itself. Section 3.5 deals with the eventual verification methods anticipated 
+during the implementation stages, while section 3.6 talks about some automated 
+testing frameworks and verification tools that will be used. All of these 
+sections delve into software verification methods: how do we know we are 
+building the right product. Section 3.7 wraps up by going into some system 
+validation methods: how do we know we are building the product right. 
 
 \subsection{Verification and Validation Team}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+The Verification and Validation Team will be composed of all team members 
+and supervisors. In general, the software team will be in charge of initial 
+stages of testing, while the supervisors will be brought in near latter stages 
+to reinforce the student validation. Some steps will seek feedback from the 
+assigned peer review group as well. 
+
+The software team will conduct preliminary SRS verification, and make sure the
+functionality matches what is outlined in the SRS. Verified elements will 
+then be passed forward to the supervisors to ensure they truly match what 
+the users need. It is important to note that since the supervisors work very 
+closely with SLPs, requirements were heavily solicited through them. 
+Therefore, this process cross verifies whether the perceived implementation 
+of those requirements are in line with what is needed. 
+
+Furthermore, the software team will be in charge of unit tests, integration 
+tests, system tests, and regression tests for all software. These should be 
+added to the Github CI/CD so that they are checked upon any code changes. 
+These tests should be curated by someone besides the primary developer of 
+those features. 
+
+Any system design decisions will be verified on a rolling basis by another 
+team member. They should be done frequently so as to not hold back development. 
+Mutation testing should also be completed by a different group member to 
+ensure developer bias does not interfere with testing.
+
+The following table outlines the assigned tester for each developer:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Developer} & \textbf{Tester} \\ \hline
+        Hemal Rajput & Gurmanjot Minhas \\ \hline
+        Gurmanjot Minhas & James Araiche \\ \hline
+        James Araiche & Lily Porter \\ \hline
+        Lily Porter & Sarah Dorfman \\ \hline
+        Sarah Dorfman & Hemal Rajput \\ \hline
+    \end{tabular}
+    \caption{Developer and Tester Assignments}
+\end{table}
 
 \subsection{SRS Verification}
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
+The SRS verification will be done by the project supervisors. The supervisors 
+are interested in using a version of this project for their own teaching, and 
+act as the liaison between the developers and the SLPs. Therefore, they are 
+the ideal representative to validate what is being done is right. 
 
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
+SRS verification will be handled using an agile framework, and touched on 
+during each biweekly meeting. Starting from the core of the system, more 
+features will be fleshed out between each meeting. Prior to development 
+beginning, all related requirements will be touched on and refined with the 
+supervisors to ensure they align with what they had in mind. Following 
+development, a short demonstration will compile the implementations of all 
+those requirements so they may be revalidated. Since each requirement is 
+attributed to one main goal, relevant requirements may be easily split up 
+based on the current focus. This timeline is not concrete and may vary based 
+on the nature of the implemented features and importance of other matters. 
 
-\wss{Maybe create an SRS checklist?}
+The requirement validation portion will be more of an interview process where 
+the supervisors read each requirement and comment on whether it makes sense. 
+The eventual demonstration will start with the software team showing an 
+overview of what has been put in. This will be followed by time for the 
+supervisors to test their own cases and give additional feedback. This will 
+allow for the SRS document or implementation to be revised as needed. The 
+GitHub issue tracker will be used to create issues when needed. 
+
 
 \subsection{Design Verification}
 
-\wss{Plans for design verification}
+Design verification will be conducted by a mixture of the group members, 
+reviewers, and supervisors. 
 
-\wss{The review will include reviews by your classmates}
+The supervisors will be consulted for user interface verification. For each 
+main page and visualization, the supervisors will be shown a Figma 
+(high-fidelity wireframe drawing) to review. Based on this, they will 
+determine if the interface is too complicated, needs more explanation, or has 
+any usability concerns. Since they have direct interaction with SLPs, they 
+have a good idea of their needs, abilities, and day to day, making them the 
+best group to validate this. 
 
-\wss{Create a checklists?}
+Additionally, the supervisors will have to verify all speech processing 
+elements since the software team are not linguistics experts. The plan is 
+for this to be addressed during the scheduled biweekly meetings. Specifically, 
+all the phoneme representations, comparison metrics, and conclusions will need 
+to be verified for relevance and correctness. 
+
+On a grander scheme, the software architecture will go through several 
+iterations of peer review. The software team will break off into several 
+smaller groups and create initial drawings for some interface. The drawings 
+will then be rotated to another sub group and refined. Once the entire team 
+is satisfied with the drawings, they will be presented to a peer review group 
+for further evaluation. They will be looking at these designs with a fresh 
+perspective, so they will likely notice any gaps that were missed by the 
+development team. 
+
+There will also be a checklist created based on the different user interface 
+requirements, functional requirements, and likely changes sections of the SRS. 
+These shall accompany any peer reviews and supervisor reviews as a 
+complementary tool. 
+
 
 \subsection{Verification and Validation Plan Verification}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+The Validation and Verification plan will be verified by a mixture of formal 
+and informal methods. For the SRS VnV plan, the team members will verify that 
+each requirement from the SRS has a traceable verification or validation 
+method assigned to it. All software classes must have a corresponding test 
+suite for unit, integration, system, and regression testing as well. To ensure 
+that this test suite is complete, it must achieve complete test coverage 
+(see 3.6 for a definition of complete), and successfully report failures upon 
+mutation testing. Mutation testing will be conducted by the assigned tester 
+from 3.1. Clear acceptance criteria and metrics for non-functional 
+requirements must be present, and approved by the supervisors. Once this is 
+all done, the peer review team will verify the VnV plan using a checklist 
+outlining the noted elements in detail.
 
 \subsection{Implementation Verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+The implementation will be verified by using tests of varying granularity. At 
+the lowest level, unit tests shall be introduced to test each component in 
+isolation. These tests must cover all branches of execution to make sure the 
+unit is fully covered by using mocks and stubs to abstract out dependencies 
+on other classes. Moving up one level, there must be integration tests to 
+connect each element of the code to make sure they work with each other 
+correctly. For example, if some class is written to take measurements in the 
+imperial system and another in the metric system, then individually their 
+expected outputs will be correct. However, when working with each other, the 
+components will fail. At the highest level, there should be system tests to 
+test the main modules as a whole. The assigned tester will be responsible for 
+writing these tests for their corresponding developer from 3.1. 
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+Beyond the code level, the implementation must also match what is desired by 
+the stakeholders. This overlaps with design verification, but will be done by 
+demonstrating the system to the supervisors and letting them play around with 
+it. This will help them catch any usability mistakes or quality of life 
+enhancements that they expected, but were not reflected by the implementation. 
+Static analysis tools will also be useful to ensure all coding standards and 
+conventions are met. Ruff and Prettier will be used to lint the corresponding 
+Python / JavaScript code. The team will also perform code reviews during the 
+integration stages. This lets the developers of each module iron out any 
+inconsistencies between their code and to ensure it is of an acceptable 
+standard, without making it too frequent. 
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+All code based tests will be run with Github continuous integration to ensure 
+that no component interactions are broken when pushing new code to the main 
+branch.
 
 \subsection{Automated Testing and Verification Tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+The coding standards and linting are mentioned in the Development Plan document. 
+To recall:
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+\begin{itemize}
+  \item Python: PEP 8, enforced with Ruff for Linting
+  \item JavaScript: the Airbnb JavaScript Style Guide, enforced with Prettier
+\end{itemize}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+Unit testing and Integration testing will be done using the Pytest framework. 
+This framework is picked due to its ability to support both unit and 
+integration testing rather than one or the other. These tools will be 
+continuously enforced using Github CI/CD on every pull request. Tests are 
+expected to achieve complete coverage, along with coverage of relevant edge 
+cases and erroneous cases. This will be measured by using the Pytest-Cov 
+coverage frameworks, which provides a report of line, branch, and function 
+coverage. The goal is to achieve 90-100\% statement coverage, and 80\% branch 
+coverage in general. Critical components should achieve 100\% branch coverage. 
+Relevant cases will be verified beforehand during the implementation 
+verification phase. 
+
 
 \subsection{Software Validation}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+To validate that the product is being built right, it must first ensure that 
+it is built for the correct user group. While the system architecture will 
+support adding multiple SLP interfaces, the main focus is on child SLPs. 
+Therefore, all validation will be done using openly available child audio data 
+from TalkBank. This is a well reputable platform used by researchers to share 
+data and has high quality annotated speech datasets. Their privacy 
+requirements will be strictly followed. Some of the data may be used to train 
+a speech recognition model, but some will be explicitly separated off for 
+validation and test phases. 
 
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
+Next, it is important to ensure that SLPs actually want the visualizations 
+and features provided. This can be validated by going over a mixed task based 
+inspection of the SRS and corresponding implementation demonstration with the 
+supervisors. For example, if visualization A is described in the SRS, the 
+corresponding implementation will be shown and approved or rejected by the 
+supervisor. 
 
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
+Every small matter mentioned within this section will not be explicitly 
+checked with the supervisors. There is limited time with them, so the 
+mentioned strategies will be used when appropriate and for key checkpoints. 
 
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
-
-\wss{This section might reference back to the SRS verification section.}
 
 \section{System Tests}
 
@@ -1222,36 +1344,59 @@ Their values are defined in this section for easy maintenance.
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+\begin{table}[hp]
+\caption{List of AI Tools Used} \label{aiToolsUsed}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Tool Number} & \textbf{Name} & \textbf{Model} \\
+\midrule
+1 & ChatGPT & GPT 5 Thinking Mini \\
+2 & Claude & Sonnet 5 \\
+3 & ChatGPT & GPT 6 Astra \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+In general, generative AI was used to help with LaTeX formatting. More specific uses may be noted in the table below. 
 
-\wss{For each of the uses, identify which parts of the document were affected.}
-
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+\begin{table}[H]
+\caption{Usage Details for All AI Tools Used} \label{aiToolUsageDetails}
+\begin{tabularx}{\textwidth}{
+  >{\hsize=0.5\hsize}L
+  >{\hsize=0.5\hsize}L
+  >{\hsize=1\hsize}L
+}
+\toprule
+\textbf{Tool Number} & \textbf{Location} & \textbf{Details} \\
+\midrule
+1 & (3) Plan & Explained what the difference between each section was because some sections were slightly confusing (3.4, 3.7). \\
+1 & (3) Plan & Gave the LLM the write-up for 3.4, 3.5, 3.6, and asked if there were any key strategies missed. \\
+2 & (8) Reflection & Gave the AI a rough draft and bullet points for the reflection answers. Asked it to generate it into a nice paragraph, and edited the generated paragraph manually. \\
+3 & (4) System Tests & Used the AI for ideation and brainstorming of system tests given the SRS requirements. This was done to cover a broad scope of testing in addition to the manually brainstormed tests. All generated tests were meticulously edited to match all characteristics desired of PronouncedFish. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Verification of AI-Generated Content}
-
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+Verification of AI content involved a human reviewer for any and all generated 
+content. For LaTeX formatting, as long as it compiled it was fine. For all 
+uses in parts (3) and (4), all generated content was read and taken as 
+brainstorming. Part (3) used it to uncover missing strategies in the current 
+writing. Each suggestion was weighed on if it was adding enough value to the 
+VnV to offset the added complexity. Having more validation is directly 
+correlated with putting in more testing effort. However, at some point 
+putting in more effort becomes infeasible due to timing constraints, 
+so only the most important strategies were used. For part (4), the goal was 
+to get a diverse pool of tests that might have been missed during the team's 
+ideation session. No test was directly transferred to the VnV document without 
+proper verification. Each one was read, and ones that fit with the group's 
+vision and SRS were used as a template. This template had all inputs, outputs, 
+and procedures revised with more precise human wording instead of the generic 
+LLM generated one.
 
 \newpage{}
 
