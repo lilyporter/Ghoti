@@ -533,7 +533,105 @@ How test will be performed: Review each visualization screen and verify the disc
 review of the error wording and visuals to confirm they are not discouraging.
 
 \end{enumerate}
-...
+
+\subsubsection{Progress and Data Management}
+
+\begin{enumerate}
+
+\item{ST-F17 Patient record, session record, and patient association\\}
+
+Control: Manual
+
+Initial State: Two patients exist; a session is run for one of them.
+
+Input: Create and view a patient record; run a session with targets and SLP inputs; view and export the session history.
+
+Output: The patient's identifying information and session history are maintained; the session record includes the date, SLP, target 
+phonemes/words, session results, and SLP inputs; the session results are associated only with the session patient.
+
+Test Case Derivation: \textbf{FR-DMR1} requires a record of identifying information and session history for each patient. 
+\textbf{FR-DMR6} requires each session to record the date, SLP, target phonemes and words, session results, and SLP inputs. 
+\textbf{FR-DMR7} requires session results to be associated only with the session patient.
+
+How test will be performed: Create both patients and run a session for one. Inspect the database and export to verify all required 
+session fields are present and no data from the other patient is linked.
+
+\item{ST-F18 Support level, correction, override, and cue/repetition flag\\}
+
+Control: Manual
+
+Initial State: A session is active with attempts classified by the system.
+
+Input: The SLP inputs a support level; corrects the system output; marks an attempt correct or incorrect regardless of system output; 
+records whether a correct item required cues or repetition.
+
+Output: The support level is stored with the correct attempt; the correction and override are stored; the cue/repetition flag is 
+recorded for the correct practiced item.
+
+Test Case Derivation: \textbf{FR-DMR2} requires the support level to be recorded with the attempt it applies to. \textbf{FR-DMR2.1} 
+allows the SLP to input the level of support per attempt. \textbf{FR-DMR3} allows the SLP to correct system output. \textbf{FR-DMR3.1} 
+allows the SLP to mark an attempt correct or incorrect regardless of recognized output. \textbf{FR-DMR11} requires recording whether a 
+correct practiced item required additional cues or repetition.
+
+How test will be performed: Perform each SLP action through the UI and query the attempt records to verify the stored support level, 
+correction, override, and cue/repetition flag.
+
+\item{ST-F19 Audit log creation, retrieval, and copying\\}
+
+Control: Manual
+
+Initial State: An authorized SLP or admin account exists; a patient record exists.
+
+Input: View, create, modify, export, and delete a patient record; retrieve the audit log; copy the audit log.
+
+Output: Each event creates an audit entry containing the information type, date and time, user identity, and patient identity; an 
+authorized user can retrieve and copy the audit log.
+
+Test Case Derivation: \textbf{FR-DMR4} requires an audit entry for every view, creation, modification, export, or deletion of a patient 
+record, including the information type, date and time, user identity, and patient identity. \textbf{FR-DMR5} allows authorized users to 
+retrieve and copy the audit log. \textbf{FR-HA9} requires an audit trail detailing the user, action, and time of all data accesses and 
+manipulations.
+
+How test will be performed: Perform each record action and inspect the audit log. Verify the required fields and timestamps. Retrieve 
+and copy the log as an authorized user.
+
+\item{ST-F20 Longitudinal performance tracking and comparison\\}
+
+Control: Manual
+
+Initial State: A patient has sessions over multiple dates with one target phoneme improving and another showing persistent errors.
+
+Input: Open the progress view; compare sessions.
+
+Output: The system tracks performance on target phonemes over time; the SLP can compare performance between sessions; the system 
+identifies improving target phonemes and persistent errors.
+
+Test Case Derivation: \textbf{FR-DMR8} requires tracking each patient's performance on target phonemes over time. \textbf{FR-DMR9} 
+allows the SLP to compare performance between sessions. \textbf{FR-DMR10} requires tracking and identifying target phonemes showing 
+improvement and those with persistent errors.
+
+How test will be performed: Seed session data for the patient. Open the progress and comparison views and verify the trends, comparison 
+outputs, and improving/persistent classifications.
+
+\item{ST-F21 Session-end backup and failure alert\\}
+
+Control: Automatic
+
+Initial State: A patient session with progress data is active; backup storage is available; a backup failure can be injected.
+
+Input: End the session normally; end a second session with backup failure injected.
+
+Output: All patient progress data and analytics are backed up at the end of the session; if the backup fails, the user is alerted.
+
+Test Case Derivation: \textbf{FR-HA2} requires the system to back up all patient progress data and analytics at the end of each session 
+and to alert the user if the backup fails.
+
+How test will be performed: End a normal session and verify the backup. Inject a backup failure, end another session, and observe the 
+alert to confirm the failure is surfaced.
+
+
+
+\end{enumerate}
 
 \subsection{Tests for Nonfunctional Requirements}
 
