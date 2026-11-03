@@ -9,6 +9,7 @@ dist/
 .verification/
 
 # Local datasets, recordings, model weights, and experiment outputs
+# Shared src/.gitignore also covers CLI result JSON and artifacts outside engine/.
 models/
 examples/synthetic-soa/
 *.wav

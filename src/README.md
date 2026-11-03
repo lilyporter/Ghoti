@@ -21,10 +21,19 @@ Browser/iPad inference and production frontend integration remain future work.
 | Validation | 85 software tests pass, including offline real-model inference/acoustic scoring. Intended-population accuracy, clinical interpretation, and iPad performance remain unverified. |
 
 Start with the [engine README](engine/README.md) for commands and result fields.
+For a detailed explanation of how the code works, read the
+[code guide](engine/docs/code-walkthrough.md): recording-to-screen execution,
+worked distance/acoustic calculations, every source module and frontend function,
+model files, tests, and debugging.
 The [team walkthrough](engine/docs/PronouncedFish-Engine-Walkthrough.html) explains
 the complete flow, design decisions, phone pairs, SODA candidates, and feature
 heatmaps. A PDF copy is available locally beside the HTML; PDFs are ignored by Git.
 See [acoustic assessment and model expansion](engine/docs/acoustic-assessment.md)
 for the new experimental method, result fields, and adapter contract.
+
+The demo also embeds six deliberate synthetic S/O/A comparisons with audio,
+phone/supplied-syllable distance plots, acoustic margins, and control overlays.
+See the [comparison guide](engine/README.md#synthetic-soa-comparisons-and-graphical-groups)
+for generation commands and the local WAV/JSON/ZIP files.
 See [verification evidence](engine/docs/recognition-verification.md) for measured
 behavior and [traceability](TraceToDesign.md) for the scope of implemented requirements.

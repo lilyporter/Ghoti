@@ -1,0 +1,63 @@
+# Shared rules for local artifacts created anywhere under src/.
+# Keep source, documentation, dependency manifests, and intentional test fixtures.
+
+# Local Python/conda environments and packaging output
+.venv/
+venv/
+env/
+.conda/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Test, analysis, and notebook caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.ipynb_checkpoints/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.verification/
+
+# Downloaded models, checkpoints, and local library caches
+models/
+checkpoints/
+.cache/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.onnx.data
+
+# Local recordings (including generated smoke/comparison audio)
+*.wav
+*.flac
+*.mp3
+*.m4a
+*.webm
+*.ogg
+
+# CLI result files: these names are generated, not source fixtures.
+# Do not ignore all JSON: model configuration and future test fixtures may need it.
+recognition.json
+analysis.json
+assessment.json
+
+# Local secrets; keep example environment files available to commit
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
