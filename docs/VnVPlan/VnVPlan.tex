@@ -232,53 +232,62 @@ the contents of the subsections.}
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
-
 \wss{Include a blurb here to explain why the subsections below
   cover the requirements.  References to the SRS would be good here.}
 
-\subsubsection{Area of Testing1}
+The subsections below outline all necessary system tests associated with the functional 
+requirements of PronouncedFish.
 
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
-		
-\paragraph{Title for Test}
+\subsubsection{Audio capture}
+
+The following tests will ensure that the system 
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{ST-F01 Capture audio\\}
 
-Control: Manual versus Automatic
+Control: Manual
 					
-Initial State: 
+Initial State: A patient session is active; microphone is configured; no speech attempts have been made.
 					
-Input: 
+Input: An attempt is recorded for a target word.
 					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
+Output: One audio recording is captured and linked to the session, patient and only the corresponding attempt. 
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Test Case Derivation: \textbf{FR-AC1} specifies the capture of a patient's spoken response for each attempt.
 					
-How test will be performed: 
+How test will be performed: Record an attempt through the session UI, then open the attempt's saved record and play the audio back. Confirm the recording is linked to the 
+correct session, patient, and attempt only.
 					
-\item{test-id2\\}
+\item{ST-F02 Isolate attempts\\}
 
-Control: Manual versus Automatic
+Control: Manual
 					
-Initial State: 
+Initial State: A patient session is active; microphone is configured; no speech attempts have been made.
 					
-Input: 
+Input: Two different single word recordings/attempts.
 					
-Output: \wss{The expected result for the given inputs}
+Output: Each attempt has it's own audio and corresponding analysis. Audio is used only for its own attempt.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Test Case Derivation: Audio is analyzed based only on the corresponding attempt as specified in \textbf{FR-AC2}.
 
-How test will be performed: 
+How test will be performed: Record two different attempts through the session UI, then open each attempt's saved record. Confirm each attempt has its own audio and its own 
+analysis, and that neither attempt's audio appears in the other's analysis.
+
+\item{ST-F03 Reject unusable recordings\\}
+
+Control: Automatic
+					
+Initial State: A patient session is active; thresholds exist for clean audio for noise, clipping, and duration.
+					
+Input: An unclean audio recording/attempt. A clean audio recording/attempt.
+					
+Output: Noisy, clips or duration failures in attempts are correctly flagged. 
+
+Test Case Derivation: Unclean audio is correctly flagged, which can be signaled to the SLP, as specified in \textbf{FR-AC3}.
+
+How test will be performed: Record or submit audio that is noisy, clipped, or too short/long through the session UI, and confirm each is flagged to the SLP and not analyzed. 
+Then record a clean attempt to confirm it is accepted.
 
 \end{enumerate}
 
