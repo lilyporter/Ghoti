@@ -51,21 +51,76 @@ November 2nd, 2026 & 1.0 & Initial Revision of VnV Plan\\
 \section{Symbols, Abbreviations, and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
+
+\begin{longtable}{l l}
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
+
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\
+    \midrule
+    \endhead
+
+    \bottomrule
+    \endfoot
+
+    AC & Audio Capture \\
+    ACCU & Accuracy \\
+    dB & Decibel \\
+    DMR & Progress and Data Management Requirements \\
+    FR & Functional Requirement \\
+    GPL & GNU General Public License \\
+    HA & Hazard Analysis \\
+    IPA & International Phonetic Alphabet \\
+    LAL & Legal and Licensing \\
+    MAI & Maintainability \\
+    MIS & Module Interface Specification \\
+    NFR & Non-Functional Requirement \\
+    PAR & Practice Activities Requirements \\
+    PER & Performance \\
+    PHI & Personal Health Information \\
+    PHIPA & Personal Health Information Protection Act \\
+    POR & Portability \\
+    RDV & Results and Data Visualization \\
+    REL & Reliability \\
+    SA & Speech Analysis \\
+    SAP & Security and Privacy \\
+    SLP & Speech-Language Pathologist \\
+    SM & Session Management \\
+    SRS & Software Requirements Specification \\
+    SSD/SSDs & Speech Sound Disorder(s) \\
+    ST & System Test \\
+    USA & Usability \\
+    UI & User Interface \\
+    UX & User Experience \\
+    VnV & Verification and Validation \\
+\end{longtable}
+
 \newpage
 
 \pagenumbering{arabic}
 
-This document presents the Verification and Validation (VnV) Plan for \progname{}, developed by Ghoti.
-It describes how the team will confirm that \progname{} meets the requirements in the SRS and is suitable for its intended users, speech-language pathologists (SLPs) and the children they treat. The plan covers functional correctness, phonemic identification accuracy, responsiveness, usability, portability, and PHIPA compliance.
-Section 2 gives general information about the project, Section 3 describes the overall verification and validation strategy, and Section 4 specifies the system tests along with a traceability matrix to the requirements.
-Section 5 covers unit testing and will be completed once the MIS is finished.
+
+This document describes the Verification and Validation Plan for the 
+PronouncedFish software developed by Ghoti. It describes how the team will confirm 
+that PronouncedFish meets the requirements in the SRS and is suitable for its 
+intended users, speech-language pathologists (SLPs) and the children they treat. 
+The plan covers functional correctness, phonemic identification accuracy, 
+responsiveness, usability, portability, and PHIPA compliance. 
+Section 1 defines some acronyms used within this 
+document. Section 2 introduces a summary of the project, its VnV plan, and 
+the custom documents relevant to this project. Section 3 outlines a high 
+level plan to verify the SRS, design, VnV plan and implementation. It also 
+touches on some automated testing tools and ways to validate the final 
+system itself. Section 4 goes in depth on the system tests used for each 
+SRS requirement, and provides a traceability matrix to describe all of these 
+relations. Section 5 covers some unit testing requirements for this project, 
+and will be updated after the MIS document is completed. The remaining appendix sections 
+touch on some symbolic parameters used, the generative AI disclosure, and 
+the reflection for this document. 
+
 \section{General Information}
 
 \subsection{Summary}
@@ -1279,6 +1334,7 @@ In general, generative AI was used to help with LaTeX formatting and writing ass
 4 & (4) System Tests & Used the AI for ideation and brainstorming of system tests given the SRS requirements. This was done to cover a broad scope of testing in addition to the manually brainstormed tests. All generated tests were meticulously edited to match all characteristics desired of PronouncedFish. \\
 5 & (2) General Information & Used for language assistance and writing refinement. This helped to improve the clarity and coherence of the document. \\
 6 & (2) General Information & Used to add requirement references from the SRS. Task was quick to do for the LLM and saved significant time in the writing process. \\
+7 & (1) Symbols, Abbreviations, and Acronyms & Used to extract all acronyms from the document and put them into a LaTeX table. All acronyms were then reviewed and edited for accuracy. \\
 \bottomrule
 \end{tabularx}
 \end{table}
