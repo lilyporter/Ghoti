@@ -3,6 +3,9 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{tabularray}
+\usepackage{float}
+\UseTblrLibrary{booktabs}
 
 \hypersetup{
     colorlinks=true,       % false: boxed links; true: colored links
@@ -36,7 +39,7 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
+10/19/2026 & Ghoti & First submission\\
 Date2 & Name(s) & Description of changes\\
 ... & ... & ...\\
 \bottomrule
@@ -51,107 +54,293 @@ Date2 & Name(s) & Description of changes\\
 
 \pagenumbering{arabic}
 
-\wss{You are free to modify this template.}
-
 \section{Introduction}
 
-\wss{You can include your definition of what a hazard is here.}
+This document covers the hazard analysis for PronouncedFish, a web-based software assistant for speech-language pathologist (SLPs) 
+during sessions. The system captures and analyses a child's speech in real-time, and flags it for substitution errors. Results are 
+presented to the SLP through a dashboard interface and data visualizations. The system also offers in-session exercises to support 
+the SLP in coaching a patient on speech challenges. It is strictly assistive and does not replace the professional judgement of the 
+SLP. 
+This document defines hazard as a property or condition in the system together with a condition in the environment that has the 
+potential to cause harm or loss. 
+The purpose of this document is to identify the hazards of the system, so mitigation strategies and safety requirements can be 
+derived. 
 
 \section{Scope and Purpose of Hazard Analysis}
 
-\wss{You should say what \textbf{loss} could be incurred because of the
-hazards.}
+This hazard analysis addresses the major hazards that could negatively impact PronouncedFish. This includes hazards with 
+speech/audio capture, speech analysis, and interfaces. The analysis will cover the various risks such as with patient data handling, 
+data privacy, accuracy, and performance. The losses that could result from the hazards include violations of PHIPA, privacy breaches, inaccurate analysis of speech and presentation of data, and loss of stakeholder trust.
+The purpose of this hazard analysis is early identification of any risks that could affect the key components of the system. 
+Identifying these risks will inform the creation of mitigation strategies and proper safety and security requirements. 
+Doing this will minimize risk and potential loss from unaddressed hazards. 
 
+\clearpage
 \section{System Boundaries and Components}
 
-\wss{Dividing the system into components will help you brainstorm the hazards.
-You shouldn't do a full design of the components, just get a feel for the major
-ones.  For projects that involve hardware, the components will typically include
-each individual piece of hardware.  If your software will have a database, or an
-important library, these are also potential components.}
+\begin{table}[H]
+\centering
+\caption{System Components and Boundaries}
+\label{tab:system-components}
+\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth}X p{0.23\textwidth}@{}}
+\toprule
+\textbf{Component} & \textbf{Description} & \textbf{Boundary} \\
+\midrule
+
+Microphone and Browser &
+Captures the child's speech through a microphone and runs the client application on a tablet, laptop, or desktop computer. &
+Environment (hardware and software outside system control) \\
+
+\addlinespace
+
+Audio Capture &
+Records the audio for each attempt and transmits it to the backend. &
+System (client-side) \\
+
+\addlinespace
+
+Speech Model &
+Converts the recorded audio of an attempt into a sequence of phonemes, each with an associated confidence value. &
+System \\
+
+\addlinespace
+
+Comparison Engine &
+Compares recognized phonemes against the target word's expected phonemes and acceptable variants, identifies predefined substitutions, and classifies the attempt. &
+System \\
+
+\addlinespace
+
+Backend API &
+Coordinates system components, enforces access rules, and provides results to the dashboard. &
+System \\
+
+\addlinespace
+
+Database &
+Stores patient records, session history, SLP inputs, and audit logs, while maintaining separation between patient identity and clinical data. &
+System (configuration and schema) \\
+
+\addlinespace
+
+SLP Dashboard &
+Allows SLPs to configure and control sessions, enter inputs and overrides, and view results and visualizations. &
+System (client-side) \\
+
+\addlinespace
+
+Authentication &
+Verifies user identities and restricts access to patient data according to user permissions. &
+System (configuration) \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{Critical Assumptions}
 
-\wss{These assumptions that are made about the software or system.  You should
-minimize the number of assumptions that remove potential hazards.  For instance,
-you could assume a part will never fail, but it is generally better to include
-this potential failure mode.}
+\begin{itemize}
+    \item The patient never intentionally errs or mispronounces phonemes.
+    \item The user of the software is always a trained SLP.
+    \item The user is utilizing a hardware/operating system that is identified as compatible.
+    \item The user is operating in Ontario and hosting sessions within reasonable working hours (no later than 12 am or earlier than 6 am).
+    \item The user has the basic knowledge of how to use web-based software.
+    \item The user does not make diagnoses without additional verification outside of the software.
+\end{itemize}
 
 \section{Failure Mode and Effect Analysis}
 
-\wss{Include your FMEA table here. This is the most important part of this document.}
-\wss{The safety requirements in the table do not have to have the prefix SR.
-The most important thing is to show traceability to your SRS. You might trace to
-requirements you have already written, or you might need to add new
-requirements.}
-\wss{If no safety requirement can be devised, other mitigation strategies can be
-entered in the table, including strategies involving providing additional
-documentation, and/or test cases.}
+\fontsize{8}{10}\selectfont
+\begin{longtblr}[
+    caption = {Failure Mode and Effects Analysis},
+    label = {tab:fmea},
+]{
+    width = \linewidth, 
+    colspec = {X[1,l] X[1,l] X[1,l] X[1.1,l] X[1.6,l]},
+    row{1}  = {font=\bfseries},
+    hline{1,Z} = {0.8pt},
+    hline{2} = {0.5pt},
+    rowhead = 1, % Automatically repeats the header row on every new page
+}
+Failure Mode &
+Causes &
+Effects &
+Detection &
+Recommendations \\
+Phonemic identification model misclassifies patient speech \newline
+(false positive or negative) &
+• External noise reduces quality of the audio \newline
+• Unique vocal patterns or accents of the patient cause incorrect phoneme to be identified \newline
+• Technical issues with the microphone \newline
+• Updates to model could cause regression and diminishing of accuracy for the patient's specific speech sound disorder (SSD) &
+• Patient's treatment data contains errors, misrepresenting their actual progress &
+• Notify clinician of noisy data \newline
+• Notify clinician of large gaps in variance \newline
+• Flag illogical identified phonemes (Phonemes from a language a patient does not know, phonemes with vastly different characteristics than the expected phoneme) &
+• Allow the patient to try again \newline
+• Use aggregate data for progress tracking \newline
+• Display the model's confidence in the phoneme it identified \newline
+• Display recommendation to limit noise \newline
+• Allow for microphone test at the beginning of a session and ensure the quality is sufficient to get audio clips from a patient \newline
+• Allow clinician to test the model by pronouncing the correct phoneme \\
+Performance too slow for a live session &
+• The device where the phonemic analysis occurs is congested or busy \newline
+• Wi-Fi/connection issues like an unstable connection or congested network can cause high latency \newline
+• Sessions that use a client-side device may run older or slower specs, causing computation times to be extremely slow &
+• Valuable time lost in session waiting for a response from the application \newline
+• Frustration from SLP and patient for extending a session and wasting time &
+• Measure the time between the start of an audio analysis and its end. Note large time intervals above a given threshold &
+• For server-side computation methods, scale the number of servers used based on number of customers \newline
+• For server-side computation methods, if latency is too high, switch to using client-side device for computation \newline
+• Alert clinician or patient during a session that the connection is slow/unstable \\
+Data breach exposes patient information &
+• Malicious actors \newline
+• Data backup to an insecure location &
+• Software violates PHIPA guidelines \newline
+• Sensitive medical data from a patient can be taken advantage of &
+• Monitoring tools for the deep or dark web where sensitive information could be sold \newline
+• Logs of data access to check whenever the data has been viewed &
+• Software flags any suspicious transactions in the database \newline
+• Multiple data backups such that if one data storage location is exposed, it can be isolated and no data will be lost \\
+Race conditions in database access and/or modification &
+• Multiple clinicians access or edit the database at the same time &
+• Recently input patient data could be lost &
+• Timestamps for database viewing or modification are extremely close together &
+• Suspend the execution of a database action (e.g. view, modify) while a transaction is in progress (transactions include editing database elements, adding database elements, or removing database elements) \\
+Authentication or access control failure &
+• Forgotten username or password \newline
+Connection cannot be made to authentication server &
+• Clinician or patient is unable to use the application &
+• System detects multiple failed logins &
+• Implement forgotten username or password system \newline
+• Check connection to authentication server \newline
+Provide contact information to authentication server support \\
+Data is corrupted or lost &
+• Data storage hardware is damaged \newline
+• Software glitch corrupts data \newline
+• Software attacks that encrypt data (e.g. Ransomware Scheme) &
+• Patient data and overall progress is lost &
+• Check connections to all data storage devices \newline
+• Software tool to check for encrypted or inaccessible data &
+• Regularly backup data to multiple different data storage devices, if one should be compromised or lost, others will still be available \newline
+• Check health of data storage devices frequently, should one be experiencing signs of a potential failure, set up plans for replacement \\
+Replacement of a clinician's judgement &
+• Clinician believes everything the phonemic identification model says at face value \newline
+• Parents or guardians of patient trust the application and model over clinician &
+• Model is not always accurate or correct which could be providing false information to the patient. This can cause issues in their development if they believe when they are/are not speaking correctly, the opposite is true. &
+• Decline in patient's overall performance \newline
+• Minimal to no corrections given to the model &
+• Software consistently reminds clinicians and patients that machine learning models are not always perfectly accurate and can be wrong \newline
+• Check corrections given to the model for inconsistencies and frequency of corrections \\
+Patient is frustrated with using the software to do lessons &
+• Patient struggles to pronounce a phoneme or complete a lesson \newline
+• Each patient responds differently based on what kind of feedback they receive to improve (e.g. encouragement, straightforward, etc.) \newline
+• Patient finds the software boring to use &
+• Patient is unwilling to engage with the software, making treatment using it less effective &
+• In-session discomfort, annoyance, or anger \newline
+• Refusal to do lessons \newline
+• Detect limited improvements to progress &
+• Ask for patient feedback on improving elements of the application \newline
+• Allow for choice of feedback type that works well for the patient \\
+\end{longtblr}
+\fontsize{10}{12}\selectfont
+
 
 \section{Safety and Security Requirements}
 
-\wss{Newly discovered requirements.  These should also be added to the SRS.  (A
-rationale design process how and why to fake it.)}
+The following security, safety, and reliability requirements were drawn as a result of the hazard analysis process:
+
+\begin{itemize}
+\item \textbf{FR-HA1}: The system shall prompt the user when noisy (less than 15 dB) microphone inputs are passed in, and allow them to retry that input.\\
+\textbf{Rationale:} The system should not take in corrupted data as it will degrade the quality of the results and misrepresent a patient’s standing. A safer alternative is to prompt the user of the error, reject the data, and offer a retry option when the issue is resolved. 15 dB is the standard signal to noise ratio aimed for a clear microphone signal \cite{mic_noise}.
+
+\item \textbf{FR-HA2}: The system must back up all patient progress data and analytics at the end of each session. It must alert the user if the backup fails.\\
+\textbf{Rationale:} In the event of a data breach, patient data is not lost.
+
+\item \textbf{FR-HA3}: The speech engine must provide a confidence percentage for each phoneme deduction it reaches. (have a FR to connect this to)\\
+\textbf{Rationale:} Upon some speech analysis, the results must be kept transparent so the SLP is confident to accept them. This way they can leverage their professional judgement to reject incorrect deductions and consider high confidence ones.
+
+\item \textbf{FR-HA4}: The system must alert the user when WiFi connection becomes unstable. It must provide an offline version which records patient audio for when the WiFi recovers.\\
+\textbf{Rationale:} If the network connection becomes unstable, the connection to any processing server may drop and the analysis system may become inactive. The SLP needs to know of this so they could take alternative measures instead of randomly finding out their session was not tracked. A metric for unstable will depend on the user’s hardware specifications and the server specifications.
+
+\item \textbf{FR-HA5}: The system must be able to transfer from online to offline mode at all times. The transfer cannot be blocked by network or interface malfunctions.\\
+\textbf{Rationale:} If the network connection drops, the system cannot freeze and must fail gracefully. This way, the session may continue with limited functionality while still allowing the SLP to save speech files, and access the interface.
+
+\item \textbf{FR-HA6}: The system must have two factor authentication and a password recovery system in place.
+
+\item \textbf{FR-HA7}: The system must preface all deductions and analytics with an acknowledgement that they may be incorrect and may only be accepted under the discretion of an SLP.\\
+\textbf{Rationale:} The tool is purely assistive and software may not be 100\% correct. Therefore this disclosure is necessary to ensure users do not try to replace the judgement of SLPs with this.
+
+\item \textbf{FR-HA8}: Prior to authorizing any audio recordings, a one-time confirmation code sent to the patient’s trusted device at the start of the session must be entered into the SLP interface.\\
+\textbf{Rationale:} This serves as a method of consent for the clinic to record the patient during this session. It indirectly verifies that the SLP has their interface open to the correct patient as well.
+
+\item \textbf{FR-HA9}: The system shall maintain an audit trail detailing the user, action, and time of all data accesses and manipulations.\\
+\textbf{Rationale:} It is important to keep a traceable log of all user and system actions in the event of errors, data breaches or other undesired events.
+\end{itemize}
 
 \section{Roadmap}
 
-\wss{Which safety requirements will be implemented as part of the capstone timeline?
-Which requirements will be implemented in the future?}
+Requirements 1, 3, 7 will be integrated within the capstone timeline. The core of the product is its speech analysis ability, so filtering inputs for noisy data is crucial. It is important to be transparent about the validity of a claim, which is why each deduction must be supported by a confidence level. This way an SLP can make a more informed judgement rather than blindly trusting the software. Full disclosure is needed at all times to ensure it does not impede the professional judgement of an SLP. 
+
+The remaining requirements specify necessary security and reliability mechanisms that must be in place before the product is released. Elements like authentication and redundancy are especially crucial for real life clinic scenarios, but do not enhance the value of the project as a capstone. Instead, time is better spent enhancing the SLP interface of the system, and focusing on the speech analysis. 
 
 \newpage{}
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+ChatGPT (version 5), GPT 6-Sol, and Claude Sonnet 5.5 were used.
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
-
-\wss{For each of the uses, identify which parts of the document were affected.}
-
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+ChatGPT (version 5) helped brainstorm the template for this disclosure section. Claude Sonnet 5.5 was used for brainstorming and ideation during the hazard analysis. GPT 6-Sol was used to format this document and restore its section layout after a merge.
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+The formatting changes were checked against the prior text to confirm that the wording was preserved, and the document was compiled. The team remains responsible for reviewing brainstormed ideas and verifying any factual claims or requirements before submission.
 
 \newpage{}
 
 \section{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
 \input{../Reflection.text}
 
 \begin{enumerate}
-    \item What went well while writing this deliverable? 
+    \item What went well while writing this deliverable?
+    We went into this deliverable with a general idea of the expected hazards.
+    In many of our prior discussions (both as a group and with our supervisors), we discussed many of the potential failure modes.
+    As a result, we spent more time expanding on the failure modes we have previously identified rather than ideating from scratch.
+    Our supervisors also gave us many jumping off points to identify failures and provided us with related reading material.
     \item What pain points did you experience during this deliverable, and how
     did you resolve them?
+    We struggled with differentiating on what is a failure mode and what is actually a cause of the failure mode.
+    For instance, we identified the potential issue of unique vocal patterns or accents causing an incorrect phoneme to be identified.
+    However, we realized that the unmet requirement was that an incorrect phoneme was identified (accuracy).
+    This meant that it was ultimately a redundancy in the failure mode: Phonemic identification model misclassifies patient speech.
+    To resolve this, we started rooting out the specific requirements that were not met in our ideas.
+    We then separated the cause of failure out of this statement to reorganize our thoughts.
     \item Which of your listed risks had your team thought of before this
     deliverable, and which did you think of while doing this deliverable? For
     the latter ones (ones you thought of while doing the Hazard Analysis), how
     did they come about?
+    We have had many discussions about risks associated with phonemic identification both in terms of accuracy and performance.
+    We also had general discussions about sensitive patient data being lost or accessed by an actor who should not be able to access it.
+    However, during the actual identification of the failure modes, we separated the data loss and incorrect access into more subtypes, such as a data breach or authentication failure.
+    We then identified two additional risks, which were replacement of a clinician's judgement and patient frustration.
+    We came up with these during analysis of our non-functional requirements, specifically medical requirements for the clinician's judgement and usability requirements for patient frustration.
     \item Other than the risk of physical harm (some projects may not have any
     appreciable risks of this form), list at least 2 other types of risk in
     software products. Why are they important to consider?
+    One type of risk is the spread of misinformation. Many software products are used to provide people with media access.
+    If the information shared by that media is incorrect or exaggerated, it can lead to people making drastic decisions that are not in their best interest or are unsafe.
+    Another type of risk is a data breach. Software products are frequently entrusted with people's data.
+    If that data is a vulnerability for them, it can be used to take advantage of the person, or exposes something that puts them into danger.
+    For instance, if an app has information about banking information, the exposure of that information can lead to someone accessing their finances.
+
 \end{enumerate}
+
+\bibliographystyle{IEEEtran}
+\bibliography{../../refs/References}
 
 \end{document}

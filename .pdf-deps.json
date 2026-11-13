@@ -71,7 +71,8 @@
     "docs/Comments.text",
     "docs/Common.text",
     "docs/HazardAnalysis/HazardAnalysis.tex",
-    "docs/Reflection.text"
+    "docs/Reflection.text",
+    "refs/References.bib"
   ],
   "docs/ProblemStatementAndGoals/ProblemStatement.tex": [
     "docs/Comments.text",
@@ -84,13 +85,6 @@
     "docs/Common.text",
     "docs/ReflectAndTrace/ReflectAndTrace.tex"
   ],
-  "docs/SRS-Volere/SRS.tex": [
-    "docs/Comments.text",
-    "docs/Common.text",
-    "docs/Reflection.text",
-    "docs/SRS-Volere/SRS.tex",
-    "docs/SRS_Reflection.text"
-  ],
   "docs/SRS/SRS-FAQ.tex": [
     "docs/SRS/SRS-FAQ.tex"
   ],
@@ -98,9 +92,14 @@
     "docs/Comments.text",
     "docs/Common.text",
     "docs/Reflection.text",
-    "docs/SRS/RelationsBetweenTM_GD_IM_DD_A.pdf",
+    "docs/SRS/GhotiPSD.png",
+    "docs/SRS/LessonPlan.png",
+    "docs/SRS/ModelManagement.png",
+    "docs/SRS/PhonemicID.png",
+    "docs/SRS/ProgressTracking.png",
     "docs/SRS/SRS.tex",
-    "docs/SRS/SystemContextFigure.pdf",
+    "docs/SRS/Session.png",
+    "docs/SRS/System.png",
     "docs/SRS_Reflection.text",
     "refs/References.bib"
   ],
