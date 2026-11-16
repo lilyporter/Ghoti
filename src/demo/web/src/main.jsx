@@ -107,7 +107,7 @@ function App() {
     setError('')
   }
 
-  if (window.location.pathname === '/slp') return <SessionDashboard samples={samples} sampleError={sampleError} onDemo={() => { window.location.href = '/' }} />
+  if (window.location.pathname === '/slp') return <SessionDashboard samples={samples} sampleError={sampleError} />
 
   return <div className="app">
     <header className="topbar">

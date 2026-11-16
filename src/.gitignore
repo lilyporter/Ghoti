@@ -1,6 +1,9 @@
 # Shared rules for local artifacts created anywhere under src/.
 # Keep source, documentation, dependency manifests, and intentional test fixtures.
 
+# Local agent instructions
+/AGENTS.md
+
 # Local Python/conda environments and packaging output
 .venv/
 venv/

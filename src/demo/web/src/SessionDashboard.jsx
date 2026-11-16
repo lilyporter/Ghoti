@@ -33,7 +33,7 @@ function differences(analysis) {
   }).join(' · ')
 }
 
-export default function SessionDashboard({ samples, sampleError, onDemo }) {
+export default function SessionDashboard({ samples, sampleError }) {
   const [results, setResults] = useState(null)
   const [error, setError] = useState('')
   const [playError, setPlayError] = useState('')
@@ -65,8 +65,11 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
     <aside className="dash-sidebar">
       <div className="dash-brand"><Mascot small /> PronouncedFish</div>
       <nav aria-label="Dashboard navigation">
-        <button onClick={onDemo}><span aria-hidden="true">▦</span> Audio demo</button>
-        <span className="dash-nav-active"><span aria-hidden="true">▥</span> Session analysis</span>
+        <span className="dash-nav-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h6v6H3Zm12 0h6v6h-6ZM3 15h6v6H3Zm12 0h6v6h-6Z"/></svg>Overview</span>
+        <span className="dash-nav-item"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="7" r="4"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m1-18a4 4 0 0 1 0 8m2 3a5 5 0 0 1 3 5v2"/></svg>Caseload</span>
+        <span className="dash-nav-item dash-nav-active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V12m6 9V9m6 12v-6m6 6V7M2 9l7-6 6 6 7-8"/></svg>Session analysis</span>
+        <span className="dash-nav-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h4m5 0h9M3 12h10m5 0h3M3 19h4m5 0h9M8 2v6m6 1v6m-6 1v6"/></svg>Practice plans</span>
+        <span className="dash-nav-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 19 1-5L17 3l4 4-11 11Zm10-14 4 4M5 19l5-1"/></svg>Clinical notes</span>
       </nav>
       <div className="dash-clinician"><span className="dash-avatar small">JL</span><span><strong>Jordan Lee, SLP</strong><small>Clinician</small></span></div>
     </aside>
@@ -74,7 +77,7 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
     <div className="dash-main-area">
       <header className="dash-topbar"><span>Maya Chen</span><span>English (US)</span></header>
       <main className="dash-content">
-        <div className="dash-profile"><span className="dash-avatar">MC</span><div><h1>Maya Chen</h1><p>Age 7 · English (US)</p></div><button onClick={onDemo}>Open exercise →</button></div>
+        <div className="dash-profile"><span className="dash-avatar">MC</span><div><h1>Maya Chen</h1><p>Age 7 · English (US)</p></div></div>
         <div className="dash-tabs"><span className="active">Progress &amp; sessions</span></div>
 
         <div className="dash-overview dash-history-overview">
@@ -138,7 +141,7 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
           <section className="dash-card dash-attempts"><div className="dash-attempts-header"><h2>Previous sessions</h2><span className="dash-pill">{maya.sessions.length} sessions</span></div>
             <div className="dash-table-wrap"><table><thead><tr><th>Date</th><th>Exercise</th><th>Duration</th><th>Attempts</th></tr></thead><tbody>{[...maya.sessions].reverse().map(session => <tr key={session.date}><td>{session.date}</td><td><strong>{session.name}</strong></td><td>{session.minutes} min</td><td>{session.attempts}</td></tr>)}</tbody></table></div>
           </section>
-          <section className="dash-card dash-home-practice"><h2>At-home practice</h2><h3>{maya.practice.title}</h3><p>{maya.practice.schedule}</p><div className="dash-practice-words">{maya.practice.words.map(word => <span key={word}>{word}</span>)}</div><p>{maya.practice.instruction}</p></section>
+          <section className="dash-card dash-home-practice"><h2>At-home practice</h2><h3>{maya.practice.title}</h3><p>{maya.practice.schedule}</p><div className="dash-practice-words">{maya.practice.words.map(word => <span key={word}>{word}</span>)}</div></section>
         </div>
         <section className="dash-card dash-clinical-notes"><h2>Clinical notes</h2>{maya.notes.map(note => <article key={note.date}><div><strong>{note.title}</strong><span>{note.author} · {note.date}</span></div><p>{note.text}</p></article>)}</section>
       </main>
