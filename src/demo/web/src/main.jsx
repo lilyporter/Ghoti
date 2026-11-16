@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './style.css'
+import SessionDashboard from './SessionDashboard'
 
 const PICTURES = { sun: '☀️', gift: '🎁', seal: '🦭', sheep: '🐑', shell: '🐚', ship: '🚢', shoe: '👟', shop: '🏪', soup: '🍲', chute: '🛝' }
 
@@ -46,7 +47,7 @@ function App() {
     catch { setError('Your iPad could not play this clip. Please tap again.'); setState('ready') }
   }
   async function finished() {
-    if (screen === 'results') { setState('ready'); return }
+    if (screen !== 'practice') { setState('ready'); return }
     if (!selected) return
     setState('analyzing')
     try {
@@ -59,6 +60,7 @@ function App() {
   const comparison = result?.analysis
   const recognition = result?.recognition
   const changes = comparison?.alignment?.filter(row => row.kind !== 'match') || []
+  if (window.location.pathname === '/slp') return <SessionDashboard samples={samples} onDemo={() => { window.location.href = '/' }} />
   return <div className="app"><Header screen={screen} onBack={reset}/>
     <main>
       {screen === 'choose' && <section className="choose-screen"><div className="page-title"><span className="eyebrow">Step 1 of 3</span><h1>Choose a voice and word</h1><p>Listen to ten different words spoken by ten children.</p></div>

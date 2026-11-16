@@ -29,7 +29,10 @@ cd .\demo\web
 npm run dev
 ```
 
-Open the `Network` URL shown by Vite on the iPad. The model files must be present
+Open the `Network` URL shown by Vite on the iPad for the child demo. On the laptop,
+open `http://localhost:5173/slp` for the sample SLP dashboard (use Vite's printed
+port if it differs). The dashboard's patient and session details are fictional;
+its playback buttons use the real demo clips. The model files must be present
 in `engine/models/pasketti-phonetic/`. The first analysis takes longer while the
 laptop loads the model.
 
