@@ -15,6 +15,7 @@ from pronouncedfish_engine import PaskettiRecognizer, analyze, load_audio
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLES = ROOT / "demo" / "audio"
 MODEL = ROOT / "engine" / "models" / "pasketti-phonetic"
+ANALYSIS = ROOT / "demo" / "saved_results.json"
 app = FastAPI(title="PronouncedFish demo API")
 _inference_lock = Lock()
 
@@ -46,6 +47,13 @@ def samples():
          "audio_url": f"/api/samples/{item['id']}/audio"}
         for item in _manifest().values()
     ]
+
+
+@app.get("/api/analysis")
+def saved_analysis():
+    if not ANALYSIS.is_file():
+        raise HTTPException(status_code=503, detail="Saved demo analysis is missing")
+    return json.loads(ANALYSIS.read_text(encoding="utf-8"))
 
 
 @app.get("/api/samples/{sample_id}/audio")
