@@ -1,6 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './dashboard.css'
 import Mascot from './Mascot'
+import maya from './maya.json'
+
+function ProgressHistory() {
+  const points = key => maya.sessions.map((session, index) => `${35 + index * 100},${180 - session[key] * 1.6}`).join(' ')
+  return <section className="dash-card dash-history">
+    <div className="dash-card-heading"><div><h2>Sound-level trends</h2><p>Word practice · Across recent sessions</p></div><span className="dash-pill">/s/</span></div>
+    <svg className="dash-history-chart" viewBox="0 0 580 220" role="img" aria-label="Initial s progress increases from 58 to 78 percent; final s increases from 49 to 63 percent">
+      {[0,25,50,75,100].map(value => <g key={value}><text x="0" y={184-value*1.6}>{value}%</text><line x1="35" x2="555" y1={180-value*1.6} y2={180-value*1.6}/></g>)}
+      <polyline points={points('initialS')} fill="none" stroke="#3975ea" strokeWidth="3"/>
+      <polyline points={points('finalS')} fill="none" stroke="#4f967c" strokeWidth="2" strokeDasharray="6 4"/>
+      {maya.sessions.map((session,index) => <g key={session.date}><circle cx={35+index*100} cy={180-session.initialS*1.6} r="3.5" fill="#3975ea"/><circle cx={35+index*100} cy={180-session.finalS*1.6} r="3" fill="#4f967c"/><text x={35+index*100} y="208" textAnchor="middle">{session.date}</text></g>)}
+    </svg>
+    <div className="dash-legend"><span><i className="blue-line"/> /s/ · Initial</span><span><i className="green-line"/> /s/ · Final</span></div>
+  </section>
+}
 
 function phoneText(phones, brackets = false) {
   if (!phones?.length) return '—'
@@ -10,7 +25,7 @@ function phoneText(phones, brackets = false) {
 function differences(analysis) {
   if (analysis?.status !== 'ok') return 'Could not assess'
   const changes = analysis.alignment.filter(row => row.kind !== 'match')
-  if (!changes.length) return 'No candidate differences'
+  if (!changes.length) return 'Sounds matched'
   return changes.map(row => {
     if (row.kind === 'substitution') return `${phoneText([row.expected_phone])} → [${row.recognized_phone}]`
     if (row.kind === 'omission') return `Missing ${phoneText([row.expected_phone])}`
@@ -51,16 +66,23 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
       <div className="dash-brand"><Mascot small /> PronouncedFish</div>
       <nav aria-label="Dashboard navigation">
         <button onClick={onDemo}><span aria-hidden="true">▦</span> Audio demo</button>
-        <span className="dash-nav-active"><span aria-hidden="true">▥</span> Sample analysis</span>
+        <span className="dash-nav-active"><span aria-hidden="true">▥</span> Session analysis</span>
       </nav>
-      <div className="dash-clinician"><span className="dash-avatar small">SLP</span><span><strong>Clinician view</strong></span></div>
+      <div className="dash-clinician"><span className="dash-avatar small">JL</span><span><strong>Jordan Lee, SLP</strong><small>Clinician</small></span></div>
     </aside>
 
     <div className="dash-main-area">
-      <header className="dash-topbar"><span>Sample analysis</span></header>
+      <header className="dash-topbar"><span>Maya Chen</span><span>English (US)</span></header>
       <main className="dash-content">
-        <div className="dash-profile"><span className="dash-avatar">10</span><div><h1>Ten child voices</h1><p>Ten different speakers · Ten words · Paidologos recordings</p></div><button onClick={onDemo}>Open audio demo</button></div>
-        <div className="dash-tabs"><span className="active">Recordings &amp; model results</span></div>
+        <div className="dash-profile"><span className="dash-avatar">MC</span><div><h1>Maya Chen</h1><p>Age 7 · English (US)</p></div><button onClick={onDemo}>Open exercise →</button></div>
+        <div className="dash-tabs"><span className="active">Progress &amp; sessions</span></div>
+
+        <div className="dash-overview dash-history-overview">
+          <ProgressHistory />
+          <section className="dash-card dash-goals"><div className="dash-card-heading"><h2>Practice goals</h2></div>
+            {maya.goals.map(goal => <div className="dash-goal" key={goal.title}><div><span className="dash-pill">{goal.sound}</span><strong>{goal.title}</strong></div><p>{goal.detail}</p><div className="dash-goal-track"><i style={{width:`${goal.progress}%`}}/></div><small>{goal.progress}% · Goal {goal.target}%</small></div>)}
+          </section>
+        </div>
 
         {(error || sampleError) && <p className="dash-load-error" role="alert">{error || sampleError}</p>}
         {!error && !sampleError && !rows.length && <p className="dash-loading">Loading saved analysis…</p>}
@@ -68,7 +90,7 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
         {rows.length > 0 && <>
           <div className="dash-overview">
             <section className="dash-card dash-trends">
-              <div className="dash-card-heading"><div><h2>Sound label comparison</h2><p>Target versus model output for each recording</p></div></div>
+              <div className="dash-card-heading"><div><h2>Sound comparisons</h2><p>Sunny Reef · Matching sound labels by word</p></div></div>
               <div className="dash-comparison-chart">
                 {rows.map(({ sample, result }) => {
                   const alignment = result.analysis.alignment || []
@@ -83,30 +105,42 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
                   </div>
                 })}
               </div>
-              <div className="dash-legend"><span><i className="blue-line"/> Matching labels</span><span><i className="coral-line"/> Candidate changes</span></div>
+              <div className="dash-legend"><span><i className="blue-line"/> Matching sounds</span><span><i className="coral-line"/> Differences</span></div>
             </section>
 
             <section className="dash-card dash-latest">
-              <div className="dash-card-heading"><h2>Analysis summary</h2></div>
-              <div className="dash-metrics"><div><strong>{rows.length}</strong><span>Recordings</span></div><div><strong>{exact}</strong><span>Exact label matches</span></div><div><strong>{withChanges}</strong><span>With candidate changes</span></div></div>
+              <div className="dash-card-heading"><h2>Latest session</h2><span className="dash-pill blue">Sunny Reef</span></div>
+              <h3 className="dash-session-title">Word practice</h3>
+              <p className="dash-session-subtitle">Maya Chen · Individual session</p>
+              <div className="dash-metrics"><div><strong>{rows.length}</strong><span>Prompts</span></div><div><strong>{rows.length}</strong><span>Attempts</span></div><div><strong>{exact}</strong><span>Matched</span></div></div>
+              <div className="dash-session-score"><strong>{exact}<span> / {rows.length}</span></strong><div>Words matched the target<small>{withChanges} with sound differences</small></div></div>
               {unassessable > 0 && <p>{unassessable} recording{unassessable === 1 ? '' : 's'} could not be assessed.</p>}
             </section>
           </div>
 
           <section className="dash-card dash-attempts">
-            <div className="dash-attempts-header"><div><h2>Recording breakdown</h2><span>One analysis per child voice</span></div><span className="dash-pill blue">All {rows.length} recordings</span></div>
-            <div className="dash-table-wrap"><table><thead><tr><th>Recording</th><th>Target sounds</th><th>Model heard</th><th>Candidate differences</th><th>Playback</th></tr></thead><tbody>
+            <div className="dash-attempts-header"><div><h2>Session attempts</h2><span>Sunny Reef</span></div><span className="dash-pill blue">All attempts ({rows.length})</span></div>
+            <div className="dash-table-wrap"><table><thead><tr><th>Word / attempt</th><th>Target sounds</th><th>Recognized sounds</th><th>Sound comparison</th><th>Playback</th></tr></thead><tbody>
               {rows.map(({ sample, result }) => <tr key={sample.id}>
-                <td><strong>{sample.target_word.toUpperCase()}</strong><small>{sample.label}</small></td>
+                <td><strong>{sample.target_word.toUpperCase()}</strong><small>Try 1</small></td>
                 <td className="dash-phone">{phoneText(result.analysis.expected_phones)}</td>
                 <td className="dash-phone">{phoneText(result.recognition.recognized_phones, true)}</td>
-                <td className="dash-differences">{differences(result.analysis)}</td>
+                <td className="dash-differences">{result.analysis.matches_target ? <span className="dash-match-pill">Sounds matched</span> : differences(result.analysis)}</td>
                 <td><button className="dash-play" onClick={() => play(sample)} aria-label={`Play ${sample.target_word} recording`}>▷</button></td>
               </tr>)}
             </tbody></table></div>
+            <div className="dash-table-footer">Showing all {rows.length} attempts</div>
           </section>
           {playError && <p className="dash-load-error" role="alert">{playError}</p>}
         </>}
+
+        <div className="dash-overview dash-history-overview">
+          <section className="dash-card dash-attempts"><div className="dash-attempts-header"><h2>Previous sessions</h2><span className="dash-pill">{maya.sessions.length} sessions</span></div>
+            <div className="dash-table-wrap"><table><thead><tr><th>Date</th><th>Exercise</th><th>Duration</th><th>Attempts</th></tr></thead><tbody>{[...maya.sessions].reverse().map(session => <tr key={session.date}><td>{session.date}</td><td><strong>{session.name}</strong></td><td>{session.minutes} min</td><td>{session.attempts}</td></tr>)}</tbody></table></div>
+          </section>
+          <section className="dash-card dash-home-practice"><h2>At-home practice</h2><h3>{maya.practice.title}</h3><p>{maya.practice.schedule}</p><div className="dash-practice-words">{maya.practice.words.map(word => <span key={word}>{word}</span>)}</div><p>{maya.practice.instruction}</p></section>
+        </div>
+        <section className="dash-card dash-clinical-notes"><h2>Clinical notes</h2>{maya.notes.map(note => <article key={note.date}><div><strong>{note.title}</strong><span>{note.author} · {note.date}</span></div><p>{note.text}</p></article>)}</section>
       </main>
     </div>
   </div>

@@ -1,0 +1,20 @@
+{
+  "sessions": [
+    { "date": "Sep 19", "name": "Coral Cove", "minutes": 15, "attempts": 16, "initialS": 58, "finalS": 49 },
+    { "date": "Sep 23", "name": "Bubble Bay", "minutes": 12, "attempts": 14, "initialS": 62, "finalS": 52 },
+    { "date": "Sep 26", "name": "Coral Cove", "minutes": 15, "attempts": 18, "initialS": 67, "finalS": 55 },
+    { "date": "Sep 30", "name": "Turtle Trail", "minutes": 14, "attempts": 16, "initialS": 70, "finalS": 58 },
+    { "date": "Oct 3", "name": "Bubble Bay", "minutes": 12, "attempts": 15, "initialS": 74, "finalS": 61 },
+    { "date": "Oct 7", "name": "Sunny Reef", "minutes": 10, "attempts": 14, "initialS": 78, "finalS": 63 }
+  ],
+  "goals": [
+    { "sound": "/s/", "title": "Initial sounds in words", "detail": "8 of 10 words with one verbal cue", "progress": 78, "target": 80 },
+    { "sound": "/s/", "title": "Final sounds in words", "detail": "Keep the final sound through the whole word", "progress": 63, "target": 80 },
+    { "sound": "/ʃ/", "title": "Short phrases", "detail": "Use a two-word phrase after a model", "progress": 55, "target": 75 }
+  ],
+  "practice": { "title": "Little words, little moments", "schedule": "5 minutes · 3 days a week", "words": ["sun", "soup", "seal", "shoe", "ship"], "instruction": "Say each word together, then let Maya try on her own. Finish with a word she enjoys." },
+  "notes": [
+    { "date": "Oct 7 · 10:35 AM", "author": "Jordan Lee", "title": "A little more independence", "text": "Maya started initial /s/ words with fewer reminders today. A mirror cue helped her keep airflow steady. Continue word practice before moving to phrases." },
+    { "date": "Oct 3 · 2:15 PM", "author": "Jordan Lee", "title": "Home practice check-in", "text": "Family reported two short practice sessions this week. Maya enjoyed choosing the pictures. Keep practice brief and offer a second try without rushing." }
+  ]
+}
