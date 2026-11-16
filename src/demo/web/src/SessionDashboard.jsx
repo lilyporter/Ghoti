@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import './dashboard.css'
+import Mascot from './Mascot'
 
 // Fictional dashboard records. The playback buttons use the real demo recordings.
 const attempts = [
@@ -40,7 +41,7 @@ export default function SessionDashboard({ samples, onDemo }) {
 
   return <div className="dashboard">
     <aside className="dash-sidebar">
-      <div className="dash-brand"><span aria-hidden="true">🐟</span> PronouncedFish</div>
+      <div className="dash-brand"><Mascot small /> PronouncedFish</div>
       <nav aria-label="Dashboard navigation">
         <button onClick={onDemo}><span aria-hidden="true">▦</span> Audio demo</button>
         <span className="dash-nav-active"><span aria-hidden="true">▥</span> Session analysis</span>
@@ -51,7 +52,7 @@ export default function SessionDashboard({ samples, onDemo }) {
     <div className="dash-main-area">
       <header className="dash-topbar"><span>Maya Chen</span><span>English (US) <span className="dash-top-icons" aria-hidden="true">ⓘ &nbsp; ♧</span></span></header>
       <main className="dash-content">
-        <div className="dash-profile"><span className="dash-avatar">MC</span><div><h1>Maya Chen</h1><p>Age 5 · English (US) · Fictional demo profile</p></div><button onClick={onDemo}>+ Try a recording</button></div>
+        <div className="dash-profile"><span className="dash-avatar">MC</span><div><h1>Maya Chen</h1><p>Age 5 · English (US)</p></div><button onClick={onDemo}>+ Try a recording</button></div>
         <div className="dash-tabs"><span className="active">Progress &amp; sessions</span><span>Practice plan</span><span>Mouth map</span><span>Notes</span></div>
 
         <div className="dash-overview">
@@ -59,7 +60,7 @@ export default function SessionDashboard({ samples, onDemo }) {
           <section className="dash-card dash-latest"><div className="dash-card-heading"><h2>Latest session</h2><span className="dash-pill neutral">6 to review</span></div><h3>Sunny Reef</h3><p>Oct 7, 2026 · 10:20 AM · 10 min</p><div className="dash-metrics"><div><strong>10</strong><span>Prompts</span></div><div><strong>14</strong><span>Attempts</span></div><div><strong>8</strong><span>Reviewed</span></div></div><div className="dash-estimate"><strong>78%</strong><span>Example accuracy estimate<small>/s/ initial · 74% previous session</small></span></div></section>
         </div>
 
-        <section className="dash-card dash-attempts"><div className="dash-attempts-header"><div><h2>Session attempts</h2><span>Oct 7 · Sunny Reef</span></div><span className="dash-pill blue">Showing 5 of 14 example attempts</span></div><div className="dash-table-wrap"><table><thead><tr><th>Word / attempt</th><th>Target / position</th><th>Example estimate</th><th>Example review</th><th>Playback</th></tr></thead><tbody>{attempts.map(row => <tr key={row.word}><td><strong>{row.word.toUpperCase()}</strong><small>Try {row.try}</small></td><td>{row.target}</td><td><strong>{row.score}%</strong></td><td><span className={`dash-pill ${row.review === 'Confirmed' ? 'confirmed' : row.review === 'Needs cue' ? 'neutral' : 'blue'}`}>{row.review}</span></td><td><button className="dash-play" onClick={() => play(row.word)} aria-label={`Play ${row.word} recording`}>▷</button><small>{row.time}</small></td></tr>)}</tbody></table></div><div className="dash-table-footer"><span>Fictional session data · Playback uses real demo clips</span><button onClick={onDemo}>Open audio demo →</button></div></section>
+        <section className="dash-card dash-attempts"><div className="dash-attempts-header"><div><h2>Session attempts</h2><span>Oct 7 · Sunny Reef</span></div><span className="dash-pill blue">Showing 5 of 14 example attempts</span></div><div className="dash-table-wrap"><table><thead><tr><th>Word / attempt</th><th>Target / position</th><th>Example estimate</th><th>Example review</th><th>Playback</th></tr></thead><tbody>{attempts.map(row => <tr key={row.word}><td><strong>{row.word.toUpperCase()}</strong><small>Try {row.try}</small></td><td>{row.target}</td><td><strong>{row.score}%</strong></td><td><span className={`dash-pill ${row.review === 'Confirmed' ? 'confirmed' : row.review === 'Needs cue' ? 'neutral' : 'blue'}`}>{row.review}</span></td><td><button className="dash-play" onClick={() => play(row.word)} aria-label={`Play ${row.word} recording`}>▷</button><small>{row.time}</small></td></tr>)}</tbody></table></div><div className="dash-table-footer"><button onClick={onDemo}>Open audio demo →</button></div></section>
         <section className="dash-note"><span aria-hidden="true">✎</span><div><strong>Jordan Lee · Today, 10:35 AM</strong><p>SUN: /s/ still needed a model and visual cue. Continue initial words; allow a second try without rushing.</p></div><span className="dash-note-tag">Example note</span></section>
       </main>
     </div>
