@@ -53,11 +53,11 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
         <button onClick={onDemo}><span aria-hidden="true">▦</span> Audio demo</button>
         <span className="dash-nav-active"><span aria-hidden="true">▥</span> Sample analysis</span>
       </nav>
-      <div className="dash-clinician"><span className="dash-avatar small">SLP</span><span><strong>Clinician view</strong><small>Local demo</small></span></div>
+      <div className="dash-clinician"><span className="dash-avatar small">SLP</span><span><strong>Clinician view</strong></span></div>
     </aside>
 
     <div className="dash-main-area">
-      <header className="dash-topbar"><span>Sample analysis</span><span>Saved on this laptop</span></header>
+      <header className="dash-topbar"><span>Sample analysis</span></header>
       <main className="dash-content">
         <div className="dash-profile"><span className="dash-avatar">10</span><div><h1>Ten child voices</h1><p>Ten different speakers · Ten words · Paidologos recordings</p></div><button onClick={onDemo}>Open audio demo</button></div>
         <div className="dash-tabs"><span className="active">Recordings &amp; model results</span></div>
@@ -87,11 +87,9 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
             </section>
 
             <section className="dash-card dash-latest">
-              <div className="dash-card-heading"><h2>Analysis summary</h2><span className="dash-pill blue">Local results</span></div>
-              <p className="dash-summary-intro">The existing engine analyzed all ten selected clips. These counts describe model and target labels.</p>
+              <div className="dash-card-heading"><h2>Analysis summary</h2></div>
               <div className="dash-metrics"><div><strong>{rows.length}</strong><span>Recordings</span></div><div><strong>{exact}</strong><span>Exact label matches</span></div><div><strong>{withChanges}</strong><span>With candidate changes</span></div></div>
               {unassessable > 0 && <p>{unassessable} recording{unassessable === 1 ? '' : 's'} could not be assessed.</p>}
-              <div className="dash-estimate"><strong>Review</strong><span>All model output needs clinician review.<small>These are not calibrated accuracy scores.</small></span></div>
             </section>
           </div>
 
@@ -106,10 +104,8 @@ export default function SessionDashboard({ samples, sampleError, onDemo }) {
                 <td><button className="dash-play" onClick={() => play(sample)} aria-label={`Play ${sample.target_word} recording`}>▷</button></td>
               </tr>)}
             </tbody></table></div>
-            <div className="dash-table-footer"><span>Saved analysis from the local model · Real child recordings</span></div>
           </section>
           {playError && <p className="dash-load-error" role="alert">{playError}</p>}
-          <section className="dash-note"><span aria-hidden="true">✎</span><div><strong>How to read this</strong><p>A difference is a possible alignment between the supplied target and model output. Listen to the recording before drawing a clinical conclusion.</p></div></section>
         </>}
       </main>
     </div>

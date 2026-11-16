@@ -37,6 +37,10 @@ real clips. The model files must be present
 in `engine/models/pasketti-phonetic/`. The first analysis takes longer while the
 laptop loads the model.
 
+On the iPad, tap the first picture's play button. The ten recordings play in order,
+with each clip analyzed before the next begins. If Safari stops automatic playback,
+tap the button again to continue. A simple review of all ten appears at the end.
+
 The active demo uses ten real child recordings from ten different speakers in
 `audio/real/`: sun, gift, seal, sheep, shell, ship, shoe, shop, soup, and chute.
 The older generated clips in `audio/synthetic/` are not used. The terminal prints

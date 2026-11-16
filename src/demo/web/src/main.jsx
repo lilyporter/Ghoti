@@ -3,70 +3,150 @@ import { createRoot } from 'react-dom/client'
 import './style.css'
 import SessionDashboard from './SessionDashboard'
 import Mascot from './Mascot'
+import WordArt from './WordArt'
 
-const PICTURES = { sun: '☀️', gift: '🎁', seal: '🦭', sheep: '🐑', shell: '🐚', ship: '🚢', shoe: '👟', shop: '🏪', soup: '🍲', chute: '🛝' }
-
-function Header({ screen, onBack }) {
-  return <header className="topbar">
-    <button className="brand" onClick={onBack} aria-label="Return to audio choices"><Mascot small /> <span>PronouncedFish</span></button>
-    <div className="progress"><strong>{screen === 'choose' ? 'Choose a clip' : screen === 'practice' ? 'Listen' : 'Review'}</strong><div className="progress-dots"><i className="done"/><i className={screen !== 'choose' ? 'done' : ''}/><i className={screen === 'results' ? 'done' : ''}/><i/><i/><i/><i/><i/><i/><i/></div></div>
-  </header>
+function ReefDecor() {
+  return <svg className="reef-decor" viewBox="0 0 1200 170" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 89c188 38 334 63 515 22 234-53 377-116 685-37v96H0Z" fill="#d0eff1" />
+    <path d="M8 170V68m0 59C37 118 40 92 39 53M8 150c-25-11-26-32-26-63" fill="none" stroke="#e48657" strokeWidth="14" strokeLinecap="round" />
+    <path d="M1191 170V95m0 51c-29-8-34-34-32-48m32 62c25-8 28-30 29-47" fill="none" stroke="#4d9a7d" strokeWidth="13" strokeLinecap="round" />
+  </svg>
 }
 
-function Picture({ word }) {
-  if (word !== 'sun') return <div className="picture-card" role="img" aria-label={`Picture of ${word}`}><span className="picture-emoji" aria-hidden="true">{PICTURES[word]}</span></div>
-  return <div className="picture-card" role="img" aria-label="Illustration of a sun and clouds">
-    <svg viewBox="0 0 400 400" aria-hidden="true"><circle cx="200" cy="200" r="135" fill="#fff1bf"/>
-      {[0,45,90,135,180,225,270,315].map(a => <rect key={a} x="194" y="68" width="12" height="33" rx="6" fill="#ecb634" transform={`rotate(${a} 200 200)`}/>)}
-      <circle cx="200" cy="200" r="80" fill="#f8d773"/><ellipse cx="170" cy="143" rx="24" ry="11" transform="rotate(-30 170 143)" fill="#ffe9a2"/>
-      <path d="M74 284c0-17 14-30 31-30 7-21 38-24 50-2 19-2 34 12 34 31 0 13-11 22-24 22H98c-14 0-24-9-24-21Zm221-78c0-17 13-29 30-29 8-22 38-24 51-2 17-2 30 11 30 29 0 14-11 24-25 24h-61c-15 0-25-9-25-22Z" fill="white"/>
-    </svg>
-  </div>
+function ResultCard({ sample, result }) {
+  const analysis = result.analysis
+  const recognized = result.recognition
+  const changes = analysis.alignment?.filter(row => row.kind !== 'match') || []
+  return <article className="journey-result-card">
+    <div className="journey-result-art"><WordArt word={sample.target_word} /></div>
+    <div className="journey-result-copy">
+      <div className="journey-result-heading"><h3>{sample.target_word}</h3><span>{sample.label}</span></div>
+      <p><span>Target</span> <strong>/{analysis.expected_phones?.join(' ') || '—'}/</strong></p>
+      <p><span>Model heard</span> <strong>[{recognized.recognized_phones?.join(' ') || '—'}]</strong></p>
+      <div className={analysis.status !== 'ok' || changes.length ? 'result-status review' : 'result-status'}>
+        {analysis.status !== 'ok' ? 'Could not assess this clip' : changes.length ? `${changes.length} possible sound ${changes.length === 1 ? 'difference' : 'differences'}` : 'No sound differences found'}
+      </div>
+    </div>
+  </article>
 }
 
 function App() {
   const [samples, setSamples] = useState([])
-  const [screen, setScreen] = useState('choose')
-  const [selected, setSelected] = useState(null)
-  const [state, setState] = useState('ready')
-  const [result, setResult] = useState(null)
+  const [sampleError, setSampleError] = useState('')
+  const [screen, setScreen] = useState('journey')
+  const [index, setIndex] = useState(0)
+  const [phase, setPhase] = useState('ready')
+  const [results, setResults] = useState([])
   const [error, setError] = useState('')
+  const [autoNext, setAutoNext] = useState(false)
   const audioRef = useRef(null)
+  const inFlightRef = useRef(false)
 
-  useEffect(() => { fetch('/api/samples').then(r => { if (!r.ok) throw Error('Could not load clips'); return r.json() }).then(setSamples).catch(e => setError(e.message)) }, [])
-  function reset() { audioRef.current?.pause(); setScreen('choose'); setSelected(null); setResult(null); setState('ready'); setError('') }
-  function select(item) { setSelected(item); setResult(null); setState('ready'); setError(''); setScreen('practice') }
-  async function play() {
-    if (!audioRef.current || state === 'analyzing') return
+  useEffect(() => {
+    fetch('/api/samples')
+      .then(response => { if (!response.ok) throw Error('Could not load recordings'); return response.json() })
+      .then(setSamples)
+      .catch(e => setSampleError(e.message))
+  }, [])
+
+  const sample = samples[index]
+
+  async function playCurrent() {
+    if (!audioRef.current || phase === 'analyzing' || phase === 'playing') return
     setError('')
-    try { audioRef.current.currentTime = 0; await audioRef.current.play(); setState('playing') }
-    catch { setError('Your iPad could not play this clip. Please tap again.'); setState('ready') }
-  }
-  async function finished() {
-    if (screen !== 'practice') { setState('ready'); return }
-    if (!selected) return
-    setState('analyzing')
     try {
-      const response = await fetch(`/api/samples/${encodeURIComponent(selected.id)}/analyze`, { method: 'POST' })
+      audioRef.current.currentTime = 0
+      await audioRef.current.play()
+      setPhase('playing')
+    } catch {
+      setPhase('ready')
+      setError('Tap to play this recording. Your iPad may need another tap to continue.')
+    }
+  }
+
+  useEffect(() => {
+    if (screen === 'journey' && autoNext && phase === 'ready' && sample) {
+      setAutoNext(false)
+      playCurrent()
+    }
+  }, [autoNext, index, phase, screen, sample])
+
+  async function analyzeCurrent() {
+    if (!sample || inFlightRef.current) return
+    inFlightRef.current = true
+    setPhase('analyzing')
+    setError('')
+    try {
+      const response = await fetch(`/api/samples/${encodeURIComponent(sample.id)}/analyze`, { method: 'POST' })
       const body = await response.json()
       if (!response.ok) throw Error(body.detail || 'Analysis failed')
-      setResult(body); setScreen('results'); setState('ready')
-    } catch (e) { setError(e.message); setState('ready') }
+      setResults(previous => [...previous, body])
+      if (index + 1 === samples.length) {
+        setScreen('results')
+        setPhase('ready')
+      } else {
+        setIndex(index + 1)
+        setPhase('ready')
+        setAutoNext(true)
+      }
+    } catch (e) {
+      setError(e.message)
+      setPhase('analysis-error')
+    } finally {
+      inFlightRef.current = false
+    }
   }
-  const comparison = result?.analysis
-  const recognition = result?.recognition
-  const changes = comparison?.alignment?.filter(row => row.kind !== 'match') || []
-  if (window.location.pathname === '/slp') return <SessionDashboard samples={samples} sampleError={error} onDemo={() => { window.location.href = '/' }} />
-  return <div className="app"><Header screen={screen} onBack={reset}/>
-    <main>
-      {screen === 'choose' && <section className="choose-screen"><div className="page-title"><h1>Choose a voice and word</h1></div>
-        <div className="sample-grid">{samples.map(item => <button className="sample-card" key={item.id} onClick={() => select(item)}><span className="sample-art">{PICTURES[item.target_word]}</span><span className="sample-copy"><strong>{item.label}</strong><span>Word: {item.target_word}</span></span><span className="card-arrow">→</span></button>)}</div>
-      </section>}
-      {screen === 'practice' && selected && <section className="practice-screen"><h1>What do you see?</h1><div className="practice-layout"><Picture word={selected.target_word}/><div className="interaction"><h2>{selected.target_word}</h2><button className="play-button" onClick={play} disabled={state !== 'ready'}><span className="play-icon">{state === 'analyzing' ? '◌' : '▶'}</span><strong>{state === 'playing' ? 'Playing…' : state === 'analyzing' ? 'Analyzing…' : 'Tap to play'}</strong></button><div className="reassurance"><Mascot/><span>{state === 'analyzing' ? 'Listening is done. The laptop is checking the sounds.' : 'Take your time. I’m right here!'}</span></div><button className="secondary-button" onClick={reset}>Choose another audio</button>{error && <p className="error" role="alert">{error}</p>}</div></div><div className="sea"/></section>}
-      {screen === 'results' && selected && <section className="result-screen"><div className="page-title"><h1>Let’s look at the sounds</h1><p>Here is what the laptop heard in the selected child recording.</p></div><div className="result-layout"><div className="result-illustration"><Picture word={selected.target_word}/><h2>{selected.target_word}</h2><p>Prompt word: {selected.target_word}</p><button className="secondary-button" onClick={play}>▶ Play again</button></div><div className="result-card"><h2>{recognition?.status === 'ok' ? comparison?.matches_target ? 'Sounds matched the target' : 'Some sounds may be different' : 'Could not assess this clip'}</h2><div className="sound-row"><span>Expected sounds</span><strong className="ipa">/{comparison?.expected_phones?.join(' ') || '—'}/</strong></div><div className="sound-row"><span>Recognized sounds</span><strong className="ipa">[{recognition?.recognized_phones?.join(' ') || '—'}]</strong></div><div className="difference-list"><h3>What changed?</h3>{changes.length ? changes.map((row, i) => <p key={i}>{row.kind === 'substitution' ? `Possible substitution: /${row.expected_phone}/ → [${row.recognized_phone}]` : row.kind === 'omission' ? `Possible missing sound: /${row.expected_phone}/` : `Possible extra sound: [${row.recognized_phone}]`}</p>) : <p>{recognition?.status === 'ok' ? 'No sound differences were found in this comparison.' : recognition?.review_reason}</p>}</div><p className="review-note">This is an uncalibrated model result for a real child recording. Candidate differences need clinician review; this is not a diagnosis.</p><button className="primary-small" onClick={reset}>Try another audio →</button></div></div></section>}
-      {screen === 'choose' && error && <p className="error" role="alert">{error}</p>}
-    </main>
-    {selected && <audio key={selected.id} ref={audioRef} src={selected.audio_url} preload="auto" onEnded={finished} onError={() => setError('The selected audio could not be loaded.')} />}
+
+  function startOver() {
+    audioRef.current?.pause()
+    setIndex(0)
+    setResults([])
+    setPhase('ready')
+    setScreen('journey')
+    setAutoNext(false)
+    setError('')
+  }
+
+  if (window.location.pathname === '/slp') return <SessionDashboard samples={samples} sampleError={sampleError} onDemo={() => { window.location.href = '/' }} />
+
+  return <div className="app">
+    <header className="topbar">
+      <div className="brand"><Mascot small /><span>PronouncedFish</span></div>
+      <span className="header-caption">Sunny Reef</span>
+      <span className="header-count">{screen === 'results' ? 'Journey complete' : `Picture ${index + 1} of ${samples.length || 10}`}</span>
+    </header>
+
+    {screen === 'journey' && <main className="practice-screen">
+      <h1>What do you see?</h1>
+      <div className="practice-layout">
+        <div className="picture-card">{sample ? <WordArt word={sample.target_word} /> : <div className="picture-loading">Loading pictures…</div>}</div>
+        <div className="interaction">
+          <div className="interaction-inner">
+            <span className="picture-step">Picture {index + 1} of {samples.length || 10}</span>
+            <h2>{sample ? `Listening.` : 'Getting ready…'}</h2>
+            <button className="play-button" onClick={phase === 'analysis-error' ? analyzeCurrent : playCurrent} disabled={!sample || phase === 'playing' || phase === 'analyzing'}>
+              <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12 7v18l14-9Z" fill="currentColor"/></svg>
+              <strong>{phase === 'playing' ? 'Playing…' : phase === 'analyzing' ? 'Checking…' : phase === 'analysis-error' ? 'Try analysis again' : index === 0 && !results.length ? 'Tap to play' : 'Tap to continue'}</strong>
+            </button>
+            <div className="reassurance"><Mascot /><span>{phase === 'analyzing' ? 'Nice listening! I’m checking this one.' : 'Take your time!'}</span></div>
+            {(error || sampleError) && <p className="error" role="alert">{error || sampleError}</p>}
+          </div>
+        </div>
+      </div>
+      <span className="bubble bubble-one"/><span className="bubble bubble-two"/><span className="bubble bubble-three"/>
+      <ReefDecor />
+    </main>}
+
+    {screen === 'results' && <main className="results-screen">
+      <div className="results-intro"><Mascot /><div><span className="picture-step">All ten pictures complete</span><h1>Let’s look at the sounds!</h1></div></div>
+      <div className="journey-results">{samples.map(sample => {
+        const result = results.find(item => item.sample_id === sample.id)
+        return result && <ResultCard key={sample.id} sample={sample} result={result} />
+      })}</div>
+      <button className="restart-button" onClick={startOver}>Listen again →</button>
+    </main>}
+
+    {screen === 'journey' && sample && <audio key={sample.id} ref={audioRef} src={sample.audio_url} preload="auto" onEnded={() => { if (phase === 'playing') analyzeCurrent() }} onError={() => { setPhase('audio-error'); setError('This recording could not be loaded. Tap to try again.') }} />}
   </div>
 }
 
