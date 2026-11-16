@@ -1,0 +1,94 @@
+{
+  "samples": [
+    {
+      "id": "seat-control",
+      "label": "Seat - control",
+      "filename": "seat-control.wav",
+      "spoken_text": "Seat.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ],
+      "intended_change": "none",
+      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+    },
+    {
+      "id": "seat-substitution",
+      "label": "Seat - substitution",
+      "filename": "seat-substitution.wav",
+      "spoken_text": "Sheet.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ],
+      "intended_change": "s to sh",
+      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+    },
+    {
+      "id": "seat-omission",
+      "label": "Seat - omission",
+      "filename": "seat-omission.wav",
+      "spoken_text": "See.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ],
+      "intended_change": "omit final t",
+      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+    },
+    {
+      "id": "seat-addition",
+      "label": "Seat - addition",
+      "filename": "seat-addition.wav",
+      "spoken_text": "Seats.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ],
+      "intended_change": "add final s",
+      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+    },
+    {
+      "id": "sunset-control",
+      "label": "Sunset - control",
+      "filename": "sunset-control.wav",
+      "spoken_text": "Sunset.",
+      "target_word": "sunset",
+      "expected_phones": [
+        "s",
+        "ʌ",
+        "n",
+        "s",
+        "ɛ",
+        "t"
+      ],
+      "intended_change": "none",
+      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+    },
+    {
+      "id": "sunset-substitution",
+      "label": "Sunset - second vowel",
+      "filename": "sunset-substitution.wav",
+      "spoken_text": "Sun sat.",
+      "target_word": "sunset",
+      "expected_phones": [
+        "s",
+        "ʌ",
+        "n",
+        "s",
+        "ɛ",
+        "t"
+      ],
+      "intended_change": "second vowel eh to ae",
+      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+    }
+  ]
+}

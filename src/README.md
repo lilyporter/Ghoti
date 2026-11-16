@@ -10,6 +10,10 @@ The [standalone frontend demo](engine/docs/frontend-demo.html) renders example o
 imported analysis as phone comparisons and an interactive feature heatmap.
 Browser/iPad inference and production frontend integration remain future work.
 
+The [laptop-hosted iPad demo](demo/README.md) uses React and FastAPI with a Vite
+`/api` proxy. It plays one of six childlike synthetic clips on the iPad and runs
+live recognition and target comparison on the laptop after playback.
+
 | Component | Current state |
 | --- | --- |
 | Recognition | Local pretrained Pasketti inference; WAV/FLAC → IPA and complete phone tokens. |
