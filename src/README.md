@@ -7,7 +7,7 @@ tokens with target pronunciations and returns candidate differences and feature
 distances for heatmaps. The rest of the application can import both.
 
 The [laptop-hosted iPad demo](demo/README.md) uses React and FastAPI with a Vite
-`/api` proxy. It plays one of six childlike synthetic clips on the iPad and runs
+`/api` proxy. It plays one of ten different words recorded by children on the iPad and runs
 live recognition and target comparison on the laptop after playback.
 
 | Component | Current state |

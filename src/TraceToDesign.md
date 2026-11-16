@@ -40,7 +40,7 @@ implemented distance compares symbolic PanPhon categories; it is not a calibrate
 severity measure or a measurement of learned acoustic embedding distance.
 
 Browser inference, microphone capture, patient/session storage, and correction
-provenance remain unimplemented. The iPad demo plays synthetic clips and sends a
+provenance remain unimplemented. The iPad demo plays selected Paidologos clips and sends a
 sample identifier to the laptop API for analysis. iPad performance has not been
 validated against the product requirements.
 See [model notes](engine/docs/model-baseline.md) and

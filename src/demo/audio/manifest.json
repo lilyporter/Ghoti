@@ -1,80 +1,112 @@
 {
   "samples": [
     {
-      "id": "seat-control",
-      "label": "Seat - control",
-      "filename": "seat-control.wav",
-      "spoken_text": "Seat.",
-      "target_word": "seat",
-      "expected_phones": [
-        "s",
-        "i",
-        "t"
-      ]
-    },
-    {
-      "id": "seat-substitution",
-      "label": "Seat - substitution",
-      "filename": "seat-substitution.wav",
-      "spoken_text": "Sheet.",
-      "target_word": "seat",
-      "expected_phones": [
-        "s",
-        "i",
-        "t"
-      ]
-    },
-    {
-      "id": "seat-omission",
-      "label": "Seat - omission",
-      "filename": "seat-omission.wav",
-      "spoken_text": "See.",
-      "target_word": "seat",
-      "expected_phones": [
-        "s",
-        "i",
-        "t"
-      ]
-    },
-    {
-      "id": "seat-addition",
-      "label": "Seat - addition",
-      "filename": "seat-addition.wav",
-      "spoken_text": "Seats.",
-      "target_word": "seat",
-      "expected_phones": [
-        "s",
-        "i",
-        "t"
-      ]
-    },
-    {
-      "id": "sunset-control",
-      "label": "Sunset - control",
-      "filename": "sunset-control.wav",
-      "spoken_text": "Sunset.",
-      "target_word": "sunset",
+      "id": "child-01",
+      "label": "Child voice 1",
+      "filename": "real/e4at08m121_u41.wav",
+      "target_word": "sun",
       "expected_phones": [
         "s",
         "ʌ",
-        "n",
-        "s",
-        "ɛ",
+        "n"
+      ]
+    },
+    {
+      "id": "child-02",
+      "label": "Child voice 2",
+      "filename": "real/e4at01m311_u6.wav",
+      "target_word": "gift",
+      "expected_phones": [
+        "g",
+        "ɪ",
+        "f",
         "t"
       ]
     },
     {
-      "id": "sunset-substitution",
-      "label": "Sunset - second vowel",
-      "filename": "sunset-substitution.wav",
-      "spoken_text": "Sun sat.",
-      "target_word": "sunset",
+      "id": "child-03",
+      "label": "Child voice 3",
+      "filename": "real/e4at11m222_u52.wav",
+      "target_word": "seal",
       "expected_phones": [
         "s",
-        "ʌ",
-        "n",
-        "s",
+        "i",
+        "l"
+      ]
+    },
+    {
+      "id": "child-04",
+      "label": "Child voice 4",
+      "filename": "real/e5bt22m212_u0.wav",
+      "target_word": "sheep",
+      "expected_phones": [
+        "ʃ",
+        "i",
+        "p"
+      ]
+    },
+    {
+      "id": "child-05",
+      "label": "Child voice 5",
+      "filename": "real/e5at02f121_u17.wav",
+      "target_word": "shell",
+      "expected_phones": [
+        "ʃ",
         "ɛ",
+        "l"
+      ]
+    },
+    {
+      "id": "child-06",
+      "label": "Child voice 6",
+      "filename": "real/e5bt16f122_u1.wav",
+      "target_word": "ship",
+      "expected_phones": [
+        "ʃ",
+        "ɪ",
+        "p"
+      ]
+    },
+    {
+      "id": "child-07",
+      "label": "Child voice 7",
+      "filename": "real/e5bt21m322_u1.wav",
+      "target_word": "shoe",
+      "expected_phones": [
+        "ʃ",
+        "u"
+      ]
+    },
+    {
+      "id": "child-08",
+      "label": "Child voice 8",
+      "filename": "real/e4at07f112_u34.wav",
+      "target_word": "shop",
+      "expected_phones": [
+        "ʃ",
+        "ɑ",
+        "p"
+      ]
+    },
+    {
+      "id": "child-09",
+      "label": "Child voice 9",
+      "filename": "real/e5at06f222_u2.wav",
+      "target_word": "soup",
+      "expected_phones": [
+        "s",
+        "u",
+        "p"
+      ]
+    },
+    {
+      "id": "child-10",
+      "label": "Child voice 10",
+      "filename": "real/e4bt18f311_u25.wav",
+      "target_word": "chute",
+      "expected_phones": [
+        "ʃ",
+        "u",
         "t"
       ]
     }

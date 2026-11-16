@@ -33,7 +33,20 @@ Open the `Network` URL shown by Vite on the iPad. The model files must be presen
 in `engine/models/pasketti-phonetic/`. The first analysis takes longer while the
 laptop loads the model.
 
-The six included clips are pitch-shifted adult synthetic speech, not recordings
-of children. Their labels describe the intended spoken words; the result screen
-shows the engine's actual prediction and candidate sound differences. Those
-results are not clinical assessments.
+The active demo uses ten real child recordings from ten different speakers in
+`audio/real/`: sun, gift, seal, sheep, shell, ship, shoe, shop, soup, and chute.
+The older generated clips in `audio/synthetic/` are not used. The terminal prints
+model loading, audio preparation, recognition, comparison, and total time for each
+analysis request.
+
+The word targets come from the supplied Paidologos `dataset.csv`, except “sun”:
+its CSV target is `/sən/` while its annotated production is `[sʌn]`, so this demo
+compares against `/sʌn/`. Model predictions are never replaced by those annotations.
+Results are candidate differences, not clinical assessments.
+
+Audio source: [English Paidologos corpus](https://talkbank.org/phon/access/Eng-NA/PaidoEnglish.html).
+Please cite Edwards, J., & Beckman, M. E. (2008), *Methodological questions in
+studying consonant acquisition*, Clinical Linguistics & Phonetics 22(12), 937–956.
+The corpus audio follows [TalkBank's data rules](https://talkbank.org/0share/rules.html),
+including its noncommercial share-alike terms; it is separate from this project's
+code license.

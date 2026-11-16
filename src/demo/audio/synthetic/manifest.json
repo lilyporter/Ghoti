@@ -1,0 +1,82 @@
+{
+  "samples": [
+    {
+      "id": "seat-control",
+      "label": "Seat - control",
+      "filename": "seat-control.wav",
+      "spoken_text": "Seat.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ]
+    },
+    {
+      "id": "seat-substitution",
+      "label": "Seat - substitution",
+      "filename": "seat-substitution.wav",
+      "spoken_text": "Sheet.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ]
+    },
+    {
+      "id": "seat-omission",
+      "label": "Seat - omission",
+      "filename": "seat-omission.wav",
+      "spoken_text": "See.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ]
+    },
+    {
+      "id": "seat-addition",
+      "label": "Seat - addition",
+      "filename": "seat-addition.wav",
+      "spoken_text": "Seats.",
+      "target_word": "seat",
+      "expected_phones": [
+        "s",
+        "i",
+        "t"
+      ]
+    },
+    {
+      "id": "sunset-control",
+      "label": "Sunset - control",
+      "filename": "sunset-control.wav",
+      "spoken_text": "Sunset.",
+      "target_word": "sunset",
+      "expected_phones": [
+        "s",
+        "ʌ",
+        "n",
+        "s",
+        "ɛ",
+        "t"
+      ]
+    },
+    {
+      "id": "sunset-substitution",
+      "label": "Sunset - second vowel",
+      "filename": "sunset-substitution.wav",
+      "spoken_text": "Sun sat.",
+      "target_word": "sunset",
+      "expected_phones": [
+        "s",
+        "ʌ",
+        "n",
+        "s",
+        "ɛ",
+        "t"
+      ]
+    }
+  ]
+}
