@@ -1,7 +1,7 @@
 ﻿# Traceability between code files and design modules
 
-The current engine implements local Python recognition, descriptive target
-analysis, and a standalone frontend prototype. These mappings describe
+The current engine implements local Python recognition and descriptive target
+analysis. The demo connects it to an iPad through a laptop-hosted API. These mappings describe
 responsibilities; they do not establish clinical accuracy or device acceptance.
 
 | File | Responsibility | Requirements / context |
@@ -14,7 +14,7 @@ responsibilities; they do not establish clinical accuracy or device acceptance.
 | [assessment.py](engine/pronouncedfish_engine/assessment.py) | Model-evidence boundary and restricted single-substitution CTC sequence support | Experimental acoustic evidence; no numerical correctness calibration, full GOP-SF replication, or clinical substitution validation |
 | [cli.py](engine/pronouncedfish_engine/cli.py) | Download, recognition, saved-JSON analysis, and combined assess commands | Reviewable local workflow; assess returns recognition, analysis, and acoustic evidence from one forward pass |
 | [assets.py](engine/pronouncedfish_engine/assets.py) | Explicit download and local verification of a pinned model | Reproducible model identity; no audio upload |
-| [frontend-demo.html](engine/docs/frontend-demo.html) | Render phone pairs, symbolic feature map, and a separate acoustic evidence panel | Prototype demonstration for FR-RDV5; acoustic values have no clinical thresholds, and inference is not connected live |
+| [demo/api/main.py](demo/api/main.py) | Serve the selected sample and run live recognition and target comparison | Laptop-hosted demo; no microphone capture or browser inference |
 
 The supplied SRS identifies the 87% accuracy and under-10-second targets. These
 remain unverified. Target analysis is implemented, but candidate differences are
@@ -39,10 +39,9 @@ The SRS's feature representation and Manhattan-distance calculation appear in
 implemented distance compares symbolic PanPhon categories; it is not a calibrated
 severity measure or a measurement of learned acoustic embedding distance.
 
-Browser inference, iPad execution, microphone capture integration, patient/session
-storage, and correction provenance remain unimplemented. The HTML prototype reads
-results locally and offers audio playback only. A future development backend
-connection would be a separate implementation choice and would not by itself
-satisfy a production requirement for inference on the user's device.
+Browser inference, microphone capture, patient/session storage, and correction
+provenance remain unimplemented. The iPad demo plays synthetic clips and sends a
+sample identifier to the laptop API for analysis. iPad performance has not been
+validated against the product requirements.
 See [model notes](engine/docs/model-baseline.md) and
 [recorded verification](engine/docs/recognition-verification.md).

@@ -51,7 +51,7 @@ Pasketti's published evaluation normalizes several marks and approximates PER
 with character error rate. Our future evaluation must define token-level PER
 explicitly; do not compare the two scores as if their conventions were identical.
 
-## Analysis and frontend built on the recognition baseline
+## Analysis built on the recognition baseline
 
 The recognition model remains unchanged. `analysis.py` adds descriptive comparison
 of its complete phone tokens with caller-supplied target pronunciations. Jiwer
@@ -71,11 +71,8 @@ Our analysis uses caller-supplied targets/variants and reports candidate S/O/A
 differences; acoustic distortions are not assessed. No clinical severity or
 calibrated probability follows from a feature distance.
 
-`docs/frontend-demo.html` is an offline renderer of six illustrative symbolic
-outputs, a real-model synthetic-audio assessment, and imported JSON. Audio selection enables playback only; it does not
-perform inference. The notebook's Colab-backed inference and our static demo
-are not browser/iPad inference implementations. See the
-[team walkthrough](PronouncedFish-Engine-Walkthrough.html) for the full discussion.
+The [current demo](../../demo/README.md) plays synthetic clips on an iPad and
+runs inference on a laptop through FastAPI. It does not run the model in the browser.
 
 As of 29 October, `assessment.py` also implements experimental audio-dependent
 CTC single-substitution sequence support, using one forward pass from the same

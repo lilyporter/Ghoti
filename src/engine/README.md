@@ -13,9 +13,8 @@ uncalibrated; it does not detect distortions or predict acoustic feature vectors
 
 Start with the [step-by-step code guide](docs/code-walkthrough.md) if you are new
 to this repository. It follows a recording through the engine, works through
-sequence edits, PanPhon distances, CTC probabilities, and frontend plot positions
-with numbers, then explains every Python module and frontend function. It also
-covers model files, dependencies, synthetic scripts, tests, model replacement,
+sequence edits, PanPhon distances, and CTC probabilities with numbers, then
+explains the Python modules. It also covers model files, dependencies, tests, model replacement,
 and common debugging problems. The field tables below are the API reference.
 
 ## Run it
@@ -51,8 +50,8 @@ engine/
     recognition.py          AudioInput and RecognitionResult used by the code
     cli.py                  download-model, recognize, analyze, and assess commands
   tests/                    Regression checks and an optional real-model test
-  scripts/                  Synthetic audio generators and comparison assessment
-  docs/                     Model notes, recorded checks, and team walkthrough
+  scripts/                  Development audio generator
+  docs/                     Model notes, code guide, and recorded checks
   models/                   Downloaded assets, ignored by Git
   pyproject.toml            Package metadata and dependency pins
   environment.yml           Conda setup; installs this package with test tools
@@ -138,7 +137,7 @@ Output is JSON-compatible and includes:
   substitutions until an approved inventory is provided; it is not validation.
 - `feature_names` and each row's `feature_comparison`: target/recognized vectors,
   per-feature absolute differences, and their sum (Manhattan distance). The
-  standalone frontend plots alignment rows against feature columns as a heatmap.
+  analysis result can be rendered as a feature heatmap.
 
 Features use PanPhon's `-1`, `0`, `+1` values; `0` is a feature specification, not
 missing data. Gaps have `feature_status="not_applicable"` and no distance. Phones
@@ -233,8 +232,8 @@ response = {"recognition": result, "analysis": comparison}
 ```
 
 That two-result wrapper is an integration choice, not an HTTP endpoint. The new
-`assess` command supplies a three-result bundle, described below. The standalone
-frontend accepts analysis alone or a bundle with an `analysis` member.
+`assess` command supplies a three-result bundle, described below. The current
+demo API returns recognition and analysis together.
 
 ## Experimental acoustic evidence
 
@@ -244,7 +243,7 @@ python -m pronouncedfish_engine assess sample.wav --expected-phones ð ə ɹ æ 
 
 This performs one model forward pass and returns `recognition`, `analysis`, and
 `acoustic_assessment`. Existing `recognize` and `analyze` outputs are unchanged.
-Open `assessment.json` in the frontend to see its separate acoustic evidence panel.
+The JSON includes raw acoustic evidence; the iPad demo does not display it.
 
 The versioned method, `ctc-single-substitution-log-support-v1`, compares full-target
 CTC probabilities with sequences replacing one target phone at a time. It sums
@@ -286,7 +285,7 @@ A phone pair is one aligned target sound and recognized sound. For target
 | `k` | `k` | Matching tokens. |
 
 An omission has a target phone and `null` recognized phone; an addition has the
-reverse. The frontend displays gaps as `∅`. Alignment allows subsequent sounds to
+reverse. A UI can display gaps as `∅`. Alignment allows subsequent sounds to
 remain matched after an insertion/deletion. Multiple minimum-edit explanations
 can exist, so the returned alignment is one candidate explanation. Indices are
 token positions, not word-initial/medial/final labels or audio timestamps.
@@ -311,7 +310,7 @@ introductions to the [PanPhon definitions](https://aclanthology.org/C16-1328/):
 | `lab` | Labial | Lip involvement, such as `p`, `b`, or `m`. |
 | `round` | Rounded | Lip rounding, such as `u`. |
 
-The full 24-feature glossary is in the [team walkthrough](docs/PronouncedFish-Engine-Walkthrough.html#features).
+PanPhon defines the full 24-feature inventory.
 Sonorant is not synonymous with voiced: `d` is voiced but not sonorant. Feature
 values encode positive/negative/unspecified categories, not more/less correct.
 
@@ -342,96 +341,7 @@ supplied practice pronunciation**. A correct transcription of “wabbit” can s
 differ from the target “rabbit.” In the notebook's legend, green means an extra
 model sound; it does not mean correct child production.
 
-There is one Python package and one standalone frontend file. The previous unused
-browser types, speculative interfaces, and empty future-feature folders were
-removed. A small model-evidence interface now has an actual consumer in `assess`,
-with replacement-model tests. Downloaded model JSON files are upstream assets, not additional services.
-No frontend framework, HTTP service, database, training pipeline, or browser model
-runtime was added for this milestone.
-
-## Standalone frontend example
-
-Open [frontend-demo.html](docs/frontend-demo.html) directly in a browser. This
-single file contains all styles, scripts, and 13 cases: six illustrative symbolic
-comparisons, one real-model synthetic sentence, and six playable S/O/A recordings.
-Select sound pairs, inspect the feature heatmap and acoustic evidence, or open and
-save engine result JSON. No server or install is required.
-
-To load your own result, append `> analysis.json` to the `analyze` command above,
-then choose **Open analysis JSON**. UTF-8 and BOM-marked UTF-16 files are supported.
-The optional audio picker only plays a local file; it does not run recognition or
-change the displayed analysis. The page makes no network requests or persistent
-session writes. **How this frontend connects to the engine** explains integration.
-
-If `analyze` reports that `--expected-phones` is missing, supply the target tokens;
-the engine does not infer a practice target from the recording. If an older
-PowerShell-generated JSON file has damaged IPA, regenerate it with the current
-recognition CLI. Merely converting that file's encoding cannot recover sounds
-already replaced or corrupted during redirection.
-
-## Synthetic S/O/A comparisons and graphical groups
-
-The frontend now includes six additional recordings/results, synthesized with
-Microsoft David Desktop. They are adult synthetic prompts, not a child-speech
-validation dataset. Audio is embedded in the standalone HTML, so each comparison
-can be played without choosing a file. Generated WAVs and individual result JSONs
-are also available locally in `examples/synthetic-soa/`, with `comparison-pack.zip`.
-
-| Target | Spoken prompt | Intended change |
-| --- | --- | --- |
-| seat | Seat. | Control. |
-| seat | Sheet. | Initial /s/ → /ʃ/ substitution. |
-| seat | See. | Omit final /t/. |
-| seat | Seats. | Add final /s/. |
-| sunset | Sunset. | Two-group control. |
-| sunset | Sun sat. | Change the second vowel; timing and prosody also differ. |
-
-These are intended synthesis changes, not guaranteed recognition results. In the
-recorded run the seat control itself ends in recognized `d`; sheet/seats include
-additional recognition differences. Minimum-edit alignment can place an addition
-differently when substitutions also occur. No predictions are edited to fit labels.
-Both sunset recordings are recognized as the target, but the weakest second-group
-acoustic margin drops from about +3.69 to +1.34. This is model evidence, not an
-assessment of clinical severity or proof of the cause of the change.
-
-The **Distance and acoustic support** panel offers phone or supplied-group views:
-
-- Symbolic distance is a raw PanPhon distance per phone; group distance is the
-  mean only when every target phone has a comparison. Gaps/unknown mappings stay
-  unavailable, and unmatched additions are displayed separately.
-- Acoustic margin is the raw log margin; a group's value is its weakest phone
-  (minimum), not a learned syllable score. Positive favors target over the best
-  restricted alternative; negative favors the alternative. No percent-correct
-  conversion or clinical threshold is used.
-- Outlined dots overlay the synthetic control for the same target/model. This
-  recording is not a clinical norm and may itself have recognition errors.
-- The axes are fixed for comparison (distance 0–12, margin −10 to +10); values
-  outside that display range are clipped graphically; numeric labels are rounded
-  to two decimals without clipping. Raw JSON keeps the full precision.
-- “sun” and “set” use supplied groups of three target phones each. You can enter
-  other group sizes, such as `3 3`, that sum to the selected target length. This is
-  a display grouping, not automatic syllabification or measured audio boundaries.
-  Custom grouping controls do not change the engine result.
-
-Regenerate audio and assess it with one resident model:
-
-```powershell
-.\scripts\New-ComparisonAudio.ps1
-python scripts/Assess-ComparisonAudio.py
-```
-
-The Python script writes per-fixture JSON with optional `demo_metadata`: the
-synthesis prompt, target word, voice, supplied `syllables` intervals (`start`
-inclusive, `end` exclusive), and embedded `audio_data_url`. These annotations are
-fixture data, not extra fields in the core engine's assessment contract. The
-frontend validates them when importing an individual fixture JSON. The aggregate
-`comparison-examples.json` is for embedding examples, not a single result import.
-
-If you see two `assessment.json` files, remember redirection is relative to the
-shell's current directory. Running the command from `src/engine/` writes
-`src/engine/assessment.json`, not `src/assessment.json`. Inspect with
-`Get-Item .\assessment.json` and load the file from that directory. Console timing
-lines are stderr diagnostics; JSON is redirected into the file.
+The Python package supplies the engine. The current laptop-hosted iPad demo lives in [../demo/](../demo/README.md).
 
 ## Check it
 
@@ -463,10 +373,7 @@ packaging or Python/pytest. They are not source modules and are ignored by Git.
 The obsolete `.venv` and earlier `.verification` artifacts have been removed;
 the active development environment is the external conda environment.
 
-See [model and license notes](docs/model-baseline.md),
-[verification results](docs/recognition-verification.md), and the
-[current team walkthrough](docs/PronouncedFish-Engine-Walkthrough.html), with a
-locally generated PDF beside it (ignored by Git).
+See [model and license notes](docs/model-baseline.md) and
+[verification results](docs/recognition-verification.md).
 Next: measure recognition and candidate analysis against annotated child speech.
-Browser/iPad inference and production application integration are not implemented.
-The standalone frontend example demonstrates the interactive heatmap locally.
+Browser-only inference and production application integration are not implemented.

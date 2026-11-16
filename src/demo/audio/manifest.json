@@ -10,9 +10,7 @@
         "s",
         "i",
         "t"
-      ],
-      "intended_change": "none",
-      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+      ]
     },
     {
       "id": "seat-substitution",
@@ -24,9 +22,7 @@
         "s",
         "i",
         "t"
-      ],
-      "intended_change": "s to sh",
-      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+      ]
     },
     {
       "id": "seat-omission",
@@ -38,9 +34,7 @@
         "s",
         "i",
         "t"
-      ],
-      "intended_change": "omit final t",
-      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+      ]
     },
     {
       "id": "seat-addition",
@@ -52,9 +46,7 @@
         "s",
         "i",
         "t"
-      ],
-      "intended_change": "add final s",
-      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+      ]
     },
     {
       "id": "sunset-control",
@@ -69,9 +61,7 @@
         "s",
         "ɛ",
         "t"
-      ],
-      "intended_change": "none",
-      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+      ]
     },
     {
       "id": "sunset-substitution",
@@ -86,9 +76,7 @@
         "s",
         "ɛ",
         "t"
-      ],
-      "intended_change": "second vowel eh to ae",
-      "voice_description": "Childlike synthetic voice (pitch-shifted adult TTS)"
+      ]
     }
   ]
 }

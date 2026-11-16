@@ -1,8 +1,7 @@
 # Understanding the PronouncedFish code
 
-This guide explains the current implementation from the recording to the screen.
-Start with sections 1–6 to understand the calculations. Sections 7–12 connect them
-to every source module, the frontend functions, setup files, scripts, and tests.
+This guide explains the engine from audio input to analysis output. Sections 1–5
+cover the calculations; sections 6–10 cover source modules, setup, tests, and troubleshooting.
 The examples below are teaching examples unless explicitly identified as saved
 synthetic model runs. No model was trained as part of this package.
 
@@ -13,19 +12,16 @@ synthetic model runs. No model was trained as part of this package.
 3. [Phone sequences and S/O/A alignment](#3-phone-sequences-and-soa-alignment)
 4. [Feature vectors and Manhattan distance](#4-feature-vectors-and-manhattan-distance)
 5. [Scores that use the actual recording](#5-scores-that-use-the-actual-recording)
-6. [How the frontend draws closeness](#6-how-the-frontend-draws-closeness)
-7. [Python source, function by function](#7-python-source-function-by-function)
-8. [Frontend source, function by function](#8-frontend-source-function-by-function)
-9. [Model files, dependencies, and generated files](#9-model-files-dependencies-and-generated-files)
-10. [Synthetic examples and tests](#10-synthetic-examples-and-tests)
-11. [Replacing the recognition model](#11-replacing-the-recognition-model)
-12. [Run, inspect, and troubleshoot](#12-run-inspect-and-troubleshoot)
+6. [Python source, function by function](#6-python-source-function-by-function)
+7. [Model files, dependencies, and generated files](#7-model-files-dependencies-and-generated-files)
+8. [Tests](#8-tests)
+9. [Replacing the recognition model](#9-replacing-the-recognition-model)
+10. [Run, inspect, and troubleshoot](#10-run-inspect-and-troubleshoot)
 
 Related documents: the [engine README](../README.md) contains the JSON field
 reference; [acoustic assessment](acoustic-assessment.md) gives the detailed scoring
-contract; the [team walkthrough](PronouncedFish-Engine-Walkthrough.html) is the
-shorter presentation; [verification notes](recognition-verification.md) record
-past checks. Open [frontend-demo.html](frontend-demo.html) alongside this guide.
+contract; [verification notes](recognition-verification.md) record
+past checks. The [current demo](../../demo/README.md) uses the engine on a laptop.
 
 ## 1. What the engine actually does
 
@@ -41,8 +37,8 @@ Think of three questions being answered in sequence:
 alone from saved recognition JSON. `assess` returns a bundle containing all three.
 They are different outputs, rather than three names for one score.
 
-The frontend reads these outputs. It does not run the Python model. Opening a WAV
-in the HTML page only lets you listen; it does not analyze that WAV.
+The [iPad demo](../../demo/README.md) uses the recognition and analysis outputs.
+The Python model runs on the laptop.
 
 ### Vocabulary used in this code
 
@@ -78,7 +74,7 @@ CLI: python -m pronouncedfish_engine assess recording.wav --expected-phones s i 
       return {recognition, analysis, acoustic_assessment}
     JSON to stdout; timing to stderr
 
-HTML: import that JSON → validate → store state → render tables and plots
+The iPad demo calls `recognize()` and `analyze()` through its laptop API.
 ```
 
 The target does not go into Pasketti's recognition call. The model first estimates
@@ -252,19 +248,14 @@ distance 2 does not always mean two differing features. `ɹ` versus `w` has dist
 
 With 24 coordinates bounded by `[-1, +1]`, 48 is a mathematical upper bound on
 this formula. It is not a verified maximum among actual table entries, a severity
-scale, or the frontend plot's chosen limit.
+scale.
 
-### How that becomes JSON and a heatmap
+### How that becomes JSON
 
 `feature_comparison` stores both vectors, the 24 absolute differences, and their
 sum in `manhattan_distance`. Entry `i` in each list corresponds to entry `i` in
-`feature_names`. `renderHeatmap()` draws the differences, not the original feature
-signs: a `2` cell means opposite `-1/+1` specifications; it does not mean feature
-value `+2`. The detail panel shows the original values for changed coordinates.
-
-The “changed features only” control hides columns that are zero for every
-available pair. If no features change it shows all columns. This control affects
-visibility only; the sum and JSON are unchanged.
+`feature_names`. A difference of `2` means opposite `-1/+1` specifications;
+it does not mean feature value `+2`.
 
 | Situation | `feature_status` | Distance |
 | --- | --- | --- |
@@ -409,72 +400,7 @@ alternatives in its denominator, supplies no segment times, and has no calibrate
 good/bad threshold. Whole-sequence log probability is not length-normalized and
 should not be used as a universal score across unrelated recordings or models.
 
-## 6. How the frontend draws closeness
-
-The screen deliberately shows symbolic feature distance and acoustic margin as
-separate measurements. It does not combine them into an accuracy percentage.
-
-### Phones versus supplied syllable groups
-
-`targetGroups()` either creates one group per target phone or uses supplied
-intervals such as `sun=[0,3)` and `set=[3,6)` for `s ʌ n s ɛ t`. Brackets mean
-start included, end excluded. These intervals refer to phone indices, not seconds.
-Typing `3 3` in the custom grouping control supplies two three-phone groups.
-The program does not detect syllable boundaries from audio. Grouping does not
-change the underlying alignment or the engine's JSON fields.
-
-For each group, `groupMetrics()` computes:
-
-| Display metric | Rule | Worked example |
-| --- | --- | --- |
-| Feature distance | Mean of the available per-target-phone Manhattan distances, only if every target phone in the group has a complete feature comparison. | Distances `[0,2,0]` give `(0+2+0)/3 = 0.6667`. |
-| Acoustic margin | Minimum per-target-phone margin, only if all target positions have usable acoustic rows. | Margins `[5,1.34,1.42]` give `1.34`. |
-
-These are frontend aggregation choices: the mean reduces dependence on group
-length; the minimum highlights the least-supported position. They are not learned
-syllable scores or a validated way to diagnose syllable quality. A negative margin
-is smaller than a positive one, so it determines the minimum when present.
-
-An omission prevents a complete feature comparison; its group distance is
-unavailable instead of a misleading zero. Additions have no target index and are
-listed separately; they are not averaged into a target vector. Acoustic scoring
-does not include insertion/deletion alternatives, so an acoustic group value
-must not be read as “no S/O/A problems.”
-
-### From numbers to positions on a bar
-
-`metricPlot()` chooses these fixed display axes:
-
-```text
-Feature position (%) = clamp(distance, 0, 12) / 12 × 100
-Margin position (%)  = 50 + clamp(margin, -10, +10) × 5
-```
-
-Distance 2 sits at 16.67% of its bar. Margin +2 sits at 60%; margin -2 at 40%.
-Feature distance 0 is the target end; acoustic margin 0 is the center/tie point.
-The axes are visualization choices, not clinical cutoffs. Values outside the
-display range are drawn at the edge. Numeric labels still show the actual value
-rounded for display, and JSON retains the underlying precision.
-
-The outlined reference marker comes from a bundled synthetic control for the
-same target sequence and model version. It is not a universal ideal speaker.
-Even a control recording can be misrecognized.
-
-### A real example already in the page
-
-The bundled synthetic “Sunset.” and “Sun sat.” runs both decoded to `s ʌ n s ɛ t`.
-Both therefore have zero symbolic distance at every matched phone. Their second
-supplied group's minimum acoustic margin differs: approximately **3.69** for the
-control and **1.34** for the changed prompt. The acoustic layer can distinguish
-model evidence even when hard labels are identical. This observation is not a
-validation of correctness or proof that only vowel quality caused the difference;
-the synthetic recordings can differ in timing and prosody too.
-
-Conversely, the synthetic “Seat.” control was recognized as `s i d`, so it already
-contains a model mismatch. The page preserves that prediction instead of changing
-the result to fit the fixture's intended label.
-
-## 7. Python source, function by function
+## 6. Python source, function by function
 
 Leading underscores mark internal implementation helpers. They are not separate
 services or extra layers of machine learning. Type hints document expected data;
@@ -603,81 +529,7 @@ displays IPA directly.
 recognition and, for `assess`, the analysis/scoring work. Do not add
 `preprocessing_ms` again to `processing_ms` when estimating total time.
 
-## 8. Frontend source, function by function
-
-Everything is in [`frontend-demo.html`](frontend-demo.html): HTML structure, CSS,
-an `application/json` examples block, and the executable JavaScript. The large
-file size mainly comes from embedded example JSON and base64 WAV audio, rather
-than a large JavaScript framework. There are no runtime library downloads,
-backend calls, live model inference, or automatic recording uploads.
-
-### Structure, state, and rendering
-
-HTML defines the cards and controls. CSS defines layout, responsive behavior,
-phone-kind colors, `heat0/heat1/heat2` cells, unavailable patterns, and plot markers.
-Colors illustrate categories and magnitudes, not clinically validated judgments.
-
-| Variable | What it holds |
-| --- | --- |
-| `examples` | Parsed built-in examples: illustrative phone inputs with real analysis, and actual synthetic recording runs. |
-| `currentPayload` | Full current imported/built-in result, possibly the assessment bundle plus fixture metadata. Export uses this value. |
-| `current` | The analysis object, either `currentPayload.analysis` or a standalone analysis. Most UI components read it. |
-| `selected` | Alignment row index selected in the phone/heatmap/detail views. It is not necessarily the same as a target phone index when there are gaps. |
-| `imported` | Whether the source was a user-imported result; used for labels/export naming. |
-| `audioUrl` | Temporary object URL for a user-selected audio file; revoked when replaced or cleared. |
-| `manualGroups` | Optional display-only target groups entered with the grouping control. Reset on a different result. |
-| `featureLabels`, `kindLabels` | Human-readable names for backend feature codes and alignment kinds. |
-
-| Function | What to look for in its body |
-| --- | --- |
-| `$` | Short form of `document.getElementById`. |
-| `el` | Creates a DOM node and sets text/class. Uses `textContent` so imported labels are displayed as text. |
-| `message` | Shows a status or error message with an appropriate accessibility role. |
-| `phone` | Displays a missing phone as `∅`; this symbol represents a gap, not an IPA sound. |
-| `vectorValue` | Displays positive one as `+1`. |
-| `loadExample` | Selects built-in payload, labels its provenance, clears old audio, configures groups, attaches embedded audio, resets selection, and renders. |
-| `clearAudio` | Pauses/resets the player, clears the file input, and revokes an old object URL. |
-| `resetSelection` | Selects the first non-match alignment row, falling back to the first row. |
-| `render` | Updates target, counts, summary/variant/review text; calls component renderers and displays the raw JSON. |
-| `chooseRow` | Changes selected alignment row, refreshes phone/heatmap/detail/acoustic selection, and preserves scroll/focus. |
-| `renderPhones` | Makes clickable expected/recognized phone-pair buttons with kinds and accessible labels. |
-| `renderHeatmap` | Finds changed columns and draws absolute feature differences for each aligned pair; shows unavailable cells for gaps/unknown vectors. |
-| `renderDetail` | Shows selected pair, distance, original changed feature values, and directional inventory flag. |
-| `renderAcoustic` | Draws raw log support, best alternative, and log margin per target position. Missing acoustic output produces an explanation rather than invented scores. |
-| `configureGroups` | Resets manual groups and chooses supplied syllables if fixture metadata provides them; otherwise starts with phones. |
-| `setProvidedAudio` | Attaches an embedded fixture WAV and labels its synthesis prompt for playback. |
-| `targetGroups` | Returns one-phone groups or supplied/manual phone intervals. |
-| `groupMetrics` | Computes complete-group mean feature distance and minimum acoustic margin as described in section 6. |
-| `referencePayload` | Finds the matching built-in synthetic control and checks selected target sequence and acoustic model version before using its marker. |
-| `metricPlot` | Builds the numeric label, fixed-axis bar, current dot, and optional control marker; clamps positions for drawing only. |
-| `renderProximity` | Draws each group's two metrics, provenance text, control toggle state, and separately listed additions. Clicking a group selects its first target-alignment row. |
-| `validateAnalysis` | Checks shape, tokens, indices, counts, vector lengths/values, per-coordinate differences, and their sum. Rejects recognition-only input with guidance. |
-| `validateDemoMetadata` | Checks optional synthetic labels, positive contiguous supplied groups covering the selected target, and bounded WAV data URL format. This is fixture metadata, not an engine inference result. |
-| `validateAcoustic` | Checks supported method/unit/status, target agreement, model-version agreement when recognition is present, and finite score values. Unsupported formats are rejected. |
-| `loadImported` | Extracts and validates analysis/acoustic/metadata before replacing state, then resets controls/audio/selection and renders. |
-| `parseFileBytes` | Decodes UTF-8 or BOM-marked UTF-16 LE/BE bytes, then parses JSON. Unlike the Python reader, it does not implement UTF-32 decoding. |
-
-### Events: what happens when you click something
-
-| Control / event | Sequence |
-| --- | --- |
-| Example dropdown `change` | `loadExample()` → reset state/audio/groups → `render()`. |
-| Phone or heatmap row click | `chooseRow()` → refresh linked views. |
-| Changed-features checkbox | `renderHeatmap()` only. |
-| Group mode / reference checkbox | `renderProximity()` only. |
-| Apply custom groups | Validate positive integer counts summing to target length → set contiguous `manualGroups` → render proximity. Does not change exported engine output. |
-| Integration navigation link | Opens the explanatory `<details>` panel. |
-| JSON file selection | Enforce 2 MiB limit → read bytes → `parseFileBytes()` → `loadImported()`. Failure shows an error and preserves the prior result. |
-| Download button | Serialize `currentPayload` → create JSON `Blob` → trigger local download → revoke its temporary URL. Original fixture metadata/audio are retained if present. |
-| Audio file selection | Enforce 50 MiB playback limit → create object URL → attach player. Analysis and displayed scores stay unchanged. |
-| Audio player error | Show a format/playback error. |
-| Initial page load | Select the bundled `sunset-substitution` example, or the first example if absent. |
-
-This is a result viewer. A full application would need its own recording/session
-flow and a way to call the Python library. There is no implemented browser model,
-HTTP endpoint, persistent patient database, or application backend hidden here.
-
-## 9. Model files, dependencies, and generated files
+## 7. Model files, dependencies, and generated files
 
 ### Files under `models/pasketti-phonetic/`
 
@@ -704,7 +556,7 @@ directory with similarly named files.
 | --- | --- |
 | [`pyproject.toml`](../pyproject.toml) | Package/build metadata, Python version range, pinned dependencies, console command, package discovery, and pytest configuration. |
 | [`environment.yml`](../environment.yml) | Creates conda Python 3.12 and installs this package editable with analysis/test extras. The actual environment lives outside the repository. |
-| [`.gitignore`](../.gitignore) | Keeps downloaded weights, recordings/results, generated PDF, Python/build caches, and other local artifacts out of normal version control. |
+| [`.gitignore`](../.gitignore) | Keeps downloaded weights, recordings/results, Python/build caches, and other local artifacts out of normal version control. |
 | PyTorch (`torch`) | Tensor operations, model inference, log-space calculations, and CTC dynamic programming. |
 | Transformers | Loads the pretrained WavLM model and its processor/tokenizer. |
 | NumPy | Waveform arrays and validation. |
@@ -717,26 +569,10 @@ both optional dependency groups. Source edits are then used without reinstalling
 the package. This is installation, not training.
 
 `__pycache__`, `.pytest_cache`, `build`, and `*.egg-info` are tool-generated files.
-`models/` contains downloaded assets; `examples/synthetic-soa/` contains generated
-fixtures. None is an extra recognition stage. The earlier browser package was
-removed; the current browser demonstration is the single HTML file in `docs/`.
+`models/` contains downloaded assets. The [iPad demo](../../demo/README.md)
+uses the Python engine through a laptop API.
 
-## 10. Synthetic examples and tests
-
-### Fixture generation
-
-| Script | What it does |
-| --- | --- |
-| [`New-SmokeAudio.ps1`](../scripts/New-SmokeAudio.ps1) | Uses Windows System.Speech and Microsoft David Desktop to synthesize the smoke-test sentence to `sample.wav`; disposes the synthesizer. |
-| [`New-ComparisonAudio.ps1`](../scripts/New-ComparisonAudio.ps1) | Synthesizes six recordings: Seat, Sheet, See, Seats, Sunset, and Sun sat. Writes `manifest.json` with targets, intended changes, and supplied syllable groups. Uses a slightly slowed adult synthetic voice, not a child voice. |
-| [`Assess-ComparisonAudio.py`](../scripts/Assess-ComparisonAudio.py) / `main()` | Reads that manifest, loads one resident model, assesses each WAV, attaches `demo_metadata` and base64 audio, writes individual/aggregate JSON and a summary, then bundles the files in a ZIP. Does not modify the HTML automatically. |
-
-The synthesis prompt expresses an intended change; the model's actual prediction
-may differ. `demo_metadata` is optional fixture annotation added by the script,
-not an extra inference layer or standard field emitted by `assess()`.
-The aggregate `comparison-examples.json` is an array for embedding examples; import
-an **individual** fixture JSON into the frontend. Existing built-in examples are
-embedded copies, so regenerating files does not silently update the HTML.
+## 8. Tests
 
 ### What each test module checks
 
@@ -757,9 +593,9 @@ construct deterministic fixtures so tests can isolate one behavior.
 Passing tests supports implementation behavior. It does not establish recognition
 accuracy on children, clinical usefulness, calibrated thresholds, distortion
 detection, or the quality of a future replacement model. Historical test counts
-and manual frontend checks are recorded in [verification notes](recognition-verification.md).
+and historical checks are recorded in [verification notes](recognition-verification.md).
 
-## 11. Replacing the recognition model
+## 9. Replacing the recognition model
 
 The usable extension point is the `EvidenceRecognizer` protocol in Python:
 
@@ -793,7 +629,7 @@ through `assess()` from Python, then be wired into the CLI/application when need
 No training, fine-tuning, dataset preparation, or replacement model is implemented
 by declaring this protocol. The existing fake-adapter test checks this boundary.
 
-## 12. Run, inspect, and troubleshoot
+## 10. Run, inspect, and troubleshoot
 
 From `src/engine/` in your conda environment:
 
@@ -823,8 +659,7 @@ also handles it. JSON escape sequences such as `\u0259` are valid encodings of I
 For a debugger, put breakpoints in `cli.main`, `load_audio`,
 `PaskettiRecognizer._run`, `analyze`, and `score_ctc`. Watch `samples.shape`,
 `logits.shape`, `phones`, `comparison.alignments`, `differences`, and
-`probabilities` in that order. In browser DevTools, inspect `currentPayload`,
-`current.alignment`, and `groupMetrics(currentPayload, targetGroups()[0])`.
+`probabilities` in that order.
 Do not paste private recording arrays into logs simply to inspect a shape.
 
 | Symptom | Explanation / next check |
@@ -834,12 +669,9 @@ Do not paste private recording arrays into logs simply to inspect a shape.
 | Timing appears but terminal has no JSON | With `> assessment.json`, JSON goes to the file while stderr timing remains visible. |
 | Model missing or hash mismatch | Run explicit `download-model` for the pinned snapshot. Recognition intentionally does not repair/download silently. |
 | Dependency error | Check `python --version` and `python -m pip --version` point to the active conda environment; install the extras there. |
-| Recognition-only JSON rejected by frontend | Import `analysis.json` or the combined `assessment.json`. Recognition alone has no alignment to draw. |
 | All labels match but acoustic margins differ | Expected: greedy labels discard probability information retained by the acoustic scorer. |
 | A phone distance is unavailable | Inspect gap status or exact PanPhon mapping. Missing data is not zero distance. |
 | Acoustic output unavailable | Read `review_reason` and row `reason`; common causes are missing CTC capability, multi-class target phones, impossible paths, limits, or unassessable recognition. |
-| A bar stops moving for a large value | The plotted axis is clipped; read its numeric label or raw JSON. |
-| Uploaded audio seems to have old scores | The HTML only plays the new file. Run the Python engine on that file and import the corresponding result. |
 
 Run `python -m pytest -q` for unit checks. To opt into the real-model test:
 
@@ -852,7 +684,7 @@ python -m pytest -q
 When changing behavior, follow the same boundary as the change: audio changes
 need waveform checks; token changes need mark/alias tests; feature changes need
 known-vector examples; acoustic changes need independent CTC probability checks;
-frontend changes need import, unavailable-state, numeric, and responsive checks.
+demo changes need selected-audio, result, and responsive checks.
 
 ## Source references
 

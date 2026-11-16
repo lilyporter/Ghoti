@@ -1,7 +1,6 @@
 # Experimental acoustic assessment and model expansion
 
-For a beginner-oriented explanation of logits, CTC paths, the two log scores,
-and how the frontend groups/draws them, read the
+For a beginner-oriented explanation of logits, CTC paths, and the two log scores, read the
 [code guide](code-walkthrough.md#5-scores-that-use-the-actual-recording).
 This document is the method and contract reference.
 
@@ -55,23 +54,9 @@ bundle = assess(
 )
 ```
 
-Open `assessment.json` in [frontend-demo.html](frontend-demo.html). Its separate
-acoustic panel shows raw log support and margins. Save preserves the whole bundle.
-There are six symbolic examples and one real-model synthetic-audio snapshot. The
-page still cannot run inference; loading audio enables playback only.
-
-Six further synthetic adult S/O/A comparison recordings are now embedded, bringing
-the total to 13 examples. They include control/modified “seat” prompts and two
-“sunset” prompts. Built-in recordings can be played, and the matching synthetic
-control can be overlaid on the new distance/margin plots. Supplied syllable groups
-are display annotations, not detected segments. Group distance is the mean of
-complete symbolic comparisons; group margin is the minimum available-phone margin
-only when every target phone is assessable. Additions remain separate, and gaps
-are never given a zero distance. No learned syllable score is introduced.
-
-See the [synthetic comparison guide](../README.md#synthetic-soa-comparisons-and-graphical-groups)
-for generated WAVs/results, ZIP, reproduction commands, grouping rules, and observed
-recognizer errors. Intended synthesis changes are not treated as verified labels.
+The command writes recognition, symbolic analysis, and experimental acoustic
+assessment to `assessment.json`. The [current demo](../../demo/README.md) uses
+recognition and symbolic analysis only.
 
 ## What the method actually calculates
 

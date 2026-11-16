@@ -40,8 +40,9 @@ def _sample(sample_id: str):
 @app.get("/api/samples")
 def samples():
     return [
-        {key: value for key, value in item.items() if key != "filename"}
-        | {"audio_url": f"/api/samples/{item['id']}/audio"}
+        {"id": item["id"], "label": item["label"],
+         "target_word": item["target_word"], "spoken_text": item["spoken_text"],
+         "audio_url": f"/api/samples/{item['id']}/audio"}
         for item in _manifest().values()
     ]
 
