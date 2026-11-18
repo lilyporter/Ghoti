@@ -26,18 +26,19 @@
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
 September 28, 2026 & All & Initial Revision for Deliverable 1\\
+November 18, 2026 & Hemal Rajput & Applied review feedback.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \newpage{}
 
-The following document outlines the development plan for the \textbf{Ghoti} capstone project. It contains all administrative project 
+The following document outlines the development plan for PronouncedFish. It contains all administrative project 
 details including, confidentiality, IP, team member information and communication protocols. It also includes project technical plans and 
 standards, including the Proof of Concept design, expected technologies and details on AI usage.
 
 \section{Confidential Information}
-Machine learning training uses publicly available speech corpora. Patient
+Speech recognition evaluation uses publicly available speech corpora. Patient
 recordings and related clinical data collected during use are personal
 health information. Ontario's Personal Health Information Protection Act
 (PHIPA) governs how health information custodians collect, use, disclose,
@@ -93,7 +94,8 @@ have a primary area of focus, these roles are not fixed and may evolve as the pr
   the core implementation of the software. They will ensure the team adheres to the defined architecture and design principles and ensure 
   that the system is designed with extensibility to accommodate changes and project expansion.
   \item \textbf{Machine Learning (ML) Lead:} This role is responsible for overseeing the design, implementation, and evaluation of the 
-  project's machine learning components. They will be the primary manager/liaison for datasets, model training, and performance evaluation. 
+  project's speech recognition components. They oversee model integration,
+  evaluation datasets, and performance measurement.
   \item \textbf{User Interface \& Experience (UI/UX) Lead:} This role is responsible overseeing the design and implementation of the user 
   interface. They will be the primary manager/liaison for the creation of wireframes, prototypes and the project's adherence to 
   human-centred design. 
@@ -102,25 +104,22 @@ have a primary area of focus, these roles are not fixed and may evolve as the pr
 
 \section{Workflow Plan}
 
-The team uses short development cycles so stakeholders can review changes and
-provide feedback as the product evolves.
+Stakeholders and developers will work closely together on creating this project. Thus, it is crucial to use a workflow that simplifies the development cycle, allows for rapid feedback from stakeholders, and allows for quick iterations on the product. The quicker developers are allowed to iterate, the faster they can tune the product to stakeholder needs.
 
-Feature and fix branches are merged into \texttt{main} after review, and
-releases are made from \texttt{main}. Each change starts with a GitHub issue
-tracked in GitHub Projects. A developer takes the issue, creates an
-issue-numbered branch, and references the issue in the pull request. For
-example, the branch for
+The workflow selected for this project is the GitHub workflow due to its simplicity and efficiency. The GitHub workflow dictates that each feature branch will be merged directly into the main branch, and product releases will come from the main branch. Overhead branches are not required for the GitHub workflow, minimizing the amount of branch management a developer has to do. Production releases can be created quickly after each feature branch is merged, thus allowing for rapid feedback from stakeholders and allowing developers to make quick, iterative changes to make stakeholders happy.
+
+For traceability, GitHub issues created with GitHub Projects will be used to track each feature. A developer will assign themselves to an issue on the project board and create a feature branch to work on it. Once a feature branch is ready to be merged into the main branch, the developer assigned to the issue will create a pull request. For each issue, at least one other team member must review it before approval is given to merge the associated feature branch into the main branch. Once the feature branch is merged, the developer assigned to the issue must close it and set its status to "done." Preferably, each pull request should contain a maximum of 500 changes to lines of code to minimize the workload on reviewers for each individual pull request.
+
+For example, the branch for
 \href{https://github.com/lilyporter/Ghoti/issues/32}{issue \#32}
 starts with \texttt{32-}. The pull request for that branch should reference
 \texttt{\#32}.
-At least one other team member reviews each pull request before merge.
-After merge, the developer closes the issue and marks it Done in GitHub
-Projects. The team prefers pull requests of no more than 500 changed lines
-so they remain manageable to review.
 
-GitHub Actions builds the \LaTeX{} documentation. The team plans to add
-application formatting, unit test, and dependency checks, as well as model
-accuracy, regression, and latency checks.
+GitHub Actions currently builds the \LaTeX{} documentation. The team plans to
+add automated formatting, unit testing, and vulnerability checks. The team
+will also benchmark the selected speech recognition model, run regression
+tests when the model or analysis pipeline changes, and measure latency.
+Other checks may be added as needed.
 
 \section{Project Decomposition and Scheduling}
 
@@ -155,7 +154,7 @@ workflow breaks down and prioritize those fixes before expanding the demo.
 \subsection{Languages and Constraints}
 
 \begin{itemize}
-\item \textbf{Python}: speech processing, model evaluation and training, and application backend.
+\item \textbf{Python}: speech processing, model evaluation, and the application backend.
 \item \textbf{JavaScript:} user interface.
 \item \textbf{SQL:} data storage and access control.
 \item The web application runs in Safari on iPad. A local server performs
@@ -182,13 +181,12 @@ database, encrypted at rest, and linked to the attempt. Authorized SLPs can
 replay saved audio across sessions for as long as the clinic's retention
 policy permits.
 
-\subsection{Pre-trained Models and Training}
+\subsection{Speech Recognition Model}
 
-\begin{itemize}
-\item We expect to start from pre-trained speech models (e.g., wav2vec2) and existing phone recognizers, to train a model, if the existing solutions are found to not be good enough.
-\item Training data will be publicly available child-speech corpora with phonetic annotations
-\item Both existing commercial and open-source models are evaluated and are a fallback if a trained model does not meet the agreed targets
-\end{itemize}
+PronouncedFish will use a publicly available, open-source speech recognition
+model to transcribe children's speech into IPA. The team will evaluate the
+model using publicly available child-speech corpora with phonetic
+annotations.
 
 \paragraph{Components we expect to implement ourselves.}
 \begin{itemize}
@@ -219,16 +217,18 @@ policy permits.
 \item \textbf{Accuracy}: phone error rate against reference transcriptions;
   precision and recall for substitution, omission, and addition detection;
   agreement with speech-language pathologist annotations.
-\item \textbf{Speed}: real-time factor (processing time divided by audio
-  duration) and end-to-end latency, measure at each model's size to map the accuracy-versus-latency tradeoff.
-\item \textbf{Regression testing}: a fixed held-out evaluation set is re-run after every training run or model change, and a change is accepted only if results stay within agreed thresholds.
+\item \textbf{Speed}: measure real-time factor (processing time divided by
+  audio duration) and end-to-end latency on the local server.
+\item \textbf{Regression testing}: rerun a fixed evaluation set after a
+  change to the model or analysis pipeline. Accept a change only if the
+  results stay within the agreed thresholds.
 \end{itemize}
 
 \subsection{Areas Requiring Additional Training}
 
 \begin{itemize}
 \item Phonetics and speech sound disorders, with our SLP advisor.
-\item Fine-tuning and evaluating speech models.
+\item Integrating and evaluating speech recognition models.
 \item Database access-control design.
 \end{itemize}
 
@@ -254,7 +254,7 @@ We will review any generated code before including it in the application. We wil
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-All writing was done by the team members by hand. All research and facts were obtained through academic sources, or by consulting the project supervisors unless explicitly stated below.
+The team prepared this document with the AI assistance described below.
 
 \subsection{AI Tools Used}
 
@@ -266,6 +266,7 @@ All writing was done by the team members by hand. All research and facts were ob
 \midrule
 1 & Claude & Sonnet 5 \\
 2 & ChatGPT & GPT 5 Thinking Mini \\
+3 & Codex & GPT-6.2 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -284,13 +285,15 @@ All writing was done by the team members by hand. All research and facts were ob
 \midrule
 1 & Bibliography & Used to insert a reference to the references.bib file. \\
 2 & Problem Statement and Goals; (1.3) Stakeholders & Instructed the AI to think from the perspective of a patient’s parent when assessing stakeholders: highlighted privacy concerns as another consideration for this stakeholder. \\
+3 & Development Plan & Helped apply GitHub issue feedback to the document. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Verification of AI-Generated Content}
 
-As none of the AI usage was for factual content, verification was very simple. For tool 1, we simply verified the resulting citation for correctness in the final output. For tool 2, it was used as more of a brainstorming utility, so only unconsidered elements that made logical sense were included. 
+As none of the AI usage was for factual content, verification was very simple. For tool 1, we simply verified the resulting citation for correctness in the final output. For tool 2, it was used as more of a brainstorming utility, so only unconsidered elements that made logical sense were included.
+The Development Plan edits were checked against the issue feedback and the approved decisions.
 
 \newpage{}
 
