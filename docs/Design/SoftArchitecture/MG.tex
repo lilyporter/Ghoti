@@ -303,8 +303,18 @@ usability checks and reporting (FR-AC1--3).
 \subsubsection{Session Management (\mref{mSessionManagement})}
 
 \begin{description}
-\item[Secrets:] The session state information (Prompt, analysis, continue, redo), How temporary session data is accumulated before being saved, how redos and overrides affect the final data on the completion of a session.
-\item[Services:] Manages a clinician-supervised practice session for a specific patient from setup to completion. Allows the SLP to select the patient, target phonemes, and practice items (FR-SM1), and to start, repeat, skip, and end attempts as well as the session (FR-SM2 and FR-PAR6). Presents image-cue prompts for each item to the child (FR-PAR5) and coordinates Audio Capture and Speech Analysis for each attempt, surfacing flagged or unclassifiable results so the SLP can retry (FR-AC3 and FR-SA3). Records the support level for each attempt (FR-SM3) and applies SLP overrides while retaining the original analysis (FR-SM4). Provides current-attempt results and running session counts to the Clinician Dashboard (FR-RDV1, FR-RDV4, and FR-RDV6). On completion, submits the session and its attempts to Patient Records \& Progress Tracking to be processed and stored, associated only with the session’s patient (FR-DMR6--7). Uses Practice Items \& Lesson Plans for item content.
+\item[Secrets:] The session state information (Prompt, analysis, continue, redo), 
+How temporary session data is accumulated before being saved, 
+how redos and overrides affect the final data on the completion of a session,
+how the session handles the differences in testing and treatment session modes.
+\item[Services:] Manages a clinician-supervised practice session for a specific patient from setup to completion. 
+Offers two different session modes: testing mode for gathering information about the patient’s speech errors (no helps or hints to treat the speech disorder) and treatment mode for providing support to the child while practicing target phonemes (e.g., hints and feedback)(FR-SM3 and FR-DMR11).
+Allows the SLP to select the patient, target phonemes, and practice items (FR-SM1), and to start, repeat, skip, and end attempts as well as the session (FR-SM2 and FR-PAR6). 
+Presents image-cue prompts for each item to the child (FR-PAR5) and coordinates Audio Capture and Speech Analysis for each attempt, surfacing flagged or unclassifiable results so the SLP can retry (FR-AC3 and FR-SA3). 
+Records the support level for each attempt (FR-SM3) and applies SLP overrides while retaining the original analysis (FR-SM4). 
+Provides current-attempt results and running session counts to the Clinician Dashboard (FR-RDV1, FR-RDV4, and FR-RDV6).
+On completion, submits the session and its attempts to Patient Records \& Progress Tracking to be processed and stored, associated only with the session’s patient (FR-DMR6--7). 
+Uses Practice Items \& Lesson Plans for item content.
 \item[Implemented By:] PronouncedFish
 \item[Type of Module:] Abstract Object
   %[Information to include for leaf modules in the decomposition by secrets tree.]
