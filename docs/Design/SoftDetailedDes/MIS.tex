@@ -120,9 +120,57 @@ different types. In addition, \progname \ uses functions, which
 are defined by the data types of their inputs and outputs. Local functions are
 described by giving their type signature followed by their specification.
 
+\subsection{Shared Interface Types} \label{sec:interface-types}
+
+The following records are shared by the session, records, dashboard, and
+persistence interfaces. Each identifier type denotes an opaque identifier
+for the named entity. An optional value is either present or absent.
+
+\begin{description}
+\item[StoreConfig] Configuration identifying a durable store.
+\item[Actor] An authenticated user identity and permissions to act on patient
+records or retrieve audit events.
+\item[Patient] Patient identifier and identifying information.
+\item[SpeechError] A record identifying a word occurrence in the practice
+item and one of the following error kinds.
+\begin{description}
+\item[Substitution] Expected phoneme, produced phoneme, and expected
+phoneme position within the word.
+\item[Omission] Expected phoneme and its position within the word.
+\item[Addition] Extra produced phoneme and its insertion location before,
+between, or after expected phonemes. A location is the number of expected
+phonemes preceding the insertion in that word. Multiple additions at the
+same location retain their recognized order.
+\end{description}
+\item[Attempt] Attempt identifier, practice item, target phonemes, support
+level, original analysis, and optional SLP correction. The analysis contains
+expected and recognized IPA sequences (recognized IPA may be absent),
+an ordered sequence of SpeechError, confidence when available, and
+classification. It also contains an aligned observation
+for each target occurrence, with an expected phoneme, optional produced
+phoneme, and status (accepted, incorrect, or unclassifiable). The attempt
+classification is correct, incorrect, or unclassifiable. An SLP correction
+contains the SLP identity, optional correct/incorrect override, and any
+phoneme-level corrections to the observations or error records.
+\item[Session] Session identifier, patient identifier, SLP identity, session
+date, targets, practice items, SLP inputs, status (active or completed),
+and a sequence of completed attempts. Only a completed snapshot is accepted
+by \texttt{saveSession}.
+\item[SessionPair] Two distinct session identifiers ordered from baseline
+to follow-up.
+\item[Progress] For a patient and target phoneme, dated session points
+containing session identifiers and eligible, correct, and incorrect target
+observations, with cue information where available. Includes an optional
+comparison and optional improvement or persistent-error indicators.
+\item[AuditEvent] Action, information type, timestamp, actor identity, and
+retained patient identity reference.
+\item[HistoryExport, AuditCopy] Copies of authorized session history and
+audit events, respectively. The export formats are implementation decisions.
+\end{description}
+
 \section{Module Decomposition}
 
-The following table is taken directly from the Module Guide document for this project.
+The following table shows the module hierarchy from the Module Guide.
 
 \begin{table}[h!]
 \centering
@@ -130,104 +178,258 @@ The following table is taken directly from the Module Guide document for this pr
 \toprule
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
-
-{Hardware-Hiding} & ~ \\
+{Hardware-Hiding Module} & ~ \\
 \midrule
-
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
-& Control Module\\
-& Specification Parameters Module\\
+\multirow{6}{0.3\textwidth}{Behaviour-Hiding Module} & Audio Capture\\
+& Speech Analysis\\
+& Session Management\\
+& Practice Items \& Lesson Plans\\
+& Patient Records \& Progress Tracking\\
+& Clinician Dashboard / Results Visualization\\
 \midrule
-
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
+{Software Decision Module} & Persistence\\
 \bottomrule
-
 \end{tabular}
 \caption{Module Hierarchy}
 \label{TblMH}
 \end{table}
 
-\newpage
-~\newpage
-
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
-
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
-
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+\clearpage
+\section{MIS of Patient Records \& Progress Tracking} \label{mis:records}
 
 \subsection{Module}
-
-\wss{Short name for the module}
+PatientRecords covers FR-DMR1--11 and FR-HA9, with Session Management supplying
+session and attempt results.
 
 \subsection{Uses}
-
+Persistence supplies durable reads and atomic writes for patient records, sessions, and audit events.
 
 \subsection{Syntax}
 
+\subsubsection{Exported Types}
+See the shared interface types in Section~\ref{sec:interface-types}.
+
 \subsubsection{Exported Constants}
+None.
 
 \subsubsection{Exported Access Programs}
+In the table, every operation except \texttt{initialize} may raise
+\texttt{Unavailable} when the service has yet to initialize or persistence
+fails, and \texttt{Denied} if authorization fails.
 
-\begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
-\hline
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
-\hline
-\wss{accessProg} & - & - & - \\
-\hline
-\end{tabular}
-\end{center}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{initialize} & StoreConfig & -- & Unavailable\\
+\texttt{createPatient} & Actor, Patient & -- & Conflict\\
+\texttt{updatePatient} & Actor, Patient & -- & Missing\\
+\texttt{getPatient} & Actor, patient identifier & Patient & Missing\\
+\texttt{deletePatient} & Actor, patient identifier, Boolean confirmation & -- &
+Missing, Unconfirmed\\
+\texttt{saveSession} & Actor, completed Session & -- & Missing, Invalid, Conflict\\
+\texttt{getHistory} & Actor, patient identifier & Sequence of Session & Missing\\
+\texttt{exportHistory} & Actor, patient identifier & HistoryExport & Missing\\
+\texttt{getProgress} & Actor, patient identifier, target phoneme,
+optional SessionPair & Progress & Missing\\
+\texttt{getAudit} & Actor, retained patient identity reference &
+Sequence of AuditEvent & --\\
+\texttt{copyAudit} & Actor, retained patient identity reference &
+AuditCopy & --\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+An initialization flag, initially false, and a reference to the configured
+Persistence store after initialization. Patient data and audit events are
+maintained by Persistence.
+
+\subsubsection{Environment Variables}
+A clock supplying timestamps for audit events.
+
+\subsubsection{Assumptions}
+The caller supplies an authenticated actor. Access to a patient's records and
+access to the audit trail are independently authorized.
+
+\subsubsection{Access Routine Semantics}
+For all patient operations, evaluate authorization before returning patient
+data or writing it. Raise \texttt{Missing} when an authorized request refers
+to a patient absent from active records. Record successful create, view,
+modify, export, and delete actions with their information type, actor,
+timestamp, and patient reference. If the audit write fails, raise
+\texttt{Unavailable} before exposing the output or committing a mutation.
+
+\begin{description}
+\item[] \texttt{initialize(store)}\par
+Set the store and initialization flag on
+success. On failure, raise \texttt{Unavailable}.
+\item[] \texttt{createPatient(actor, patient)}\par
+Insert the patient and creation
+audit event. Raise \texttt{Conflict} for a duplicate identifier.
+\item[] \texttt{updatePatient(actor, patient)}\par
+Replace identifying information
+for the given identifier and append a modification event.
+\item[] \texttt{getPatient(actor, patientId)}\par
+Append a view event and return the
+patient record.
+\item[] \texttt{deletePatient(actor, patientId, confirmed)}\par
+Raise
+\texttt{Unconfirmed} if the SLP has not confirmed deletion for that patient.
+Otherwise remove the patient, sessions, and attempts from active records in
+one operation. Preserve prior audit events and append a deletion event
+under the retained patient identity reference.
+\item[] \texttt{saveSession(actor, session)}\par
+Validate completion, unique attempt
+identifiers, and the patient's association. Raise \texttt{Invalid} for a
+snapshot that fails validation. Commit the session, attempts, and modification
+event together. An identical retry leaves them unchanged. Raise
+\texttt{Conflict} when the session identifier already denotes a different
+snapshot. The original analysis remains intact when an override is present.
+\item[] \texttt{getHistory(actor, patientId)}\par
+Append a view event and return
+that patient's completed sessions ordered by date, with ties ordered by
+session identifier. A patient with no sessions has empty history.
+\item[] \texttt{exportHistory(actor, patientId)}\par
+Append an export event and
+return a copy of the same ordered history.
+\item[] \texttt{getProgress(actor, patientId, target, pair)}\par
+Compute progress
+from \texttt{summarize(history, target)} for this patient's history. If a
+pair is supplied, compare its session points. Raise \texttt{Missing} if
+either session is outside this patient's history. Return available session
+points with an absent comparison if either selected session has no eligible
+observations for the target. If no pair is supplied, return the history
+without a between-session comparison. Append a view event before returning.
+\item[] \texttt{getAudit(actor, patientRef)} and \texttt{copyAudit(actor, patientRef)}\par
+Return matching events in append order or a copy of them. Include retained
+events for deleted patients when the actor has audit access.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{summarize(history, target)} reports per-session target counts and
+support levels. Use phoneme-level corrections where present. Count accepted
+productions as correct and substitutions or omissions as incorrect. Exclude
+additions and unresolved unclassifiable occurrences. Attempt-level overrides
+leave phoneme counts unchanged.
+
+The correct rate is correct divided by eligible occurrences. Compare sessions
+as follow-up minus baseline. Use the two latest eligible sessions for trends:
+a higher rate indicates improvement, and errors in both indicate persistence.
+Fewer than two eligible sessions yields no comparison or trend.
+
+\clearpage
+\section{MIS of Clinician Dashboard / Results Visualization} \label{mis:dashboard}
+
+\subsection{Module}
+Template ClinicianDashboard. One instance presents results for a clinician
+(FR-RDV1--9, FR-DMR8--10, and FR-HA7).
+
+\subsection{Uses}
+Session Management supplies the selected session
+snapshot and effective clinician overrides. Patient Records \& Progress
+Tracking (Section~\ref{mis:records}) supplies authorized longitudinal results.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\texttt{Dashboard} denotes a clinician view instance. Its result panels
+present attempt detail, a session summary and heat map, and per-target
+progress. Identifiers and snapshots use the types in
+Section~\ref{sec:interface-types}.
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{newDashboard} & Actor & Dashboard & Denied\\
+\texttt{showAttempt} & Dashboard, Session, attempt identifier & -- &
+Denied, Missing\\
+\texttt{showSession} & Dashboard, Session & -- & Denied\\
+\texttt{showProgress} & Dashboard, patient identifier, target phoneme,
+optional SessionPair & -- & Denied, Missing, Unavailable\\
+\bottomrule
+\end{tabularx}
 
 \subsection{Semantics}
 
 \subsubsection{State Variables}
-
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
+The dashboard's actor, optional selected patient identifier, and displayed
+panels. Initially, the selection and panels are empty. All visible patient
+panels belong to the selected patient.
 
 \subsubsection{Environment Variables}
-
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
+The clinician display, updated when a result panel changes.
 
 \subsubsection{Assumptions}
-
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
+Session Management supplies authorized snapshots and a refreshed snapshot
+after an attempt completes, an override changes, or a session ends.
+Phoneme closeness uses the SRS phonological feature vectors. Recognition
+confidence is displayed separately.
 
 \subsubsection{Access Routine Semantics}
+When a request selects another patient, clear the previous patient's panels.
+Raise \texttt{Denied} and clear patient content if the actor lacks access.
+Preface results with an acknowledgement that the information is assistive
+and may be incorrect, and that interpretation is at the SLP's discretion.
+Use neutral wording on clinician result panels.
 
-\noindent \wss{accessProg}():
-\begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
-\end{itemize}
-
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
-
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
+\begin{description}
+\item[] \texttt{newDashboard(actor)}\par
+Return an empty dashboard for an authorized
+clinician. Raise \texttt{Denied} for other actors.
+\item[] \texttt{showAttempt(view, session, attemptId)}\par
+Display expected and recognized IPA side by side. For each error, show the
+expected-to-produced substitution, the omitted expected phoneme with a gap
+in the recognized IPA, or the added produced phoneme with a gap in the
+expected IPA. Show the beginning, middle, or end word position for a
+substitution or omission and the insertion location for an addition. Raise
+\texttt{Missing} if the attempt is absent from the supplied session. For an
+unclassifiable attempt, show its status and any recognized IPA that is
+available. When the SLP overrides a classification, show the effective
+classification, identify it as the SLP's decision, and keep the original
+analysis visible.
+\item[] \texttt{showSession(view, session)}\par
+Recompute the view from the supplied
+snapshot. Count correct, incorrect, and unresolved unclassifiable attempts
+using \texttt{effectiveResult}. Report substitution, omission, and addition
+counts separately, using corrected error records when supplied. Split
+correct attempts by independent and
+cued support. Show zero counts and an empty heat map for zero attempts, and
+leave rates with a zero denominator unavailable. Update the open attempt
+panel from the same snapshot if applicable. Apply \texttt{closeness} to
+eligible expected-to-produced pairs. A classification-only override does
+not change the pair, and unresolved unclassifiable results without an
+eligible pair have no heat-map value. Show omissions and additions as
+unscored gaps in the IPA comparison.
+\item[] \texttt{showProgress(view, patientId, target, pair)}\par
+Retrieve and display
+authorized progress for the given patient and target in date order.
+Display the selected pair's comparison and the trend indicators when
+available. If the target has fewer than two eligible session points or
+the selected pair lacks eligible observations, show the available points
+and indicate insufficient history. On
+\texttt{Missing} or \texttt{Unavailable}, clear the requested panel and
+report the exception.
+\end{description}
 
 \subsubsection{Local Functions}
+\texttt{effectiveResult(attempt)} returns the SLP classification override
+when present and the original classification otherwise. A correct attempt
+with any additional cue or repetition is cued. A correct attempt recorded as
+independent is independent.
 
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
-
-\newpage
+\noindent\texttt{closeness(expected, produced)} returns
+$1 - \frac{\sum_{i=1}^{n}|A_i-B_i|}{2n}$ for the SRS feature vectors
+$A$ and $B$, each containing $n>0$ features in $\{-1,0,1\}$.
+Use a colour scale from 0 (least close) to 1 (closest). Use the corrected
+produced phoneme when the SLP supplies one. A pair with a missing feature
+vector or no classifiable or corrected produced phoneme has no heat-map
+value.
 
 \bibliographystyle {plainnat}
 \bibliography {../../../refs/References}

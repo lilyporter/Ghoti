@@ -188,8 +188,7 @@ decisions will be changed.
 Table~\ref{TblMH} summarizes the Phase 1 module hierarchy decomposed by
 secrets. The six behaviour-hiding leaves are implemented by PronouncedFish.
 The operating system and browser provide the hardware interfaces.
-Persistence is a proposed software decision leaf, pending agreement on the
-completed-session write boundary.
+Persistence is a software decision leaf that provides durable record storage.
 
 \begin{description}
 \item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
@@ -240,6 +239,14 @@ between requirements and modules is listed in Table~\ref{TblRT}.
   they are explicitly recorded here.  For instance, if a program has security
   requirements, a specific design decision may be made to satisfy those
   requirements with a password.}
+
+\paragraph{Speech error scope.}
+Phase 1 supports substitutions, omissions, and additions. Speech Analysis
+compares recognized IPA with the expected pronunciation and its acceptable
+variants. It reports a substitution when a different phoneme replaces an
+expected phoneme, an omission when an expected phoneme is absent, and an
+addition when an extra phoneme occurs before, between, or after expected
+phonemes. This extends the substitution cases in FR-SA1 and FR-RDV2--3.
 
 \section{Module Decomposition} \label{SecMD}
 
@@ -301,11 +308,14 @@ usability checks and reporting (FR-AC1--3).
 how completed sessions are associated with the patient and how progress is
 derived from that history.
 \item[Services:] Maintains patient records and provides authorized retrieval and
-export of session history. Provides per-target-phoneme performance over time,
-between-session comparisons, and indicators of improvement and persistent
-errors (FR-DMR1 and FR-DMR8--10). Audits patient record access and changes
+export of session history, including all three speech error types. Provides
+per-target-phoneme performance over time, between-session comparisons,
+and indicators of improvement and persistent errors (FR-DMR1 and
+FR-DMR8--10). Target progress counts substitutions and omissions at expected
+positions. Additions are reported in session history. The module audits
+patient record access and changes
 and allows authorized users to retrieve and copy the audit trail
-(FR-DMR4--5 and FR-HA9). Under the proposed write boundary, it uses
+(FR-DMR4--5 and FR-HA9). It uses
 Persistence (\mref{mPersistence}) for durable reads and writes
 (Section~\ref{SecDatabase}).
 \item[Implemented By:] PronouncedFish
@@ -317,7 +327,8 @@ Persistence (\mref{mPersistence}) for durable reads and writes
 \begin{description}
 \item[Secrets:] The presentation rules for clinician-facing speech results.
 \item[Services:] Presents expected and recognized phonemes in IPA and shows
-each identified substitution and its word position. Displays current-session
+each identified substitution, omission, and addition in its word position or
+insertion location. Displays counts by error type and current-session
 correct and incorrect counts, with independent and cued counts for correct
 attempts, and updates the views as the session progresses and completes.
 Displays a phoneme-closeness heat map and presents per-target progress and
@@ -327,8 +338,9 @@ FR-DMR8--10, and FR-HA7). Uses Session Management
 (\mref{mSessionManagement}) for current results and Patient Records \&
 Progress Tracking (\mref{mPatientRecords}) for longitudinal results. The
 heat map uses a phoneme-pair measure distinct from recognition confidence.
-The SRS proposes Manhattan distance over phonological feature vectors.
-The feature set and display scale remain to be agreed.
+Omissions and additions are shown as gaps in the IPA comparison.
+The heat map normalizes the SRS Manhattan distance over phonological feature
+vectors to a closeness scale from zero to one. Gaps receive no score.
 \item[Implemented By:] PronouncedFish
 \item[Type of Module:] Abstract Data Type (one view instance per clinician
 dashboard)
@@ -362,11 +374,9 @@ patient-record deletion and retention and retrieval of the audit trail
 \item[Type of Module:] Abstract Object
 \end{description}
 
-A Phoneme Recognizer Adapter is a candidate for a separate software decision
-leaf if Speech Analysis (\mref{mSpeechAnalysis}) needs an independently
-replaceable recognizer interface. It would hide model loading, invocation,
-and conversion of model output into phonemes and confidence values.
-Speech Analysis would continue to classify attempts and identify substitutions.
+Speech Analysis (\mref{mSpeechAnalysis}) hides model loading, invocation,
+and conversion of model output into phonemes and confidence values. It
+classifies attempts and identifies substitutions, omissions, and additions.
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -482,8 +492,9 @@ Session & Session identifier, required patient identifier, responsible SLP,
 date, selected target phonemes and practice items, session results, and SLP
 inputs. Every session belongs to exactly one patient.\\
 Attempt & Attempt identifier, required parent session, practice item and
-target phonemes, support level, original speech analysis, and any SLP
-correction or classification override. Records whether a correct item
+target phonemes, support level, original speech analysis (including the type
+and location of each detected substitution, omission, and addition), and any
+SLP correction or classification override. Records whether a correct item
 required additional cues or repetition. A session may have zero or more
 attempts. Each attempt inherits its patient from its session.\\
 Audit event & Action, type of information involved, date and time, acting
@@ -497,14 +508,14 @@ available for retrieval and copying by authorized users.\\
 
 \paragraph{Session completion.}
 Session Management owns the session and attempt lifecycles, patient
-selection, support levels, and overrides. The proposed handoff is for Session
-Management to submit a completed session and its attempts to Patient Records
+selection, support levels, and overrides. Session Management submits a
+completed session and its attempts to Patient Records
 \& Progress Tracking, which checks authorization and uses Persistence to
 write them together.
 Retrying the same completed-session save should leave one stored session.
 An override determines the effective classification while the original
-analysis remains available. The write boundary and save-failure behaviour
-are pending agreement with James. ST-F07, ST-F08, ST-F17, and ST-F18 in the
+analysis remains available. A failed save leaves records unchanged.
+ST-F07, ST-F08, ST-F17, and ST-F18 in the
 V\&V Plan cover the patient association, support levels, and persistence of
 original and overridden results.
 
@@ -515,16 +526,14 @@ Viewing, creating, modifying, exporting, and deleting a patient record each
 creates an audit event (FR-DMR4--5 and FR-HA9). The delete event and prior
 events remain available to authorized users after record deletion (ST-F19).
 The patient identity reference in those events survives deletion of the
-clinical record. The team still needs to agree on how deletion affects
-dependent sessions and backups, how long the audit identity reference is
-retained, and whether to use confirmation or 72-hour recovery as the
-critical-data safeguard (NFR-USA2 and ST-N04).
+clinical record. An SLP confirms deletion before Persistence removes the
+patient and dependent sessions and attempts from active records
+(NFR-USA2 and ST-N04).
 
 \paragraph{Phase 1 storage.}
 The SRS Phase 1 plan specifies a cloud database, and the Development Plan
 expects a relational database with row-level access control. The local demo
-uses JSON. The team still needs to confirm the Expo storage implementation
-and the scope of session-end backup and failure alerts (FR-HA2 and ST-F21).
+uses JSON.
 
 \section{Timeline}
 
