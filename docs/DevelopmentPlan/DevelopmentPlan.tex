@@ -36,10 +36,12 @@ The following document outlines the development plan for the \textbf{Ghoti} caps
 details including, confidentiality, IP, team member information and communication protocols. It also includes project technical plans and 
 standards, including the Proof of Concept design, expected technologies and details on AI usage.
 
-\section{Confidential Information?}
-During development, there is no confidential information being used. Machine learning training data will be gathered from publicly 
-available resources. However, when the product is in use by patients, their data will be private medical data. This means that the 
-final product must be PHIPA compliant.
+\section{Confidential Information}
+Machine learning training uses publicly available speech corpora. Patient
+recordings and related clinical data collected during use are personal
+health information. Ontario's Personal Health Information Protection Act
+(PHIPA) governs how health information custodians collect, use, disclose,
+and safeguard that information.
 
 \section{IP to Protect}
 
@@ -78,8 +80,9 @@ have a primary area of focus, these roles are not fixed and may evolve as the pr
 
 \begin{itemize}
   \item \textbf{Project Manager \& CI/CD/Admin Lead:} This role oversees and manages the project timeline, team organization and progress. 
-  The project manage will maintain the project's the CI/CD pipeline to ensure LaTeX documentation compiles and deploys correctly. They will 
-  also manage repository permissions, create issues, track team progress, and organize milestones and deadlines.
+  The project manager maintains the CI/CD pipeline for building and
+  deploying \LaTeX{} documentation. They also manage repository permissions,
+  create issues, track progress, and organize milestones and deadlines.
   \item \textbf{Team Liaison:} This role is the main point-of-contact between the team and course instructors. They are responsible for 
   submitting/creating pull requests for deliverables, and facilitating communication of feedback and comments between the instructor and the 
   group. 
@@ -99,13 +102,25 @@ have a primary area of focus, these roles are not fixed and may evolve as the pr
 
 \section{Workflow Plan}
 
-Stakeholders and developers will work closely together on creating this project. Thus, it is cruicial to use a workflow that simplifies the development cycle, allows for rapid feedback from stakeholders, and allows for quick iterations on the product. The quicker developers are allowed to iterate, the faster they can tune the product to stakeholder needs. 
+The team uses short development cycles so stakeholders can review changes and
+provide feedback as the product evolves.
 
-The workflow selected for this project is the GitHub workflow due to its simplicity and efficiency. The GitHub workflow dictates that each feature branch will be merged directly into the main branch, and product releases will come from the main branch. Overhead branches are not required for the GitHub workflow, minimizing the amount of branch management a developer has to do. Production releases can be created quickly after each feature branch is merged, thus allowing for rapid feedback from stakeholders and allowing developers to make quick, iterative changes to make stakeholders happy. 
+Feature and fix branches are merged into \texttt{main} after review, and
+releases are made from \texttt{main}. Each change starts with a GitHub issue
+tracked in GitHub Projects. A developer takes the issue, creates an
+issue-numbered branch, and references the issue in the pull request. For
+example, the branch for
+\href{https://github.com/lilyporter/Ghoti/issues/32}{issue \#32}
+starts with \texttt{32-}. The pull request for that branch should reference
+\texttt{\#32}.
+At least one other team member reviews each pull request before merge.
+After merge, the developer closes the issue and marks it Done in GitHub
+Projects. The team prefers pull requests of no more than 500 changed lines
+so they remain manageable to review.
 
-For traceability, GitHub issues created with GitHub Projects will be used to track each feature. A developer will assign themselves to an issue on the project board and create a feature branch to work on it. Once a feature branch is ready to be merged into the main branch, the developer assigned to the issue will create a pull request. For each issue, at least one other team member must review it before approval is given to merge the associated feature branch into the main branch. Once the feature branch is merged, the developer assigned to the issue must close it and set its status to "done." Preferably, each pull request should contain a maximum of 500 changes to lines of code to minimize the workload on reviewers for each individual pull request. 
-
-Lastly, GitHub Actions will be used to create a pipeline for continuous integration and continuous development. An automatic runner for format checking, unit testing, and vulnerability checking will be part of the pipeline. Since the project is using a model that requires training and/or fine-tuning, benchmark testing, regression testing, and model latency checks will also need to be added to the pipeline to ensure thresholds for the product are met. Other checks may be added to the pipeline as needed.
+GitHub Actions builds the \LaTeX{} documentation. The team plans to add
+application formatting, unit test, and dependency checks, as well as model
+accuracy, regression, and latency checks.
 
 \section{Project Decomposition and Scheduling}
 
@@ -121,20 +136,19 @@ Below is the information we will use GitHub projects to keep track of.
 
 Inside the project, meeting information can be found under “meetings” and lecture information can be found under “lectures”. Product progress and project deliverables can be found under “Backlog”, “Ready”, “In Progress”, “In Review”, or “Done” based on its status. Product progress and project deliverables will move through each of these stages sequentially and at each stage will be reviewed by at least one team member. 
 
-Link to the project can be found \href{https://github.com/users/lilyporter/projects/3/views/1}{Here}
+The project board is available \href{https://github.com/users/lilyporter/projects/3/views/1}{here}.
+
 \section{Proof of Concept Demonstration Plan}
 
-At a high level, this application will listen to child speech, process it into its phonetic representation, and analyze this to give feedback to SLPs. The greatest risks associated with this lie in the intermediate audio processing stage:
+During the demo, children will speak live while completing guided practice
+items on the iPad. A local server will analyze their speech and return the
+recognized phonemes and detected errors for the clinician to review. This
+walkthrough serves as a guide and can evolve as the prototype develops.
 
-\begin{enumerate}
-  \item \textbf{Converting Child Speech To Phonetic Representation -} Since children are in a developmental phase, their speech patterns vary significantly when compared to adults. Therefore, it may be challenging to ensure an acceptable accuracy rate when converting child speech into phonetic representations.
-  \item \textbf{Ensuring An Acceptable Processing Time -} For this application to be viable in a clinical setting, it will need to give real time feedback to the SLP during an appointment on their computers. As per the project supervisors, existing child speech interpretation models are quite slow, so it may be difficult for this one to process the data fast enough to give the clinician feedback in less time than it would have taken for them to reach a deduction themself.
-\end{enumerate}
-
-\indent To ensure these risks can be overcome, a suitable training dataset must be found online. To ensure speech to phonetic conversion accuracy, there must be sufficient data to properly train the model. It is important to note that this data must be publicly available to comply with PHIPA patient confidentiality guidelines. 
-
-\indent Once this data is sourced, we will need to develop the actual model that takes child speech and converts it into a readable format with the corresponding phoneme representations. If this model meets the established accuracy benchmarks, it will be feasible to continue designing this application for pediatric speech purposes. Moreover, it is fair to assume that speech therapy offices will use typical office computers that are not equipped with powerful hardware. Therefore, it is necessary to show that the model can meet the benchmark processing time on a device of similar specifications.
-
+The team will assess whether the results reflect what was spoken and arrive
+soon enough for the clinician to use during the session. If recognition is
+unreliable or feedback arrives too late, the team will document where the
+workflow breaks down and prioritize those fixes before expanding the demo.
 
 \section{Expected Technology}
 
@@ -144,20 +158,29 @@ At a high level, this application will listen to child speech, process it into i
 \item \textbf{Python}: speech processing, model evaluation and training, and application backend.
 \item \textbf{JavaScript:} user interface.
 \item \textbf{SQL:} data storage and access control.
-\item \textbf{Git, GitHub, and GitHub Projects:} course requirements and will be used for version control, issue tracking, code review, and planning.
-\item The application is web-based so it will run on devices that a typical clinic would have, i.e. a desktop.
+\item The web application runs in Safari on iPad. A local server performs
+  speech analysis.
 \end{itemize}
 
 \subsection{Libraries and Frameworks}
 
 \begin{itemize}
-\item \textbf{Backend}: an Python web framework (e.g., FastAPI)
+\item \textbf{Backend}: a Python web framework (e.g., FastAPI)
   with data validation (e.g., Pydantic).
 \item \textbf{Frontend}: a JavaScript framework (e.g., React), an API to capture audio from the browser.
-\item \textbf{Data}: a relational database (e.g., PostgreSQL) with row-level access control, hosted or self-hosted. 
+\item \textbf{Data}: a self-hosted database with row-level access control.
 \item \textbf{Speech and machine learning}: PyTorch, the Hugging Face
   Transformers library, and standard audio-processing libraries.
 \end{itemize}
+
+\subsection{Audio Processing and Storage}
+
+The iPad Safari interface sends recorded speech over an encrypted connection
+to a local server for analysis. The server returns the results to the
+frontend. Audio from every completed attempt is stored in a self-hosted
+database, encrypted at rest, and linked to the attempt. Authorized SLPs can
+replay saved audio across sessions for as long as the clinic's retention
+policy permits.
 
 \subsection{Pre-trained Models and Training}
 
@@ -177,17 +200,25 @@ At a high level, this application will listen to child speech, process it into i
 \subsection{Development Tooling}
 
 \begin{itemize}
-\item \textbf{Linting and formatting}: Ruff for Python; Prettier for JavaScript.
-\item \textbf{Unit testing}: pytest for Python; Vitest for JavaScript.
-\item \textbf{Continuous Integration}: Pull requests must have a reviewer; branch protection blocking tests that fail; unit testing to prevent breaking the application on code that compiles on merge;
+\item \textbf{Version control and planning}: Git for version control, GitHub
+  for issue tracking and pull request review, and GitHub Projects for
+  scheduling and progress tracking.
+\item \textbf{Linting and formatting}: Ruff for Python and Prettier for
+  JavaScript.
+\item \textbf{Unit testing}: pytest for Python and Vitest for JavaScript.
+  The team plans to review coverage reports to identify untested code.
+\item \textbf{Continuous integration}: GitHub Actions builds the
+  documentation. The application lint, format, and test checks listed in
+  the Workflow Plan are planned. A pull request must receive reviewer
+  approval and pass the required checks before it can be merged.
 \end{itemize}
 
 \subsection{Performance Measurement}
 
 \begin{itemize}
 \item \textbf{Accuracy}: phone error rate against reference transcriptions;
-  precision and recall of substitution detection per target sound; agreement
-  with speech-language pathologist annotations.
+  precision and recall for substitution, omission, and addition detection;
+  agreement with speech-language pathologist annotations.
 \item \textbf{Speed}: real-time factor (processing time divided by audio
   duration) and end-to-end latency, measure at each model's size to map the accuracy-versus-latency tradeoff.
 \item \textbf{Regression testing}: a fixed held-out evaluation set is re-run after every training run or model change, and a change is accepted only if results stay within agreed thresholds.
@@ -215,8 +246,8 @@ We will review any generated code before including it in the application. We wil
 \item \textbf{Commits and pull requests}: descriptive commit messages, one
   pull request per feature or fix, and at least one reviewer approval before
   merging to the main branch.
-\item These standards are enforced automatically through GitHub Actions on
-  every pull request; a failing lint or format check blocks merging.
+\item The team plans to enforce the application lint and format standards
+  through required GitHub Actions checks on pull requests.
 \end{itemize}
 
 \newpage{}
@@ -228,7 +259,7 @@ All writing was done by the team members by hand. All research and facts were ob
 \subsection{AI Tools Used}
 
 \begin{table}[hp]
-\caption{List of AI Tools Used} \label{TblRevisionHistory}
+\caption{List of AI Tools Used} \label{TblAITools}
 \begin{tabularx}{\textwidth}{llX}
 \toprule
 \textbf{Tool Number} & \textbf{Name} & \textbf{Model} \\
@@ -242,7 +273,7 @@ All writing was done by the team members by hand. All research and facts were ob
 \subsection{How and Where Used}
 
 \begin{table}[hp]
-\caption{Usage Details for All AI Tools Used} \label{TblRevisionHistory}
+\caption{Usage Details for All AI Tools Used} \label{TblAIUsage}
 \begin{tabularx}{\textwidth}{
   >{\hsize=0.5\hsize}L
   >{\hsize=0.5\hsize}L
@@ -287,11 +318,10 @@ As none of the AI usage was for factual content, verification was very simple. F
     Spending too much time on the perfect CI/CD pipeline is time lost on the features of the project. 
     \item \textbf{What disagreements did your group have in this deliverable, if any,
     and how did you resolve them?}
-    We had some disagreements on the Expected Technology section, specifically about the use of Cloud-based and web solutions for our project.
-    This project will likely require storing and analyzing the user's medical data, which means we need to consider the ethics and security of our solution.
-    Any web-based application would require considering cybersecurity, and any Cloud-based databases would require detailed inspections of the provider's security and privacy policies.
-    However, these approaches would significantly ease the technical development of our project, allowing us to focus on meeting our goals.
-    We had to spend some time considering the trade-offs of each approach and come to a compromise to move on to other aspects.
+    We discussed where to process speech and store recordings. We chose
+    a local server for processing and a self-hosted database for
+    recordings. Audio is encrypted at rest, and authorized SLPs can replay
+    recordings across sessions under the clinic's retention policy.
 \end{enumerate}
 
 \newpage{}
