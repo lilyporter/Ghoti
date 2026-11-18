@@ -129,7 +129,7 @@ export default function SessionDashboard({ samples, sampleError }) {
                 <td className="dash-phone">{phoneText(result.analysis.expected_phones)}</td>
                 <td className="dash-phone">{phoneText(result.recognition.recognized_phones, true)}</td>
                 <td className="dash-differences">{result.analysis.matches_target ? <span className="dash-match-pill">Sounds matched</span> : differences(result.analysis)}</td>
-                <td><button className="dash-play" onClick={() => play(sample)} aria-label={`Play ${sample.target_word} recording`}>▷</button></td>
+                <td><button className="dash-play" onClick={() => play(sample)} aria-label={`Play ${sample.target_word} recording`}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6Z"/></svg></button></td>
               </tr>)}
             </tbody></table></div>
             <div className="dash-table-footer">Showing all {rows.length} attempts</div>
