@@ -1,5 +1,3 @@
 # Design Documentation
 
-The folders and files for this folder are as follows:
-
-Describe ...
+[Module Guide and Module Interface Specification for PronouncedFish](design.tex)
