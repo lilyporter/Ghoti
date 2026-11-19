@@ -928,7 +928,7 @@ classification is correct, incorrect, or unclassifiable. An SLP correction
 contains the SLP identity, optional correct/incorrect override, and any
 phoneme-level corrections to the observations or error records.
 \item[Session] Session identifier, patient identifier, SLP identity, session
-date, targets, practice items, SLP inputs, status (active or completed),
+date, session mode (testing or treatment), targets, practice items, SLP inputs, status (active or completed),
 and a sequence of completed attempts. Only a completed snapshot is accepted
 by \texttt{saveSession}.
 \item[SessionPair] Two distinct session identifiers ordered from baseline
@@ -942,6 +942,165 @@ retained patient identity reference.
 \item[HistoryExport, AuditCopy] Copies of authorized session history and
 audit events, respectively. The export formats are implementation decisions.
 \end{description}
+
+\clearpage
+\section{MIS of Session Management} \label{mis:session}
+
+\subsection{Module}
+SessionManager runs one clinician-supervised practice session for one
+patient, from setup to completion. It covers FR-SM1--4 and FR-PAR5--7, and the
+session-side parts of FR-AC3, FR-SA3, FR-DMR2--3, FR-DMR6--7, and FR-DMR11.
+
+\subsection{Uses}
+Audio Capture supplies a recording and its usability flags (FR-AC1 and FR-AC3). Speech Analysis supplies the analysis of a usable recording (FR-SA1 and FR-SA3). Practice Items \& Lesson Plans supplies items, their target phonemes, and image cues. Patient Records \& Progress Tracking provides patient information if authorized and stores the completed session. Clinician Dashboard / Results Visualization uses this module; this module does not use the Dashboard.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[SessionMode] Testing or Treatment. Testing gathers information about the
+patient's speech with no cues, hints, or modelling. Treatment allows support
+from the SLP.
+\item[SupportLevel] independent, semantic cue, or repetition/model. The support
+a child received for one attempt (FR-SM3 and FR-DMR2.1).
+\item[SessionSetup] Patient identifier, SessionMode, target phonemes, and
+practice items.
+\item[Prompt] A practice item and its image cue, presented for an attempt
+(FR-PAR5).
+\item[AttemptOutcome] Either \emph{flagged}, with the usability reasons from
+Audio Capture, or \emph{analysed}, with the resulting Attempt.
+\end{description}
+Session, Attempt, Actor, and SLP correction are the shared types in
+Section~\ref{sec:interface-types}. The Attempt records its SupportLevel.
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X X@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{startSession} & Actor, SessionSetup & Session &
+Denied, Missing, Invalid, Conflict, Unavailable\\
+\texttt{startAttempt} & practice item & Prompt & Inactive, Invalid, Busy\\
+\texttt{recordAttempt} & -- & AttemptOutcome & Inactive, NoAttempt,
+Unavailable\\
+\texttt{setSupport} & SupportLevel & -- & Inactive, NoAttempt, Invalid\\
+\texttt{repeatAttempt} & -- & Prompt & Inactive, NoAttempt\\
+\texttt{skipAttempt} & -- & -- & Inactive, NoAttempt\\
+\texttt{overrideAttempt} & attempt identifier, SLP correction & -- &
+Inactive, Missing, Invalid\\
+\texttt{getSnapshot} & -- & Session & Inactive\\
+\texttt{endSession} & -- & -- & Inactive, Denied, Invalid, Conflict,
+Unavailable\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+\begin{itemize}
+\item \texttt{session}: the active Session record, or absent. Initially absent.
+Its attempts are the retained attempts so far, in order.
+\item \texttt{actor}: the Actor who started the session.
+\item \texttt{current}: the open attempt, or absent. It holds the practice
+item, its SupportLevel (initially independent), and a state: prompted,
+flagged, or analysed. An analysed current attempt is also the last element of
+\texttt{session}'s attempts.
+\item \texttt{nextId}: counter used to give attempts identifiers that are
+unique within the session.
+\end{itemize}
+The session's SessionMode is part of the active Session record.
+
+\subsubsection{Environment Variables}
+A clock supplying the session date. The child-facing display, which shows the
+Prompt.
+
+\subsubsection{Assumptions}
+The caller supplies an authenticated actor. One session is active at a time.
+Each attempt is a single spoken target word (SRS A1), and the SLP supervises
+the session (SRS A7). Audio Capture and Speech Analysis return the values
+described in Section~\ref{sec:interface-types}. Recorded audio is used only
+for its attempt (FR-AC2).
+
+\subsubsection{Access Routine Semantics}
+Every routine except \texttt{startSession} raises \texttt{Inactive} when no
+session is active. Routines that act on the current attempt raise
+\texttt{NoAttempt} when \texttt{current} is absent.
+
+\begin{description}
+\item[] \texttt{startSession(actor, setup)}\par
+Raise \texttt{Conflict} if a session is already active. Confirm access to the
+setup's patient identifier through Patient Records \& Progress Tracking;
+\texttt{Denied}, \texttt{Missing}, and \texttt{Unavailable} propagate. Raise
+\texttt{Invalid} when the target set or item set is empty, when a target is
+outside the predetermined substitution list (FR-SM1 and FR-SA1), or when an
+item does not exercise at least one selected target. On success, create an
+active Session with a new identifier, the patient, the actor's SLP identity,
+the setup's SessionMode, the clock date, the targets, the items, no SLP inputs,
+and no attempts. Record the actor, clear \texttt{current}, and return the
+Session.
+\item[] \texttt{startAttempt(item)}\par
+Raise \texttt{Invalid} if the item is not in the session's practice items.
+Raise \texttt{Busy} if \texttt{current} is prompted or flagged and has not been
+repeated or skipped. If \texttt{current} is analysed, it is final and stays in
+the session. Set \texttt{current} to a prompted attempt for the item with
+independent support, and return the Prompt supplied by Practice Items
+(FR-PAR5).
+\item[] \texttt{recordAttempt()}\par
+Raise \texttt{Unavailable} if Audio Capture or Speech Analysis fails; the state
+is unchanged. Obtain a recording from Audio Capture. If the recording is
+flagged, set \texttt{current} to flagged, add nothing to the session, and
+return flagged (FR-AC3). Otherwise obtain the analysis from Speech Analysis
+for the item and its targets. Build an Attempt with a new identifier, the item,
+its targets, the SupportLevel of \texttt{current}, and the original analysis,
+which may classify it as unclassifiable (FR-SA3). Append it to the session's
+attempts, set \texttt{current} to analysed, and return analysed. The Dashboard
+sees the new attempt through \texttt{getSnapshot}.
+\item[] \texttt{setSupport(level)}\par
+Raise \texttt{Invalid} if the level is not in \texttt{allowedSupport(mode)},
+where mode is the session's SessionMode. Set the SupportLevel of
+\texttt{current}, and of its Attempt when analysed (FR-SM3 and FR-DMR2). The
+SLP may call this before or after \texttt{recordAttempt}.
+\item[] \texttt{repeatAttempt()}\par
+Discard \texttt{current}. If it was analysed, remove its Attempt from the
+session so that only the new attempt is retained. Start a new prompted attempt
+for the same item with independent support and return its Prompt (FR-SM2).
+\item[] \texttt{skipAttempt()}\par
+Discard \texttt{current} as in \texttt{repeatAttempt}. Retain no Attempt for it
+and set \texttt{current} to absent.
+\item[] \texttt{overrideAttempt(attemptId, correction)}\par
+Raise \texttt{Missing} if the identifier is not among the session's attempts.
+Raise \texttt{Invalid} if the correction does not name the actor's SLP identity
+or names a phoneme-level change for an observation that does not exist.
+Attach the correction to the Attempt. The original analysis is not changed
+(FR-SM4 and FR-DMR3). A new correction for the same attempt replaces the
+previous one.
+\item[] \texttt{getSnapshot()}\par
+Return a copy of the Session with its current attempts. The Session's status is
+active.
+\item[] \texttt{endSession()}\par
+Discard \texttt{current} if it is prompted or flagged. Form the completed
+snapshot: the session with status completed. Call
+\texttt{saveSession(actor, snapshot)} of Patient Records \& Progress Tracking.
+On success, set \texttt{session} and \texttt{current} to absent. On any
+exception (\texttt{Denied}, \texttt{Invalid}, \texttt{Conflict}, or
+\texttt{Unavailable}), propagate it and leave the session active and its
+attempts unchanged, so that calling \texttt{endSession} again submits an
+identical snapshot. A session with zero attempts may be ended and saved.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{allowedSupport(mode)} returns \{independent\} for Testing and
+\{independent, semantic cue, repetition/model\} for Treatment.
+
+\noindent The effective classification of an attempt is defined by
+\texttt{effectiveResult} in the Dashboard (Section~\ref{mis:dashboard}) and by
+\texttt{summarize} in Patient Records \& Progress Tracking
+(Section~\ref{mis:records}). This module does not compute it. The Dashboard
+treats a correct attempt as cued when its SupportLevel is semantic cue or
+repetition/model.
 
 \clearpage
 
