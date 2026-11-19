@@ -25,6 +25,8 @@
     linkcolor=red,
     urlcolor=blue
 }
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \input{../Comments.text}
 \input{../Common.text}
@@ -307,18 +309,38 @@ the modules. It can be seen that the graph is a directed acyclic graph
 system, and modules in the higher level of the hierarchy are essentially simpler
 because they use modules from the lower levels.
 
-\wss{The uses relation is not a data flow diagram.  In the code there will often
-be an import statement in module A when it directly uses module B.  Module B
-provides the services that module A needs.  The code for module A needs to be
-able to see these services (hence the import statement).  Since the uses
-relation is transitive, there is a use relation without an import, but the
-arrows in the diagram typically correspond to the presence of import statement.}
-
-\wss{If module A uses module B, the arrow is directed from A to B.}
-
 \begin{figure}[H]
 \centering
-%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
+\begin{tikzpicture}[
+  mod/.style={draw, rectangle, rounded corners, minimum width=3.4cm,
+              minimum height=0.9cm, align=center, font=\small},
+  uses/.style={-{Stealth[length=2mm]}, thick}
+]
+% Level 4 (top)
+\node[mod] (dash) at (0,6) {Clinician Dashboard /\\Results Visualization\\(\mref{mDashboard})};
+
+% Level 3
+\node[mod] (session) at (0,4) {Session Management\\(\mref{mSession})};
+
+% Level 2
+\node[mod] (lesson)   at (-4.8,2) {Lesson Plan\\(\mref{mLesson})};
+\node[mod] (analysis) at (0,2)    {Audio Analysis\\(\mref{mAudioAnalysis})};
+\node[mod] (audio)    at (4.8,2)  {Audio Input\\(\mref{mAudioInput})};
+
+% Level 1 (bottom)
+\node[mod] (patient) at (-4.8,0) {Patient Management\\(\mref{mPatient})};
+\node[mod] (hh)      at (4.8,0)  {Hardware Hiding\\(\mref{mHH})};
+
+% A uses B: arrow from A to B
+\draw[uses] (dash)    -- (session);
+\draw[uses] (dash.west) to[out=180, in=180, looseness=1.2] (patient.west);
+\draw[uses] (session) -- (lesson);
+\draw[uses] (session) -- (analysis);
+\draw[uses] (session) -- (audio);
+\draw[uses] (session) -- (patient);
+\draw[uses] (lesson)  -- (patient);
+\draw[uses] (audio)   -- (hh);
+\end{tikzpicture}
 \caption{Use hierarchy among modules}
 \label{FigUH}
 \end{figure}
@@ -373,6 +395,37 @@ usability checks and reporting (FR-AC1--3).
 \item[Implemented By:] [Your Program Name Here]
 \item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
   [Information to include for leaf modules in the decomposition by secrets tree.]
+\end{description}
+
+\subsubsection{Audio Analysis Module (\mref{mAudioAnalysis})}
+
+\begin{description}
+\item[Secrets:] The algorithms and models used to convert recorded speech into
+  a phoneme-level assessment. This includes the machine learning model used to
+  recognize phonemes, the method for determining a phoneme's placement within
+  a word, the representation of phonemes as articulatory feature vectors, and
+  the distance metric used to compare recognized phonemes with expected ones.
+\item[Services:] Accepts a recorded audio attempt and the expected word or
+  phoneme sequence, and returns a phonemic analysis of the attempt. It
+  performs the following steps:
+  \begin{itemize}
+  \item Recognizes the sequence of phonemes in the audio using a pre-trained
+    ML phoneme recognition model.
+  \item Identifies the placement of each phoneme within the word (initial,
+    medial, or final).
+  \item Represents each recognized and expected phoneme as a feature vector
+    using the PanPhon library.
+  \item Computes the Manhattan distance between the recognized and expected
+    phoneme vectors to quantify how far each attempt is from the target, which
+    identifies substitution errors (e.g., ``rabbit'' $\rightarrow$
+    ``wabbit'').
+  \end{itemize}
+  The resulting phoneme-level results (recognized phoneme, expected phoneme,
+  placement, distance, and confidence) are passed to the results and progress
+  modules. The output is intended to assist, and never replace, the clinical
+  judgment of the speech-language pathologist.
+\item[Implemented By:] Python (PyTorch/Hugging Face model, PanPhon library)
+\item[Type of Module:] Abstract Object
 \end{description}
 
 \subsubsection{Etc.}
