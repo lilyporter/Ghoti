@@ -596,9 +596,29 @@ needed. Drawings, Sketches, Figma}
 
 \section{Design of Communication Protocols}
 
-\wss{If there is communication between hardware and software, it may be necessary
-to explain the design of the communication protocol.  This section should be filled
-in with NA if it is not appropriate for a given project.}
+The system does not use any custom hardware communication protocol. Two
+communication paths are described below.
+
+\subsection{Audio Capture}
+
+Audio is captured through the standard browser media interfaces
+(\texttt{MediaDevices.getUserMedia} and \texttt{MediaRecorder}), which are
+provided by the browser and operating system on the tablet (see \mref{mHH}).
+The browser asks the user for microphone permission, and the Audio Input Module
+(\mref{mAudioInput}) only begins recording once permission is granted. If
+permission is denied or no microphone is available, the failure is reported to
+the user and no recording is started. Recordings are encoded in a single fixed
+format (e.g., WAV at a fixed sample rate) so that the Audio Analysis Module
+(\mref{mAudioAnalysis}) always receives consistent input.
+
+\subsection{Tablet to Server}
+
+The tablet communicates with the server over an HTTPS connection. All data,
+including recorded audio, login information, and results, is encrypted in
+transit using TLS, and plain HTTP connections are rejected. This supports the
+PHIPA compliance requirement for personal health information. The tablet sends
+recordings to the server for analysis, and the server returns the phoneme-level
+results over the same connection.
 
 \section{Database Design} \label{SecDatabase}
 
