@@ -409,7 +409,7 @@ usability checks and reporting (FR-AC1--3).
   phoneme sequence, and returns a phonemic analysis of the attempt. It
   performs the following steps:
   \begin{itemize}
-  \item Recognizes the sequence of phonemes in the audio using a pre-trained
+  \item Recognizes the sequence of phonemes in the audio using a pre-trained (Pasketti Challenge)
     ML phoneme recognition model.
   \item Identifies the placement of each phoneme within the word (initial,
     medial, or final).
@@ -1007,6 +1007,129 @@ Use a colour scale from 0 (least close) to 1 (closest). Use the corrected
 produced phoneme when the SLP supplies one. A pair with a missing feature
 vector or no classifiable or corrected produced phoneme has no heat-map
 value.
+
+\clearpage
+\section{Speech Analysis (\mref{mSpeechAnalysis})} \label{mis:analysis}
+
+\subsection{Module}
+Abstract object SpeechAnalysis. One instance converts a recorded attempt into
+a phoneme-level analysis (FR-SA1, FR-RDV2--3, and FR-HA3). The analysis is
+assistive only and does not replace the judgment of the SLP.
+
+\subsection{Uses}
+None. Session Management (\mref{mSessionManagement}) supplies the recording
+captured through Audio Capture (\mref{mAudioCapture}). The module relies on a
+pre-trained phoneme recognition model and the PanPhon feature table, which are
+external to PronouncedFish.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[ModelConfig] Identifies the phoneme recognition model and the minimum
+confidence below which a recognized phoneme is treated as unreliable.
+\item[Recording] Audio of one attempt in the format fixed by Audio Capture.
+\item[PracticeItem] One or more words. Each word has an expected IPA sequence
+and a set of acceptable variant pronunciations. The practice item and target
+phonemes are the same as those in Attempt
+(Section~\ref{sec:interface-types}).
+\item[Placement] One of initial, medial, or final: the position of an expected
+phoneme within its word.
+\item[Analysis] The original analysis of an Attempt
+(Section~\ref{sec:interface-types}): expected and recognized IPA sequences, an
+ordered sequence of SpeechError, confidence when available, aligned
+observations, and classification.
+\end{description}
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{initialize} & ModelConfig & -- & Unavailable\\
+\texttt{analyze} & Recording, PracticeItem & Analysis & Unavailable, Invalid\\
+\texttt{placement} & Word length in $\mathbb{N}$, position in $\mathbb{N}$ &
+Placement & Invalid\\
+\texttt{phonemeDistance} & Expected phoneme, produced phoneme &
+$\mathbb{N}$ or absent & Unavailable\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+An initialization flag, initially false, and the loaded recognition model and
+feature table after initialization. No patient data is retained between calls.
+
+\subsubsection{Environment Variables}
+The model files and the PanPhon feature table, read during
+\texttt{initialize}.
+
+\subsubsection{Assumptions}
+The recording was captured through Audio Capture in the agreed format. Each
+word of the practice item has a non-empty expected IPA sequence. Recognized
+phonemes are IPA symbols. Calls to \texttt{analyze} are independent.
+
+\subsubsection{Access Routine Semantics}
+Every operation except \texttt{initialize} and \texttt{placement} raises
+\texttt{Unavailable} when the module has not been initialized or the model
+fails.
+
+\begin{description}
+\item[] \texttt{initialize(config)}\par
+Load the model and the PanPhon feature table, and set the initialization flag
+on success. On failure, raise \texttt{Unavailable}.
+\item[] \texttt{analyze(recording, item)}\par
+Raise \texttt{Invalid} if the recording cannot be decoded or the item has no
+expected phonemes. Otherwise:
+\begin{enumerate}
+\item Recognize the phoneme sequence in the recording, with a confidence value
+for each recognized phoneme when the model provides one.
+\item If no phonemes are recognized, or every recognized phoneme falls below
+the minimum confidence, return an analysis with absent recognized IPA, no
+SpeechError, every observation unclassifiable, and an unclassifiable
+classification. This is not an exception.
+\item Otherwise, for each word apply \texttt{align} between the recognized
+sequence and the expected sequence and each acceptable variant. Use the
+alignment of lowest cost, preferring the expected sequence on a tie.
+\item Produce one observation for each target occurrence. A pair of identical
+phonemes is accepted, a pair of different phonemes is incorrect, and an
+expected phoneme with no counterpart is incorrect with an absent produced
+phoneme. Additions are not target occurrences and produce no observation.
+\item Create one SpeechError per difference: a Substitution for a pair of
+different phonemes, an Omission for an expected phoneme with no counterpart,
+and an Addition for a recognized phoneme with no counterpart. Record the
+expected position of each Substitution and Omission and the insertion location
+of each Addition. Order errors by word occurrence and position.
+\item Classify the attempt as correct when no SpeechError exists and as
+incorrect otherwise.
+\end{enumerate}
+The result is the original machine analysis. SLP corrections and overrides are
+applied by Session Management and never change it.
+\item[] \texttt{placement(length, position)}\par
+Raise \texttt{Invalid} unless $1 \le position \le length$. Return initial if
+$position = 1$, final if $position = length$ and $length > 1$, and medial
+otherwise.
+\item[] \texttt{phonemeDistance(expected, produced)}\par
+Return $\sum_{i=1}^{n}|A_i-B_i|$ where $A$ and $B$ are the PanPhon feature
+vectors of the two phonemes (the Manhattan distance). Return absent if either
+phoneme has no feature vector.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{align(expected, recognized)} returns an alignment of two phoneme
+sequences into pairs, omissions, and additions with minimum total cost. A pair
+costs \texttt{phonemeDistance} of its phonemes. An omission or addition costs a
+constant gap cost no smaller than the greatest possible pair distance. A pair
+with an absent distance costs the gap cost. Ties are broken deterministically,
+preferring pairs over gaps and then the earliest alignment.
+
+\noindent The Dashboard normalizes a distance to the closeness scale
+$1 - \frac{distance}{2n}$ (Section~\ref{mis:dashboard}), so both modules use
+the same SRS feature vectors, and recognition confidence is reported separately.
 
 \clearpage
 
