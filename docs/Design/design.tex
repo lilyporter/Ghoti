@@ -667,28 +667,79 @@ requirements and between the modules and the anticipated changes.
 
 % the table should use mref, the requirements should be named, use something
 % like fref
-\begin{table}[H]
-\centering
-\begin{tabular}{p{0.2\textwidth} p{0.6\textwidth}}
+\begin{longtable}{p{0.2\textwidth} p{0.7\textwidth}}
+\caption{Trace Between Requirements and Modules}\label{TblRT}\\
 \toprule
 \textbf{Req.} & \textbf{Modules}\\
 \midrule
-R1 & \mref{mHH}, \mref{mInput}, \mref{mParams}, \mref{mControl}\\
-R2 & \mref{mInput}, \mref{mParams}\\
-R3 & \mref{mVerify}\\
-R4 & \mref{mOutput}, \mref{mControl}\\
-R5 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R6 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R7 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R8 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R9 & \mref{mVerifyOut}\\
-R10 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}\\
-R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
+\endfirsthead
+
+\multicolumn{2}{l}{\textit{Table \thetable{} continued from previous page}}\\
+\toprule
+\textbf{Req.} & \textbf{Modules}\\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{2}{r}{\textit{Continued on next page}}\\
+\endfoot
+
 \bottomrule
-\end{tabular}
-\caption{Trace Between Requirements and Modules}
-\label{TblRT}
-\end{table}
+\endlastfoot
+
+FR-AC1  & \mref{mHH}, \mref{mAudioCapture}\\
+FR-AC2  & \mref{mAudioCapture}\\
+FR-AC3  & \mref{mHH}, \mref{mAudioCapture}\\
+\midrule
+FR-SM1  & \mref{mSessionManagement}, \mref{mPracticeItems}\\
+FR-SM2  & \mref{mSessionManagement}\\
+FR-SM3  & \mref{mSessionManagement}\\
+FR-SM4  & \mref{mSessionManagement}\\
+\midrule
+FR-SA1  & \mref{mSpeechAnalysis}\\
+FR-SA2  & \mref{mSpeechAnalysis}\\
+FR-SA3  & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+\midrule
+FR-RDV1 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV2 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV3 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV4 & \mref{mSessionManagement}, \mref{mClinicianDashboard}\\
+FR-RDV5 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV6 & \mref{mSessionManagement}, \mref{mClinicianDashboard}\\
+FR-RDV7 & \mref{mClinicianDashboard}\\
+FR-RDV8 & \mref{mClinicianDashboard}\\
+FR-RDV9 & \mref{mClinicianDashboard}\\
+\midrule
+FR-DMR1  & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR2  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR3  & \mref{mSessionManagement}, \mref{mPersistence}\\
+FR-DMR4  & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR5  & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR6  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR7  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR8  & \mref{mPatientRecords}, \mref{mClinicianDashboard}. \mref{mPersistence}\\
+FR-DMR9  & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-DMR10 & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-DMR11 & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+\midrule
+FR-PAR1 & \mref{mPracticeItems}\\
+FR-PAR2 & \mref{mPracticeItems}\\
+FR-PAR3 & \mref{mPracticeItems}\\
+FR-PAR4 & \mref{mPracticeItems}\\
+FR-PAR5 & \mref{mSessionManagement}, \mref{mPracticeItems}\\
+FR-PAR6 & \mref{mSessionManagement}\\
+FR-PAR7 & \mref{mSessionManagement}, \mref{mClinicianDashboard}\\
+\midrule
+FR-HA1 & \mref{mHH}, \mref{mAudioCapture}\\
+FR-HA2 & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-HA3 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-HA4 & \mref{mSpeechAnalysis}, \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-HA5 & \mref{mSpeechAnalysis}, \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-HA6 & --\\
+FR-HA7 & \mref{mClinicianDashboard}\\
+FR-HA8 & \mref{mSessionManagement}, \mref{mAudioCapture}\\
+FR-HA9 & \mref{mPatientRecords}, \mref{mPersistence}\\
+\end{longtable}
 
 \begin{table}[H]
 \centering
