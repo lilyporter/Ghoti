@@ -1,47 +1,50 @@
 \documentclass[12pt, titlepage]{article}
 
-\usepackage{amsmath, mathtools}
-
+\usepackage{fullpage}
 \usepackage[round]{natbib}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath, mathtools}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{graphicx}
 \usepackage{colortbl}
-\usepackage{xr}
-\usepackage{hyperref}
 \usepackage{longtable}
 \usepackage{xfrac}
-\usepackage{tabularx}
-\usepackage{float}
 \usepackage{siunitx}
-\usepackage{booktabs}
-\usepackage{multirow}
 \usepackage[section]{placeins}
 \usepackage{caption}
-\usepackage{fullpage}
-
+\usepackage{array}
+\usepackage{hyperref}
 \hypersetup{
-bookmarks=true,     % show bookmarks bar?
-colorlinks=true,       % false: boxed links; true: colored links
-linkcolor=red,          % color of internal links (change box color with linkbordercolor)
-citecolor=blue,      % color of links to bibliography
-filecolor=magenta,  % color of file links
-urlcolor=cyan          % color of external links
+    colorlinks,
+    citecolor=blue,
+    filecolor=black,
+    linkcolor=red,
+    urlcolor=blue
 }
 
-\usepackage{array}
+\input{../Comments.text}
+\input{../Common.text}
 
-\externaldocument{../../SRS/SRS}
+\newcounter{acnum}
+\newcommand{\actheacnum}{AC\theacnum}
+\newcommand{\acref}[1]{AC\ref{#1}}
 
-\input{../../Comments.text}
-\input{../../Common.text}
+\newcounter{ucnum}
+\newcommand{\uctheucnum}{UC\theucnum}
+\newcommand{\uref}[1]{UC\ref{#1}}
+
+\newcounter{mnum}
+\newcommand{\mthemnum}{M\themnum}
+\newcommand{\mref}[1]{M\ref{#1}}
 
 \begin{document}
 
-\title{Module Interface Specification for \progname{}}
-
+\title{Module Guide and Module Interface Specification for~PronouncedFish}
 \author{\authname}
-
 \date{\today}
 
 \maketitle
@@ -53,14 +56,38 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+2026-11-18 & 1.0 & Initial Version\\
 \bottomrule
 \end{tabularx}
 
-~\newpage
+\newpage
 
-\section{Symbols, Abbreviations and Acronyms}
+\section{Reference Material}
+
+This section records information for easy reference.
+
+\subsection{Abbreviations and Acronyms}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l l}
+  \toprule
+  \textbf{symbol} & \textbf{description}\\
+  \midrule
+  AC & Anticipated Change\\
+  DAG & Directed Acyclic Graph \\
+  M & Module \\
+  MG & Module Guide \\
+  OS & Operating System \\
+  R & Requirement\\
+  SC & Scientific Computing \\
+  SRS & Software Requirements Specification\\
+  \progname & Explanation of program name\\
+  UC & Unlikely Change \\
+  \wss{etc.} & \wss{...}\\
+  \bottomrule
+\end{tabular}
+
+\subsection{Symbols}
 
 See SRS Documentation at \wss{give url}
 
@@ -70,20 +97,547 @@ See SRS Documentation at \wss{give url}
 
 \tableofcontents
 
+\listoftables
+
+\listoffigures
+
 \newpage
 
 \pagenumbering{arabic}
 
 \section{Introduction}
 
-The following document details the Module Interface Specifications for
+This document describes the software architecture and detailed module
+interfaces for PronouncedFish. The Software Requirements Specification (SRS)
+defines the requirements for the design. The full documentation and
+implementation can be found at \url{...}. \wss{provide the url for your repo}
+
 \wss{Fill in your project name and description}
 
-Complementary documents include the System Requirement Specifications
-and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+Decomposing a system into modules is a commonly accepted approach to developing
+software.  A module is a work assignment for a programmer or programming
+team~\citep{ParnasEtAl1984}.  We advocate a decomposition
+based on the principle of information hiding~\citep{Parnas1972a}.  This
+principle supports design for change, because the ``secrets'' that each module
+hides represent likely future changes.  Design for change is valuable in SC,
+where modifications are frequent, especially during initial development as the
+solution space is explored.
 
-\section{Notation}
+Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
+\begin{itemize}
+\item System details that are likely to change independently should be the
+  secrets of separate modules.
+\item Each data structure is implemented in only one module.
+\item Any other program that requires information stored in a module's data
+  structures must obtain it by calling access programs belonging to that module.
+\end{itemize}
+
+After completing the first stage of the design, the Software Requirements
+Specification (SRS), the Module Guide (MG) is developed~\citep{ParnasEtAl1984}. The MG
+specifies the modular structure of the system and is intended to allow both
+designers and maintainers to easily identify the parts of the software.  The
+potential readers of this document are as follows:
+
+\begin{itemize}
+\item New project members: This document can be a guide for a new project member
+  to easily understand the overall structure and quickly find the
+  relevant modules they are searching for.
+\item Maintainers: The hierarchical structure of the module guide improves the
+  maintainers' understanding when they need to make changes to the system. It is
+  important for a maintainer to update the relevant sections of the document
+  after changes have been made.
+\item Designers: Once the module guide has been written, it can be used to
+  check for consistency, feasibility, and flexibility. Designers can verify the
+  system in various ways, such as consistency among modules, feasibility of the
+  decomposition, and flexibility of the design.
+\end{itemize}
+
+Part~\ref{part:architecture} describes the anticipated and unlikely changes,
+module hierarchy and dependencies, module responsibilities, and traceability
+from requirements and anticipated changes to modules.
+Part~\ref{part:detailed} defines shared notation and types, followed by the
+module interface specifications.
+
+\clearpage
+
+\part{Software Architecture} \label{part:architecture}
+
+\section{Anticipated and Unlikely Changes} \label{SecChange}
+
+This section lists possible changes to the system. According to the likeliness
+of the change, the possible changes are classified into two
+categories. Anticipated changes are listed in Section \ref{SecAchange}, and
+unlikely changes are listed in Section \ref{SecUchange}.
+
+\subsection{Anticipated Changes} \label{SecAchange}
+
+Anticipated changes are the source of the information that is to be hidden
+inside the modules. Ideally, changing one of the anticipated changes will only
+require changing the one module that hides the associated decision. The approach
+adapted here is called design for
+change.
+
+\begin{description}
+\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
+  hardware on which the software is running.
+\item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
+  initial input data.
+\item ...
+\end{description}
+
+\wss{Anticipated changes relate to changes that would be made in requirements,
+design or implementation choices.  They are not related to changes that are made
+at run-time, like the values of parameters.}
+
+\subsection{Unlikely Changes} \label{SecUchange}
+
+The module design should be as general as possible. However, a general system is
+more complex. Sometimes this complexity is not necessary. Fixing some design
+decisions at the system architecture stage can simplify the software design. If
+these decision should later need to be changed, then many parts of the design
+will potentially need to be modified. Hence, it is not intended that these
+decisions will be changed.
+
+\begin{description}
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
+  (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
+\item ...
+\end{description}
+
+\section{Module Hierarchy} \label{SecMH}
+
+Table~\ref{TblMH} summarizes the Phase 1 module hierarchy decomposed by
+secrets. The six behaviour-hiding leaves are implemented by PronouncedFish.
+The operating system and browser provide the hardware interfaces.
+Persistence is a software decision leaf that provides durable record storage.
+
+\begin{description}
+\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
+\item [\refstepcounter{mnum} \mthemnum \label{mAudioCapture}:] Audio Capture
+\item [\refstepcounter{mnum} \mthemnum \label{mSpeechAnalysis}:] Speech Analysis
+\item [\refstepcounter{mnum} \mthemnum \label{mSessionManagement}:] Session Management
+\item [\refstepcounter{mnum} \mthemnum \label{mPracticeItems}:] Practice Items \& Lesson Plans
+\item [\refstepcounter{mnum} \mthemnum \label{mPatientRecords}:] Patient Records \& Progress Tracking
+\item [\refstepcounter{mnum} \mthemnum \label{mClinicianDashboard}:] Clinician Dashboard / Results Visualization
+\item [\refstepcounter{mnum} \mthemnum \label{mPersistence}:] Persistence
+\end{description}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
+\toprule
+\textbf{Level 1} & \textbf{Level 2}\\
+\midrule
+
+{Hardware-Hiding Module} & ~ \\
+\midrule
+
+\multirow{6}{0.3\textwidth}{Behaviour-Hiding Module} & Audio Capture\\
+& Speech Analysis\\
+& Session Management\\
+& Practice Items \& Lesson Plans\\
+& Patient Records \& Progress Tracking\\
+& Clinician Dashboard / Results Visualization\\
+\midrule
+
+{Software Decision Module} & Persistence\\
+\bottomrule
+
+\end{tabular}
+\caption{Module Hierarchy}
+\label{TblMH}
+\end{table}
+
+\section{Use Hierarchy Between Modules} \label{SecUse}
+
+In this section, the uses hierarchy between modules is
+provided. \citet{Parnas1978} said of two programs A and B that A {\em uses} B if
+correct execution of B may be necessary for A to complete the task described in
+its specification. That is, A {\em uses} B if there exist situations in which
+the correct functioning of A depends upon the availability of a correct
+implementation of B.  Figure \ref{FigUH} illustrates the use relation between
+the modules. It can be seen that the graph is a directed acyclic graph
+(DAG). Each level of the hierarchy offers a testable and usable subset of the
+system, and modules in the higher level of the hierarchy are essentially simpler
+because they use modules from the lower levels.
+
+\wss{The uses relation is not a data flow diagram.  In the code there will often
+be an import statement in module A when it directly uses module B.  Module B
+provides the services that module A needs.  The code for module A needs to be
+able to see these services (hence the import statement).  Since the uses
+relation is transitive, there is a use relation without an import, but the
+arrows in the diagram typically correspond to the presence of import statement.}
+
+\wss{If module A uses module B, the arrow is directed from A to B.}
+
+\begin{figure}[H]
+\centering
+%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
+\caption{Use hierarchy among modules}
+\label{FigUH}
+\end{figure}
+
+%\section*{References}
+
+\section{Module Decomposition} \label{SecMD}
+
+Modules are decomposed according to the principle of ``information hiding''
+proposed by \citet{ParnasEtAl1984}. The \emph{Secrets} field in a module
+decomposition is a brief statement of the design decision hidden by the
+module. The \emph{Services} field specifies \emph{what} the module will do
+without documenting \emph{how} to do it. For each module, a suggestion for the
+implementing software is given under the \emph{Implemented By} title. If the
+entry is \emph{OS}, this means that the module is provided by the operating
+system or by standard programming language libraries.  \emph{\progname{}} means the
+module will be implemented by the \progname{} software.
+
+Only the leaf modules in the hierarchy have to be implemented. If a dash
+(\emph{--}) is shown, this means that the module is not a leaf and will not have
+to be implemented.
+
+\subsection{Hardware Hiding Modules (\mref{mHH})}
+
+\begin{description}
+\item[Secrets:] Device-specific access to microphones and displays.
+\item[Services:] Provides microphone access and display output through
+browser and operating system interfaces. Audio Capture (\mref{mAudioCapture})
+uses the microphone interface to record attempts and handles recording
+usability checks and reporting (FR-AC1--3).
+\item[Implemented By:] Browser and operating system
+\end{description}
+
+\subsection{Behaviour-Hiding Module}
+
+\begin{description}
+\item[Secrets:]The contents of the required behaviours.
+\item[Services:]Includes programs that provide externally visible behaviour of
+  the system as specified in the software requirements specification (SRS)
+  documents. This module serves as a communication layer between the
+  hardware-hiding module and the software decision module. The programs in this
+  module will need to change if there are changes in the SRS.
+\item[Implemented By:] --
+\end{description}
+
+\subsubsection{Input Format Module (\mref{mInput})}
+
+\begin{description}
+\item[Secrets:]The format and structure of the input data.
+\item[Services:]Converts the input data into the data structure used by the
+  input parameters module.
+\item[Implemented By:] [Your Program Name Here]
+\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
+  [Information to include for leaf modules in the decomposition by secrets tree.]
+\end{description}
+
+\subsubsection{Etc.}
+
+\subsubsection{Session Management (\mref{mSessionManagement})}
+
+\begin{description}
+\item[Secrets:] The session state information (Prompt, analysis, continue, redo), 
+How temporary session data is accumulated before being saved, 
+how redos and overrides affect the final data on the completion of a session,
+how the session handles the differences in testing and treatment session modes,
+how patient consent to audio recordings is handled with data accumulation.
+\item[Services:] Manages a clinician-supervised practice session for a specific patient from setup to completion. 
+Offers two different session modes: testing mode for gathering information about the patient’s speech errors (no helps or hints to treat the speech disorder) and treatment mode for providing support to the child while practicing target phonemes (e.g., hints and feedback)(FR-SM3 and FR-DMR11).
+Allows the SLP to select the patient, target phonemes, and practice items (FR-SM1) (taken from the Practice Items \& Lesson Plans Module (\mref{mPracticeItems})), and to start, repeat, skip, and end attempts as well as the session (FR-SM2 and FR-PAR6). 
+Presents image-cue prompts for each item to the child (FR-PAR5) and coordinates Audio Capture (\mref{mAudioCapture}) and Speech Analysis (\mref{mSpeechAnalysis}) for each attempt, surfacing flagged or unclassifiable results so the SLP can retry (FR-AC3 and FR-SA3). 
+Records the support level for each attempt (FR-SM3) and applies SLP overrides while retaining the original analysis (FR-SM4). 
+Provides current-attempt results and running session counts to the Clinician Dashboard (FR-RDV1, FR-RDV4, and FR-RDV6).
+On completion, submits the session and its attempts to Patient Records \& Progress Tracking (\mref{mPatientRecords}) to be processed and stored, associated only with the session’s patient (FR-DMR6--7). 
+Interfaces with the Clinician Dashboard / Results Visualization (\mref{mClinicianDashboard}) to provide current-session information (FR-RDV1--9 and FR-HA7).
+\item[Implemented By:] PronouncedFish
+\item[Type of Module:] Abstract Object
+  %[Information to include for leaf modules in the decomposition by secrets tree.]
+\end{description}
+
+\subsubsection{Patient Records \& Progress Tracking (\mref{mPatientRecords})}
+
+See Section~\ref{mis:records} for the detailed interface specification.
+
+\begin{description}
+\item[Secrets:] The organization of the patient record, including
+how completed sessions are associated with the patient and how progress is
+derived from that history.
+\item[Services:] Maintains patient records and provides authorized retrieval and
+export of session history, including all three speech error types. Provides
+per-target-phoneme performance over time, between-session comparisons,
+and indicators of improvement and persistent errors (FR-DMR1 and
+FR-DMR8--10). Target progress counts substitutions and omissions at expected
+positions. Additions are reported in session history. The module audits
+patient record access and changes
+and allows authorized users to retrieve and copy the audit trail
+(FR-DMR4--5 and FR-HA9). It uses
+Persistence (\mref{mPersistence}) for durable reads and writes
+(Section~\ref{SecDatabase}).
+\item[Implemented By:] PronouncedFish
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Clinician Dashboard / Results Visualization (\mref{mClinicianDashboard})}
+
+See Section~\ref{mis:dashboard} for the detailed interface specification.
+
+\begin{description}
+\item[Secrets:] The presentation rules for clinician-facing speech results.
+\item[Services:] Presents expected and recognized phonemes in IPA and shows
+each identified substitution, omission, and addition in its word position or
+insertion location. Displays counts by error type and current-session
+correct and incorrect counts, with independent and cued counts for correct
+attempts, and updates the views as the session progresses and completes.
+Displays a phoneme-closeness heat map and presents per-target progress and
+comparisons across sessions. Identifies results as assistive, acknowledges
+the SLP's discretion, and uses neutral error presentation (FR-RDV1--9,
+FR-DMR8--10, and FR-HA7). Uses Session Management
+(\mref{mSessionManagement}) for current results and Patient Records \&
+Progress Tracking (\mref{mPatientRecords}) for longitudinal results. The
+heat map uses a phoneme-pair measure distinct from recognition confidence.
+Omissions and additions are shown as gaps in the IPA comparison.
+The heat map normalizes the SRS Manhattan distance over phonological feature
+vectors to a closeness scale from zero to one. Gaps receive no score.
+\item[Implemented By:] PronouncedFish
+\item[Type of Module:] Abstract Data Type (one view instance per clinician
+dashboard)
+\end{description}
+
+\subsubsection{Lesson Plan Module: Practice Items \& Lesson Plans (\mref{mPracticeItems})}
+
+\subsection{Software Decision Module}
+
+\begin{description}
+\item[Secrets:] The design decision based on mathematical theorems, physical
+  facts, or programming considerations. The secrets of this module are
+  \emph{not} described in the SRS.
+\item[Services:] Includes data structure and algorithms used in the system that
+  do not provide direct interaction with the user.
+  % Changes in these modules are more likely to be motivated by a desire to
+  % improve performance than by externally imposed changes.
+\item[Implemented By:] --
+\end{description}
+
+\subsubsection{Persistence (\mref{mPersistence})}
+
+\begin{description}
+\item[Secrets:] The durable storage representation of patient records,
+sessions, attempts, and audit events.
+\item[Services:] Provides storage and retrieval operations to Patient Records
+\& Progress Tracking (\mref{mPatientRecords}). Stores a completed session
+and its attempts as a single operation and preserves their patient association
+and original and overridden results (FR-DMR2--3 and FR-DMR6--7). Supports
+patient-record deletion and retention and retrieval of the audit trail
+(FR-DMR4--5 and FR-HA9).
+\item[Implemented By:] PronouncedFish
+\item[Type of Module:] Abstract Object
+\end{description}
+
+Speech Analysis (\mref{mSpeechAnalysis}) hides model loading, invocation,
+and conversion of model output into phonemes and confidence values. It
+classifies attempts and identifies substitutions, omissions, and additions.
+
+\section{Connection Between Requirements and Design} \label{SecConnection}
+
+The design of the system is intended to satisfy the requirements developed in
+the SRS. In this stage, the system is decomposed into modules. The connection
+between requirements and modules is listed in Table~\ref{TblRT}.
+
+\wss{The intention of this section is to document decisions that are made
+  ``between'' the requirements and the design.  To satisfy some requirements,
+  design decisions need to be made.  Rather than make these decisions implicit,
+  they are explicitly recorded here.  For instance, if a program has security
+  requirements, a specific design decision may be made to satisfy those
+  requirements with a password.}
+
+\paragraph{Speech error scope.}
+Phase 1 supports substitutions, omissions, and additions. Speech Analysis
+compares recognized IPA with the expected pronunciation and its acceptable
+variants. It reports a substitution when a different phoneme replaces an
+expected phoneme, an omission when an expected phoneme is absent, and an
+addition when an extra phoneme occurs before, between, or after expected
+phonemes. This extends the substitution cases in FR-SA1 and FR-RDV2--3.
+
+\section{Traceability Matrix} \label{SecTM}
+
+This section shows two traceability matrices: between the modules and the
+requirements and between the modules and the anticipated changes.
+
+% the table should use mref, the requirements should be named, use something
+% like fref
+\begin{longtable}{p{0.2\textwidth} p{0.7\textwidth}}
+\caption{Trace Between Requirements and Modules}\label{TblRT}\\
+\toprule
+\textbf{Req.} & \textbf{Modules}\\
+\midrule
+\endfirsthead
+
+\multicolumn{2}{l}{\textit{Table \thetable{} continued from previous page}}\\
+\toprule
+\textbf{Req.} & \textbf{Modules}\\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{2}{r}{\textit{Continued on next page}}\\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+FR-AC1  & \mref{mHH}, \mref{mAudioCapture}\\
+FR-AC2  & \mref{mAudioCapture}\\
+FR-AC3  & \mref{mHH}, \mref{mAudioCapture}\\
+\midrule
+FR-SM1  & \mref{mSessionManagement}, \mref{mPracticeItems}\\
+FR-SM2  & \mref{mSessionManagement}\\
+FR-SM3  & \mref{mSessionManagement}\\
+FR-SM4  & \mref{mSessionManagement}\\
+\midrule
+FR-SA1  & \mref{mSpeechAnalysis}\\
+FR-SA2  & \mref{mSpeechAnalysis}\\
+FR-SA3  & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+\midrule
+FR-RDV1 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV2 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV3 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV4 & \mref{mSessionManagement}, \mref{mClinicianDashboard}\\
+FR-RDV5 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-RDV6 & \mref{mSessionManagement}, \mref{mClinicianDashboard}\\
+FR-RDV7 & \mref{mClinicianDashboard}\\
+FR-RDV8 & \mref{mClinicianDashboard}\\
+FR-RDV9 & \mref{mClinicianDashboard}\\
+\midrule
+FR-DMR1  & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR2  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR3  & \mref{mSessionManagement}, \mref{mPersistence}\\
+FR-DMR4  & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR5  & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR6  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR7  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-DMR8  & \mref{mPatientRecords}, \mref{mClinicianDashboard}. \mref{mPersistence}\\
+FR-DMR9  & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-DMR10 & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-DMR11 & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
+\midrule
+FR-PAR1 & \mref{mPracticeItems}\\
+FR-PAR2 & \mref{mPracticeItems}\\
+FR-PAR3 & \mref{mPracticeItems}\\
+FR-PAR4 & \mref{mPracticeItems}\\
+FR-PAR5 & \mref{mSessionManagement}, \mref{mPracticeItems}\\
+FR-PAR6 & \mref{mSessionManagement}\\
+FR-PAR7 & \mref{mSessionManagement}, \mref{mClinicianDashboard}\\
+\midrule
+FR-HA1 & \mref{mHH}, \mref{mAudioCapture}\\
+FR-HA2 & \mref{mPatientRecords}, \mref{mPersistence}\\
+FR-HA3 & \mref{mSpeechAnalysis}, \mref{mClinicianDashboard}\\
+FR-HA4 & \mref{mSpeechAnalysis}, \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-HA5 & \mref{mSpeechAnalysis}, \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
+FR-HA6 & --\\
+FR-HA7 & \mref{mClinicianDashboard}\\
+FR-HA8 & \mref{mSessionManagement}, \mref{mAudioCapture}\\
+FR-HA9 & \mref{mPatientRecords}, \mref{mPersistence}\\
+\end{longtable}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.2\textwidth} p{0.6\textwidth}}
+\toprule
+\textbf{AC} & \textbf{Modules}\\
+\midrule
+\acref{acHardware} & \mref{mHH}\\
+\acref{acInput} & \mref{mInput}\\
+\acref{acParams} & \mref{mParams}\\
+\acref{acVerify} & \mref{mVerify}\\
+\acref{acOutput} & \mref{mOutput}\\
+\acref{acVerifyOut} & \mref{mVerifyOut}\\
+\acref{acODEs} & \mref{mODEs}\\
+\acref{acEnergy} & \mref{mEnergy}\\
+\acref{acControl} & \mref{mControl}\\
+\acref{acSeqDS} & \mref{mSeqDS}\\
+\acref{acSolver} & \mref{mSolver}\\
+\acref{acPlot} & \mref{mPlot}\\
+\bottomrule
+\end{tabular}
+\caption{Trace Between Anticipated Changes and Modules}
+\label{TblACT}
+\end{table}
+
+\section{User Interfaces}
+
+\wss{Design of user interface for software and hardware.  Attach an appendix if
+needed. Drawings, Sketches, Figma}
+
+\section{Design of Communication Protocols}
+
+\wss{If there is communication between hardware and software, it may be necessary
+to explain the design of the communication protocol.  This section should be filled
+in with NA if it is not appropriate for a given project.}
+
+\section{Database Design} \label{SecDatabase}
+
+The logical design separates patient identity from clinical data and links
+them through a stable patient identifier. Table~\ref{TblDatabaseRecords}
+summarizes the records needed for FR-DMR1--11.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Record} & \textbf{Contents and relationships}\\
+\midrule
+Patient & Patient identifier and identifying information. A patient may have
+zero or more sessions.\\
+Session & Session identifier, required patient identifier, responsible SLP,
+date, selected target phonemes and practice items, session results, and SLP
+inputs. Every session belongs to exactly one patient.\\
+Attempt & Attempt identifier, required parent session, practice item and
+target phonemes, support level, original speech analysis (including the type
+and location of each detected substitution, omission, and addition), and any
+SLP correction or classification override. Records whether a correct item
+required additional cues or repetition. A session may have zero or more
+attempts. Each attempt inherits its patient from its session.\\
+Audit event & Action, type of information involved, date and time, acting
+user, and patient identity reference. The audit trail is append-only and
+available for retrieval and copying by authorized users.\\
+\bottomrule
+\end{tabularx}
+\caption{Logical patient, session, attempt, and audit records}
+\label{TblDatabaseRecords}
+\end{table}
+
+\paragraph{Session completion.}
+Session Management owns the session and attempt lifecycles, patient
+selection, support levels, and overrides. Session Management submits a
+completed session and its attempts to Patient Records
+\& Progress Tracking, which checks authorization and uses Persistence to
+write them together.
+Retrying the same completed-session save should leave one stored session.
+An override determines the effective classification while the original
+analysis remains available. A failed save leaves records unchanged.
+ST-F07, ST-F08, ST-F17, and ST-F18 in the
+V\&V Plan cover the patient association, support levels, and persistence of
+original and overridden results.
+
+\paragraph{History, auditing, and deletion.}
+Patient Records \& Progress Tracking provides authorized history and export
+and derives longitudinal measures from the patient's completed sessions.
+Viewing, creating, modifying, exporting, and deleting a patient record each
+creates an audit event (FR-DMR4--5 and FR-HA9). The delete event and prior
+events remain available to authorized users after record deletion (ST-F19).
+The patient identity reference in those events survives deletion of the
+clinical record. An SLP confirms deletion before Persistence removes the
+patient and dependent sessions and attempts from active records
+(NFR-USA2 and ST-N04).
+
+\paragraph{Phase 1 storage.}
+The SRS Phase 1 plan specifies a cloud database, and the Development Plan
+expects a relational database with row-level access control. The local demo
+uses JSON.
+
+\clearpage
+
+\part{Detailed Design} \label{part:detailed}
+
+\section{Notation and Shared Interface Types}
 
 \wss{You should describe your notation.  You can use what is below as
   a starting point.}
@@ -95,21 +649,21 @@ with the addition that template modules have been adapted from
 multiple assignment statement and conditional rules follow the form $(c_1
 \Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
 
-The following table summarizes the primitive data types used by \progname. 
+The following table summarizes the primitive data types used by \progname.
 
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
-\noindent 
-\begin{tabular}{l l p{7.5cm}} 
-\toprule 
-\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
+\noindent
+\begin{tabular}{l l p{7.5cm}}
+\toprule
+\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\
 \midrule
 character & char & a single symbol or digit\\
 integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
 natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
 real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
 \bottomrule
-\end{tabular} 
+\end{tabular}
 \end{center}
 
 \noindent
@@ -167,32 +721,6 @@ retained patient identity reference.
 \item[HistoryExport, AuditCopy] Copies of authorized session history and
 audit events, respectively. The export formats are implementation decisions.
 \end{description}
-
-\section{Module Decomposition}
-
-The following table shows the module hierarchy from the Module Guide.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
-\toprule
-\textbf{Level 1} & \textbf{Level 2}\\
-\midrule
-{Hardware-Hiding Module} & ~ \\
-\midrule
-\multirow{6}{0.3\textwidth}{Behaviour-Hiding Module} & Audio Capture\\
-& Speech Analysis\\
-& Session Management\\
-& Practice Items \& Lesson Plans\\
-& Patient Records \& Progress Tracking\\
-& Clinician Dashboard / Results Visualization\\
-\midrule
-{Software Decision Module} & Persistence\\
-\bottomrule
-\end{tabular}
-\caption{Module Hierarchy}
-\label{TblMH}
-\end{table}
 
 \clearpage
 \section{MIS of Session Management} \label{mis:session}
@@ -354,7 +882,8 @@ treats a correct attempt as cued when its SupportLevel is semantic cue or
 repetition/model.
 
 \clearpage
-\section{MIS of Patient Records \& Progress Tracking} \label{mis:records}
+
+\section{Patient Records \& Progress Tracking (\mref{mPatientRecords})} \label{mis:records}
 
 \subsection{Module}
 PatientRecords covers FR-DMR1--11 and FR-HA9, with Session Management supplying
@@ -478,7 +1007,7 @@ a higher rate indicates improvement, and errors in both indicate persistence.
 Fewer than two eligible sessions yields no comparison or trend.
 
 \clearpage
-\section{MIS of Clinician Dashboard / Results Visualization} \label{mis:dashboard}
+\section{Clinician Dashboard / Results Visualization (\mref{mClinicianDashboard})} \label{mis:dashboard}
 
 \subsection{Module}
 Template ClinicianDashboard. One instance presents results for a clinician
@@ -590,14 +1119,26 @@ produced phoneme when the SLP supplies one. A pair with a missing feature
 vector or no classifiable or corrected produced phoneme has no heat-map
 value.
 
+\clearpage
+
+\section{Timeline}
+
+\wss{Schedule of tasks and who is responsible}
+
+\wss{You can point to GitHub if this information is included there}
+
+\renewcommand{\bibsection}{%
+  \section*{\refname}%
+  \addcontentsline{toc}{section}{\refname}%
+}
 \bibliographystyle {plainnat}
-\bibliography {../../../refs/References}
+\bibliography {../../refs/References}
 
-\newpage
+\clearpage
 
-\newpage{}
+\appendix
 
-\section{Appendix --- Generative AI Use Disclosure}
+\section{Generative AI Use Disclosure}
 
 \wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
 
@@ -614,7 +1155,7 @@ inconsistencies.}
 
 \wss{For each of the uses, identify which parts of the document were affected.}
 
-\wss{You do not need to report every interaction, but you should disclose the 
+\wss{You do not need to report every interaction, but you should disclose the
 uses that materially contributed to your work}
 
 \subsection{Verification of AI-Generated Content}
@@ -632,17 +1173,17 @@ whether material was generated by a human or an AI system.}
 
 \newpage{}
 
-\section{Appendix --- Reflection}
+\section{Reflection}
 
 \wss{Not required for CAS 741 projects}
 
 The information in this section will be used to evaluate the team members on the
 graduate attribute of Problem Analysis and Design.
 
-\input{../../Reflection.text}
+\input{../Reflection.text}
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
+  \item What went well while writing this deliverable?
   \item What pain points did you experience during this deliverable, and how
     did you resolve them?
   \item Which of your design decisions stemmed from speaking to your client(s)
