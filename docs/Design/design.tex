@@ -107,13 +107,6 @@ See SRS Documentation at \wss{give url}
 
 \section{Introduction}
 
-This document describes the software architecture and detailed module
-interfaces for PronouncedFish. The Software Requirements Specification (SRS)
-defines the requirements for the design. The full documentation and
-implementation can be found at \url{...}. \wss{provide the url for your repo}
-
-\wss{Fill in your project name and description}
-
 Decomposing a system into modules is a commonly accepted approach to developing
 software.  A module is a work assignment for a programmer or programming
 team~\citep{ParnasEtAl1984}.  We advocate a decomposition
@@ -131,9 +124,12 @@ Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
 \item Any other program that requires information stored in a module's data
   structures must obtain it by calling access programs belonging to that module.
 \end{itemize}
-
 After completing the first stage of the design, the Software Requirements
-Specification (SRS), the Module Guide (MG) is developed~\citep{ParnasEtAl1984}. The MG
+Specification (SRS), the Module Guide (MG) is developed~\citep{ParnasEtAl1984}.
+In specific, this document describes the software architecture and detailed module
+interfaces for PronouncedFish: an assistive tool designed to 
+aid SLPs in their daily workflow. It provides an interface for SLPs to manage 
+their appointments, patients, and offer complementary insights by listening in on sessions. The full documentation and implementation can be found at \href{https://github.com/lilyporter/Ghoti/tree/main/}{this repository}. The MG
 specifies the modular structure of the system and is intended to allow both
 designers and maintainers to easily identify the parts of the software.  The
 potential readers of this document are as follows:
@@ -212,7 +208,7 @@ The operating system and browser provide the hardware interfaces.
 Persistence is a software decision leaf that provides durable record storage.
 
 \begin{description}
-\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
+\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Audio Input Adapter
 \item [\refstepcounter{mnum} \mthemnum \label{mAudioCapture}:] Audio Capture
 \item [\refstepcounter{mnum} \mthemnum \label{mSpeechAnalysis}:] Speech Analysis
 \item [\refstepcounter{mnum} \mthemnum \label{mSessionManagement}:] Session Management
@@ -229,7 +225,7 @@ Persistence is a software decision leaf that provides durable record storage.
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & ~ \\
+{Hardware-Hiding Module} & Audio Input Adapter \\
 \midrule
 
 \multirow{6}{0.3\textwidth}{Behaviour-Hiding Module} & Audio Capture\\
@@ -295,7 +291,9 @@ Only the leaf modules in the hierarchy have to be implemented. If a dash
 (\emph{--}) is shown, this means that the module is not a leaf and will not have
 to be implemented.
 
-\subsection{Hardware Hiding Modules (\mref{mHH})}
+\subsection{Hardware Hiding Modules}
+
+\subsubsection{Audio Input Adapter Module (\mref{mHH})}
 
 \begin{description}
 \item[Secrets:] Device-specific access to microphones and displays.
@@ -308,29 +306,14 @@ usability checks and reporting (FR-AC1--3).
 
 \subsection{Behaviour-Hiding Module}
 
-\begin{description}
-\item[Secrets:]The contents of the required behaviours.
-\item[Services:]Includes programs that provide externally visible behaviour of
-  the system as specified in the software requirements specification (SRS)
-  documents. This module serves as a communication layer between the
-  hardware-hiding module and the software decision module. The programs in this
-  module will need to change if there are changes in the SRS.
-\item[Implemented By:] --
-\end{description}
-
-\subsubsection{Input Format Module (\mref{mInput})}
+\subsubsection{Audio Capture Module (\mref{mAudioCapture})}
 
 \begin{description}
-\item[Secrets:]The format and structure of the input data.
-\item[Services:]Converts the input data into the data structure used by the
-  input parameters module.
-\item[Implemented By:] [Your Program Name Here]
-\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-  [Information to include for leaf modules in the decomposition by secrets tree.]
+\item[Secrets:]Hides the audio recording lifecycle. This includes hiding any input audio quality variations by using preprocessing. It also normalizes any differing input file formats. Finally, it ensures that the final audio file is valid for analysis by making quality assurance checks.  
+\item[Services:]Provides a fully processed audio file in the exact format that the following speech analysis model expects. It has all metadata needed to make an appropriate deduction. 
+\item[Implemented By:] PronouncedFish
+\item[Type of Module:] Abstract Object
 \end{description}
-
-\subsubsection{Etc.}
-
 
 \subsubsection{Patient Records \& Progress Tracking (\mref{mPatientRecords})}
 
@@ -653,6 +636,315 @@ audit events, respectively. The export formats are implementation decisions.
 
 \clearpage
 
+```latex
+\section{Audio Input Adapter (\mref{mHH})} \label{mis:audio-adapter}
+
+The following section describes the syntax, semantics, and access programs offered by the Audio Input Adapter module.
+
+\subsection{Module}
+
+The Audio Input Adapter covers FR-AC1, NFR-POR1--3, and LC5. Its purpose is to provide an abstraction layer between the physical audio input resources and the software responsible for processing audio.
+
+\subsection{Uses}
+
+The Audio Input Adapter uses the underlying platform's audio input capabilities to discover and access compatible audio sources. These may include dedicated microphones, file uploads, and other supported audio input interfaces provided by different browsers and operating systems.
+
+The module uses a general audio input interface with corresponding implementations for each supported source. This allows the system to support different hardware and input methods without requiring changes to the modules that consume audio.
+
+\subsection{Syntax}
+
+The following subsection describes the syntax used by the Audio Input Adapter module, including its exported types, constants, and access programs.
+
+\subsubsection{Exported Types}
+
+The module uses the shared interface types defined in Section~\ref{sec:interface-types}. It provides an \texttt{AudioInputSource} reference representing a compatible audio input resource. This reference allows other modules to interact with an audio source without needing to know its underlying implementation.
+
+The module supplies an audio input source instance to the Audio Capture module. At this stage, the module only provides a reference to a resource capable of supplying audio; it does not capture or store any audio data.
+
+If no compatible audio input resource is supported by the current platform, the module raises a \texttt{SourceUnavailable} exception. This allows the Audio Capture module to notify the SLP that the requested input source is unsupported.
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+The following access programs provide the ability to discover, inspect, and register with compatible audio input sources. The first three programs provide information about the sources supported by the current platform, while the remaining programs determine whether a source can be accessed and attempt to register with it.
+
+\begin{table}[H]
+\centering
+\caption{Exported Access Programs for the Audio Input Adapter Module}
+\label{tab:audio-adapter}
+
+\noindent
+\small
+\begin{tabularx}{\textwidth}{
+    @{}
+    >{\raggedright\arraybackslash}p{0.27\textwidth}
+    >{\raggedright\arraybackslash}p{0.16\textwidth}
+    >{\raggedright\arraybackslash}p{0.26\textwidth}
+    >{\raggedright\arraybackslash}X
+    @{}
+}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{getCompatibleSources}
+& --
+& List of Audio Input Sources
+& Source Discovery Exception\\
+
+\texttt{getCompatibleSourceTypes}
+& --
+& List of Source Types
+& Source Discovery Exception\\
+
+\texttt{getSourceByType}
+& Source Type
+& Audio Input Source
+& Source Discovery Exception, Source Unavailable\\
+
+\texttt{isSourceAvailable}
+& Source Type or Audio Input Source
+& Boolean
+& Source Discovery Exception\\
+
+\texttt{registerWithSource}
+& Audio Input Source
+& Boolean
+& Permission Denied, Source Unavailable\\
+\bottomrule
+\end{tabularx}
+\normalsize
+\end{table}
+
+
+
+\subsection{Semantics}
+
+The following subsection describes the semantics followed by the Audio Input Adapter module, including its state variables, environment variables, assumptions, access routine semantics, and local function semantics.
+
+\subsubsection{State Variables}
+
+The module maintains two lists:
+
+\begin{itemize}
+    \item A list of all currently available compatible audio input sources discovered on the system.
+    \item A list of audio input sources with which the system is currently registered.
+\end{itemize}
+
+These lists are updated whenever the module scans for available sources or successfully registers with an audio input source.
+
+\subsubsection{Environment Variables}
+
+The module relies on environment variables describing the current platform and its available audio input capabilities. These include:
+
+\begin{itemize}
+    \item The operating system and browser currently being used.
+    \item The audio input APIs supported by the current platform, including microphone access and file upload capabilities.
+    \item The availability of physical audio input devices.
+    \item The permission status associated with accessing the requested audio input resources.
+\end{itemize}
+
+These variables are used during source discovery and registration to determine which audio input resources are supported and accessible.
+
+\subsubsection{Assumptions}
+
+\begin{enumerate}
+    \item The underlying platform provides mechanisms for discovering and accessing audio input resources.
+    \item The necessary permissions to access an audio input source can be requested at the time of registration.
+    \item There is only one audio input adapter interface for a given device and source type.
+    \item The module does not provide audio recording capabilities. Actual recording, processing, and storage are responsibilities of the Audio Capture module.
+    \item The availability of an audio input source may change during execution due to changes in connected devices or platform permissions.
+\end{enumerate}
+
+\subsubsection{Access Routine Semantics}
+
+The module provides operations for discovering compatible audio input sources, checking their availability, and registering with a selected source.
+
+\begin{description}
+
+\item[] \texttt{getCompatibleSources}\par
+Scan the current platform for all compatible audio input sources. Return a list of references to the discovered adapters. If the scan fails, raise \texttt{SourceDiscoveryException}. The operation does not attempt to register with or interact with any discovered source.
+
+\item[] \texttt{getCompatibleSourceTypes}\par
+Scan the current platform for compatible audio input sources and return a list of the corresponding supported source types. This allows the caller to determine which input methods are supported without needing to inspect individual adapter implementations. If the scan fails, raise \texttt{SourceDiscoveryException}.
+
+\item[] \texttt{getSourceByType}\par
+Scan the current platform for compatible audio input sources and locate the adapter corresponding to the specified source type. Return a reference to the matching adapter. If the scan fails, raise \texttt{SourceDiscoveryException}. If no compatible adapter exists for the specified type, raise \texttt{SourceUnavailable}.
+
+\item[] \texttt{isSourceAvailable}\par
+Given a source type or audio input source reference, determine whether the corresponding source is currently available for registration. Return \texttt{true} if the source is accessible and can be registered with, and \texttt{false} otherwise. If the availability check cannot be completed due to a discovery failure, raise \texttt{SourceDiscoveryException}. This operation does not attempt to obtain permissions or register with the source.
+
+\item[] \texttt{registerWithSource}\par
+Given an audio input source reference, attempt to register with the corresponding source. This involves obtaining the necessary permissions and establishing access to the audio input resource. If the required permissions have not yet been granted, the underlying platform may prompt the user to grant them. If registration succeeds, add the source to the list of registered sources and return \texttt{true}. If registration fails due to insufficient permissions, raise \texttt{PermissionDeniedException}. If the source is no longer available or cannot be accessed, raise \texttt{SourceUnavailableException}. A failed registration must not add the source to the list of registered sources.
+
+\end{description}
+
+\subsubsection{Local Functions}
+
+\begin{description}
+
+\item[]\texttt{scanAvailableSources}\par
+Scan the current platform for all compatible audio input adapters. Update the module's internal list of available sources with the results of the scan. This function is responsible for translating the platform's available audio input resources into the module's internal state representation. If the scan fails, the corresponding discovery exception is raised.
+\end{description}
+\section{Audio Capture (\mref{mAudioCapture})} \label{mis:audio-capture}
+
+The following section describes the syntax, semantics, and access programs offered by the Audio Capture module.
+
+\subsection{Module}
+
+The Audio Capture module covers FR-AC1--3, FR-SM2, NFR-PER1, NFR-SAP2, and NFR-LAL1. Its purpose is to use an audio input adapter to capture audio, apply the necessary preprocessing, and persist recordings when required. The module may also perform lightweight validation and analysis to identify recording errors and report unusable audio.
+
+\subsection{Uses}
+
+The Audio Capture module uses the Audio Input Adapter module to access the currently registered audio input resource. It is responsible for managing the lifecycle of audio data, beginning with recording and ending when the audio is ready to be passed to the Speech Analysis module.
+
+The module may perform several processing stages, including background noise reduction, input format normalization, resampling, and metadata generation. These stages ensure that recordings are in a suitable format for subsequent analysis.
+
+The module also uses a persistence resource to store recordings when required. The SLP may configure whether raw audio is retained for the duration of a patient's visitation cycle, the current session, or not retained permanently at all. Regardless of the persistence setting, recordings are temporarily cached so that they can be referenced throughout the current session.
+
+\subsection{Syntax}
+
+The following subsection describes the syntax used by the Audio Capture module, including its exported types, constants, and access programs.
+
+\subsubsection{Exported Types}
+
+The module supplies a processed audio recording to the Speech Analysis module for further analysis. A recording may be represented by an audio file, a unique recording identifier, or a reference to its associated metadata and audio data.
+
+The module also provides a recording status indicating whether a recording was successfully captured and processed. If a failure occurs during recording, validation, or processing, the appropriate exception is raised.
+
+The resulting recording is made available to the Speech Analysis module through its recording reference. If permanent storage is enabled, the reference may also identify the persisted recording.
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+External modules, primarily the Session Manager, interact with the Audio Capture module through its recording control operations. Preprocessing, validation, caching, and persistence are handled internally by local functions.
+
+\begin{table}[H]
+\centering
+\caption{Exported Access Programs for the Audio Capture Module}
+\label{tab:audio-capture}
+
+\small
+\begin{tabularx}{\textwidth}{
+    @{}
+    >{\raggedright\arraybackslash}p{0.27\textwidth}
+    >{\raggedright\arraybackslash}p{0.16\textwidth}
+    >{\raggedright\arraybackslash}p{0.26\textwidth}
+    >{\raggedright\arraybackslash}X
+    @{}
+}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{startRecording} & -- & -- & RecordingFailed\\
+\texttt{stopRecording} & -- & Recording ID & RecordingFailed\\
+\texttt{pauseRecording} & -- & -- & RecordingFailed\\
+\texttt{resumeRecording} & -- & -- & RecordingFailed\\
+\texttt{saveMostRecentRecording} & -- & Recording ID & RecordingFailed, Unavailable\\
+\bottomrule
+\end{tabularx}
+\normalsize
+\end{table}
+
+\subsection{Semantics}
+
+The following subsection describes the semantics followed by the Audio Capture module, including its state variables, environment variables, assumptions, access routine semantics, and local function semantics.
+
+\subsubsection{State Variables}
+
+The module maintains the following state variables
+
+
+\begin{itemize}
+    \item A recording status indicating the current state of the module. Possible states include \texttt{Idle}, \texttt{Recording}, \texttt{Paused}, and \texttt{Processing}.
+    \item A recording buffer used to temporarily store audio data while a recording is in progress.
+    \item A reference to the most recently completed and validated recording, allowing it to be cached and accessed before being passed to the Speech Analysis module or permanently persisted.
+\end{itemize}
+
+The module may also maintain references to recordings cached during the current session. However, the Session Manager is responsible for maintaining the association between recordings and their corresponding session data.
+
+\subsubsection{Environment Variables}
+
+The primary environment variable used by this module is the registered audio input adapter supplied by the Audio Input Adapter module. This provides access to the microphone, file system, or other supported audio input resource.
+
+The module also relies on the following environmental information:
+
+\begin{itemize}
+    \item Available storage space, to determine whether recordings can be cached or permanently persisted.
+    \item Recording configuration, including sample rate, encoding, and supported audio formats.
+    \item Persistence configuration, determining whether recordings should be retained for the current session, visitation cycle, or not permanently stored.
+\end{itemize}
+
+These variables influence how recordings are captured, processed, and stored.
+
+\subsubsection{Assumptions}
+
+\begin{enumerate}
+    \item Exactly one recording may be in progress at a time.
+    \item The system has successfully registered with a valid Audio Input Adapter and obtained the necessary permissions before recording begins.
+    \item The registered audio input adapter remains available throughout the recording lifecycle.
+    \item The Speech Analysis module has access to validated recordings produced by this module through their corresponding recording references.
+    \item The system provides sufficient temporary memory to cache recordings during the current session.
+    \item The recording configuration specifies a supported output format suitable for subsequent speech analysis.
+\end{enumerate}
+
+\subsubsection{Access Routine Semantics}
+
+The Audio Capture module exposes operations that allow the Session Manager to control when audio recording begins, pauses, resumes, and ends. The Session Manager may use these operations to support different recording workflows.
+
+For example, the SLP may choose to record continuously throughout a session, start and stop recording around individual target words, or temporarily pause recording while providing instructions or hints to the child.
+
+\begin{description}
+
+\item[] \texttt{startRecording}\par
+Initialize the audio recorder and begin capturing audio from the currently registered audio input adapter. Set the module's recording status to \texttt{Recording} and initialize the recording buffer. If the module is not in a valid state to begin recording, or if the audio input resource cannot be accessed, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{stopRecording}\par
+Stop capturing audio and finalize the current recording buffer. Set the recording status to \texttt{Processing} and execute the internal validation, caching, and preprocessing pipeline. Once processing is complete, store a reference to the resulting recording as the most recent recording and return its unique recording identifier. If the recording cannot be finalized, validated, or processed, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{pauseRecording}\par
+Temporarily suspend audio capture while preserving the current recording buffer. Set the recording status to \texttt{Paused}. The recording may subsequently be continued using \texttt{resumeRecording()}. If no recording is currently in progress or the underlying audio resource cannot be paused, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{resumeRecording}\par
+Resume audio capture using the existing recording buffer. Set the recording status to \texttt{Recording} and continue appending audio data to the current recording. If the module is not currently in the \texttt{Paused} state or the audio input resource cannot resume capture, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{saveMostRecentRecording}\par
+Persist the most recently completed and validated recording using the configured persistence settings. Return the unique recording identifier associated with the persisted recording. If no completed recording is available, or if persistence fails, raise \texttt{RecordingFailed} or \texttt{Unavailable}, respectively. The operation does not modify the original recording or its processed contents.
+
+\end{description}
+
+The module may additionally support configurable automation, including automatically saving a recording when recording is stopped and automatically extracting relevant audio clips from a longer recording. These behaviours are controlled internally and do not require additional external access programs.
+
+\subsubsection{Local Functions}
+
+The following local functions are used internally to manage the recording lifecycle and prepare audio data for the Speech Analysis module.
+
+\begin{description}
+
+\item[] \texttt{validateRecording}\par
+Perform lightweight validation to ensure that the captured audio is non-empty, uncorrupted, sufficiently clear, and in a supported format. If the recording fails validation, raise an appropriate recording validation exception so that the system can report that the audio is unusable.
+
+\item[] \texttt{cacheRecording}\par
+Temporarily store a validated recording in session-accessible memory. This ensures that the recording remains available for reference and subsequent processing throughout the current session, regardless of whether permanent persistence is enabled.
+
+\item[] \texttt{preprocessRecording}\par
+Apply the necessary preprocessing operations to prepare the audio for speech analysis. These operations may include background noise reduction, audio normalization, resampling, and input format conversion. Return the resulting processed recording.
+
+\item[] \texttt{initializeRecorder}\par
+Configure and initialize the audio recorder using the currently registered audio input adapter and the configured recording parameters. Ensure that the module is in a valid state to begin capturing audio.
+
+\item[] \texttt{releaseRecorder}\par
+Release the resources associated with the active audio recorder when recording is no longer required. Ensure that the module returns to the \texttt{Idle} state and that unnecessary hardware resources are no longer held.
+
+\item[] \texttt{postprocessRecording}\par
+Perform the final processing steps after a recording has been captured and validated. This function acts as an umbrella routine for generating recording metadata, assigning a unique recording identifier, updating the most recent recording reference, and persisting the recording when required by the configured settings.
+
+\end{description}
 \section{Patient Records \& Progress Tracking (\mref{mPatientRecords})} \label{mis:records}
 
 \subsection{Module}
@@ -945,28 +1237,51 @@ whether material was generated by a human or an AI system.}
 
 \section{Reflection}
 
-\wss{Not required for CAS 741 projects}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Problem Analysis and Design.
-
-\input{../Reflection.text}
+Please note that we combined the MG and MIS into this one document so the reflection is based on our experiences for them both. We worked on them side by side, as the MIS just goes into some more detail for topics covered at a higher level in the MG. 
 
 \begin{enumerate}
   \item What went well while writing this deliverable?
+
+        The brainstorming process went very smoothly for this deliverable. Our group felt appropriately prepared with considered design solutions and sources of inspiration when decomposing modules. We have already begun working on the proof of concept and have some wireframe mock-ups that map out the features and views we are going to need for the final design. Using this as a reference, we brainstormed all the unique features we will include (both during or after capstone timeline), and got a rough idea of the architecture we would want to design as well. This made it really easy to decompose our system into modules. 
+
   \item What pain points did you experience during this deliverable, and how
     did you resolve them?
+
+    During this deliverable, we struggled with the actual architecture design aspect before the module decomposition. Initially, we were just blindly trying to put together a combination of modules without a general brainstorming session. This made it hard to add in new modules and pigeonholed us into designs since we were only considering a select few parts of the workflow we already had mapped out. To remedy this, we transitioned to brainstorming (mentioned in the last question) where we just made a big list of all the features and potential improvements we would add in the future. This way, it allowed for us to come up with a more robust design considering a wider variety of possibilities. This helped us think beyond the main workflow and towards potential enhancements instead. 
+
   \item Which of your design decisions stemmed from speaking to your client(s)
   or a proxy (e.g. your peers, stakeholders, potential users)? For those that
   were not, why, and where did they come from?
+
+        Almost all of our design decisions stemmed from our supervisor, who acts as a proxy to our clients (SLPs). Others were software decisions made through group discussions. We were told that most SLPs use iPads for their sessions, so it brought up the idea of the audio input adapter module, as future expansions would need some abstract adapter to interface with various OS or hardware. We determined that an audio capture module would be helpful as well in case any pre-processing was needed. We were also told that SLPs would love to have a replay feature that lets them play back recordings from a session, so a save feature may be integrated here too. For session management, patient management, practice items, and dashboard element modules, we conducted interviews with our stakeholders using wireframe sketches. These discussions inspired a need for related features, so we partitioned them into related, abstract modules. A big part of our design is the audio analysis portion so it was a common understanding between us and the supervisors that this was a necessary portion. This is essential so we could put other ML models, or analysis mechanisms in general, even if they are unrelated to SLP needs. For example, it leaves it open for accent coaches as well. 
+
   \item While creating the design doc, what parts of your other documents (e.g.
   requirements, hazard analysis, etc), it any, needed to be changed, and why?
+  
+      When creating the design document, we noticed a lot of outdated information that came as a result of changing scope as the project progressed. For example, we limited the inputs to be from iPads since that is what is used most often. In our architecture, we still considered this to be an abstract concept as outlined by the Audio Input Adapter Module. 
+      
+      In general, some of these design decisions did not have strong links to requirements and vaguely pointed at general ones. This is not good because requirements should be clear, not open to interpretation. For example, we revised how we navigated PHIPPA compliance as per insight from our stakeholder interviews. We were told that as long as the PHI data storage is being done on a local drive, it may still comply with PHIPPA if done correctly. Our demonstrations also revealed that the SLPs were very excited by the idea of playing back voice clips or saving them to monitor progression over time. However the specifics of this are not communicated effectively in the SRS. An issue has been opened for this matter. 
+
+
   \item What are the limitations of your solution?  Put another way, given
   unlimited resources, what could you do to make the project better? (LO\_ProbSolutions)
+  
+  Given unlimited resources, our solution would remove a lot of the configurability within the design. For example, instead of letting the SLP choose to automatically clip audio files for them, this would be on by default. However our model is unlikely to be good enough for this to work properly, so it is a stretch feature in trial. Ideally, this would be what happens regularly and the SLP could just start and stop the recording once with no need for manual intervention. 
+
+  Another limitation is with the variety of lesson plans that we can offer. Our current plan is to give one type of lesson plan: showing images and having the child repeat the word. This is done in a similar manner to how the standardized testing is done. But to give more personalized feedback, a very powerful model would be needed, and a greater variety of tests would need to be supported. The current design is trained for and suited to only single word, picture naming sessions. 
+
+  
   \item Give a brief overview of other design solutions you considered.  What
   are the benefits and tradeoffs of those other designs compared with the chosen
   design?  From all the potential options, why did you select the documented design?
   (LO\_Explores)
+
+  Some other design elements we considered were to combine the input adapter and input processing modules into one large block. This would simplify our implementation and reduce dependencies between modules. For our timeline, we only plan to support iPads so this would make it much easier for us. However, we decided against this in the long term, our design would like to support more devices and platforms. Furthermore, it is key to abstract out the analysis module because the input adapter and processing module can be reused generally for any speech task (adult SLP, accent coach). However our child SLP model is tailored for this one use case, so it would be a bad design to couple the analysis module with the input module. 
+
+  Another design decision we considered was to completely separate the testing modules from the lesson plan modules. This was because the goal of testing is different to what is done during treatment. In testing, no hints or cues are provided, whereas treatment has a clearer focus. However, we decided against this because of the reusability possible between the two modules. Both testing and lessons could be implemented as an extension of a session. They might have the same structure but reveal different amounts of information to the child. Therefore, this behaviour was instead separated using the state pattern. This way their respective behaviours could be accommodated without needing redundant classes that hurt maintainability. 
+
+
   \item (After you have implemented another team's module, which means this
   isn't filled in until after the original deadline). What did you learn by
   implementing another team's module? Were all the details you needed in the
@@ -975,6 +1290,8 @@ graduate attribute of Problem Analysis and Design.
   what was this experience like?  Are there things in your documentation you
   could have changed to make the process go more smoothly for when an
   ``outsider'' completes some of the implementation?
+
+  	*To be implemented after implementing another team’s module 
 
   Your reflection should be about concepts learned in your SE education, such as modular decomposition, cohesion, coupling, information hiding, etc.  You should critique the quality and utility of the specification you received.
 
