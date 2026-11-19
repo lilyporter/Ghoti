@@ -179,15 +179,47 @@ change.
 
 \begin{description}
 \item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
-  hardware on which the software is running.
+  hardware on which the software is running, including the tablet or computer
+  model and its microphone and audio capture hardware.
 \item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
-  initial input data.
-\item ...
+  audio input data (e.g., sample rate, bit depth, encoding, and file container).
+\item[\refstepcounter{acnum} \actheacnum \label{acModel}:] The speech
+  recognition and phoneme analysis model (e.g., moving from one pre-trained
+  wav2vec2 variant to another, or to a different architecture or framework).
+\item[\refstepcounter{acnum} \actheacnum \label{acPhonemeSet}:] The phoneme
+  inventory and the representation of phonemes (e.g., IPA symbols, ARPAbet, or
+  feature vectors) used to compare expected and recognized speech.
+\item[\refstepcounter{acnum} \actheacnum \label{acErrorTypes}:] The set of
+  speech error patterns detected. The system currently targets substitution
+  errors, and may later be extended to omissions, distortions, or other
+  patterns.
+\item[\refstepcounter{acnum} \actheacnum \label{acPopulation}:] The target
+  population and language, such as the age range (currently 4--6), and
+  dialect or language (currently monolingual North American English).
+\item[\refstepcounter{acnum} \actheacnum \label{acPractice}:] The content and
+  structure of practice activities, including the word lists, lesson
+  suggestion rules, and difficulty progression.
+\item[\refstepcounter{acnum} \actheacnum \label{acScoring}:] The algorithm for
+  scoring pronunciation and computing per-phoneme confidence.
+\item[\refstepcounter{acnum} \actheacnum \label{acVisual}:] The format and
+  presentation of results, progress charts, and exported reports.
+\item[\refstepcounter{acnum} \actheacnum \label{acUI}:] The user interface
+  framework and layout, including support for new device form factors and a
+  future patient-facing, homework, or mobile interface.
+\item[\refstepcounter{acnum} \actheacnum \label{acDB}:] The database
+  technology and schema used to persist session, patient, and progress data.
+\item[\refstepcounter{acnum} \actheacnum \label{acAuth}:] The authentication
+  and authorization mechanism (e.g., password policy, two-factor method,
+  consent-code scheme, and identity provider).
+\item[\refstepcounter{acnum} \actheacnum \label{acAudit}:] The audit trail
+  format and the data retention and backup policies.
+\item[\refstepcounter{acnum} \actheacnum \label{acDeploy}:] The hosting and
+  deployment environment (e.g., cloud provider, containerization, and
+  CI/CD pipeline).
+\item[\refstepcounter{acnum} \actheacnum \label{acPrivacy}:] Privacy and
+  regulatory requirements, such as amendments to PHIPA or the need to meet
+  additional jurisdictions' regulations.
 \end{description}
-
-\wss{Anticipated changes relate to changes that would be made in requirements,
-design or implementation choices.  They are not related to changes that are made
-at run-time, like the values of parameters.}
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
@@ -200,8 +232,22 @@ decisions will be changed.
 
 \begin{description}
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-  (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-\item ...
+  (Input: microphone audio and keyboard/touch, Output: screen display and
+  audio playback; Memory and database for persistence).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucAssistive}:] The assistive
+  role of the system. It will always support, and never replace, the clinical
+  judgment of the speech-language pathologist.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucArch}:] The web-based
+  client--server architecture of the system.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucAudioModality}:] Speech audio
+  as the primary input modality, with analysis at the phoneme level.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucUsers}:] The primary user
+  roles of speech-language pathologist and patient, with SLP-led sessions as
+  the core workflow.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucLicense}:] The open-source
+  GPL licensing of the software.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucPHIPA}:] The requirement to
+  comply with PHIPA for handling personal health information.
 \end{description}
 
 \section{Module Hierarchy} \label{SecMH}
