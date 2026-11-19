@@ -195,6 +195,75 @@ The following table shows the module hierarchy from the Module Guide.
 \end{table}
 
 \clearpage
+\section{MIS of Practice Items \& Lesson Plans} \label{mis:practice}
+
+\subsection{Module}
+PracticeItems manages the practice-item catalogue and the SLP's saved,
+patient-specific lesson plans. It covers FR-PAR1--7. It supplies the
+selected plan and its practice items to Session Management. It does not
+execute the active session or control the order in which items are presented;
+those responsibilities belong to Session Management.
+
+\subsection{Uses}
+Persistence supplies durable storage and retrieval for the practice-item
+catalogue and saved lesson plans. Patient Records \& Progress Tracking supplies patient lookup and authorization when a
+lesson plan is associated with a patient. Session Management recieves a
+copy of the selected lesson plan, including its practice-item details, when the SLP starts a session. 
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[WordPosition] One of \texttt{initial}, \texttt{medial}, or
+\texttt{final}, identifying the position of a target phoneme in a word.
+\item[PracticeTarget] A target phoneme and its \texttt{WordPosition}. A
+practice item may be associated with more than one target occurrence.
+\item[PracticeItem] A practice-item identifier, an ordered sequence of
+\texttt{PracticeTarget}, the correct word, a reference to its image cue, and
+the expected IPA transcription of the correct word. The image cue is used
+to prompt the child; the written word and expected transcription are retained
+for clinician and system use.
+\item[LessonPlan] A lesson-plan identifier, patient identifier, plan name,
+and an ordered sequence of practice-item identifiers. The order of the
+identifiers defines the planned order of practice items.
+\item[LessonPlanContent] A saved \texttt{LessonPlan} together with the
+corresponding ordered sequence of resolved \texttt{PracticeItem} records.
+This is the form supplied to Session Management when a plan is selected for
+a session.
+\end{description}
+
+Identifiers are opaque. A \texttt{PracticeItem} referenced by a lesson plan
+is resolved using its current catalogue record when the plan is retrieved.
+The \texttt{PracticeItem} type defined in this module is the canonical
+practice-item record used by Session Management. When the SLP starts a
+session, Session Management receives the \texttt{LessonPlanContent} and
+copies its ordered \texttt{PracticeItem} records into the session snapshot.
+Each attempt refers to the corresponding practice item by its identifier.
+Later catalogue edits do not change the practice-item content retained
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{} l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.5cm} @{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{initialize} & StoreConfig & -- & Unavailable\\
+\texttt{listPracticeItems} & Actor, optional target phoneme, optional WordPosition & Sequence of PracticeItem & Denied, Invalid\\
+\texttt{createPracticeItem} & Actor, PracticeItemDraft & PracticeItem & Denied, Invalid\\
+\texttt{updatePracticeItem} & Actor, practice-item identifier, PracticeItemDraft & PracticeItem & Denied, Missing, Invalid\\
+\texttt{deletePracticeItem} & Actor, practice-item identifier & -- & Denied, Missing, InUse, Coverage\\
+\texttt{listLessonPlans} & Actor, patient identifier & Sequence of LessonPlan & Denied, Missing\\
+\texttt{createLessonPlan} & Actor, patient identifier, plan name, Sequence of practice-item identifiers & LessonPlan & Denied, Missing, Invalid\\
+\texttt{getLessonPlan} & Actor, patient identifier, lesson-plan identifier & LessonPlanContent & Denied, Missing\\
+\texttt{updateLessonPlan} & Actor, patient identifier, LessonPlan & LessonPlan & Denied, Missing, Invalid\\
+\texttt{deleteLessonPlan} & Actor, patient identifier, lesson-plan identifier & -- & Denied, Missing\\
+\bottomrule
+\end{tabularx}
+
+
+\clearpage
 \section{MIS of Patient Records \& Progress Tracking} \label{mis:records}
 
 \subsection{Module}
