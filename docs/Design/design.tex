@@ -1052,7 +1052,6 @@ Section~\ref{sec:interface-types}. The Attempt records its SupportLevel.
 \subsubsection{Exported Constants}
 None.
 
-\subsubsection{Exported Access Programs}
 \noindent\begin{tabularx}{\textwidth}{@{}l X X X@{}}
 \toprule
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
@@ -1177,6 +1176,174 @@ identical snapshot. A session with zero attempts may be ended and saved.
 (Section~\ref{mis:records}). This module does not compute it. The Dashboard
 treats a correct attempt as cued when its SupportLevel is semantic cue or
 repetition/model.
+
+\clearpage
+\section{MIS of Practice Items \& Lesson Plans} \label{mis:practice}
+
+\subsection{Module}
+PracticeItems manages the practice-item catalogue and the SLP's saved,
+patient-specific lesson plans. It covers FR-PAR1--7. It supplies the
+selected plan and its practice items to Session Management. It does not
+execute the active session or control the order in which items are presented;
+those responsibilities belong to Session Management.
+
+\subsection{Uses}
+Persistence supplies durable storage and retrieval for the practice-item
+catalogue and saved lesson plans. Patient Records \& Progress Tracking supplies patient lookup and authorization when a
+lesson plan is associated with a patient. Session Management recieves a
+copy of the selected lesson plan, including its practice-item details, when the SLP starts a session. 
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[WordPosition] One of \texttt{initial}, \texttt{medial}, or
+\texttt{final}, identifying the position of a target phoneme in a word.
+\item[PracticeTarget] A target phoneme and its \texttt{WordPosition}. A
+practice item may be associated with more than one target occurrence.
+\item[PracticeItem] A practice-item identifier, an ordered sequence of
+\texttt{PracticeTarget}, the correct word, a reference to its image cue, and
+the expected IPA transcription of the correct word. The image cue is used
+to prompt the child; the written word and expected transcription are retained
+for clinician and system use.
+\item[LessonPlan] A lesson-plan identifier, plan name,
+and an ordered sequence of practice-item identifiers. The order of the
+identifiers defines the planned order of practice items.
+\item[LessonPlanContent] A saved \texttt{LessonPlan} together with the
+corresponding ordered sequence of resolved \texttt{PracticeItem} records.
+This is the form supplied to Session Management when a plan is selected for
+a session.
+\end{description}
+
+Identifiers are opaque. A \texttt{PracticeItem} referenced by a lesson plan
+is resolved using its current catalogue record when the plan is retrieved.
+The \texttt{PracticeItem} type defined in this module is the canonical
+practice-item record used by Session Management. When the SLP starts a
+session, Session Management receives the \texttt{LessonPlanContent} and
+copies its ordered \texttt{PracticeItem} records into the session snapshot.
+Each attempt refers to the corresponding practice item by its identifier.
+Later catalogue edits do not change the practice-item content retained
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{} l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.5cm} @{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{initialize} & StoreConfig & -- & Unavailable\\
+\texttt{listPracticeItems} & Actor, optional target phoneme, optional WordPosition & Sequence of PracticeItem & Denied, Invalid\\
+\texttt{createPracticeItem} & Actor, PracticeItemDraft & PracticeItem & Denied, Invalid\\
+\texttt{updatePracticeItem} & Actor, practice-item identifier, PracticeItemDraft & PracticeItem & Denied, Missing, Invalid\\
+\texttt{deletePracticeItem} & Actor, practice-item identifier & -- & Denied, Missing, InUse, Coverage\\
+\texttt{listLessonPlans} & Actor & Sequence of LessonPlan & Denied, Missing\\
+\texttt{createLessonPlan} & Actor, plan name, Sequence of practice-item identifiers & LessonPlan & Denied, Missing, Invalid\\
+\texttt{getLessonPlan} & Actor, lesson-plan identifier & LessonPlanContent & Denied, Missing\\
+\texttt{updateLessonPlan} & Actor, LessonPlan & LessonPlan & Denied, Missing, Invalid\\
+\texttt{deleteLessonPlan} & Actor, lesson-plan identifier & -- & Denied, Missing\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+An initialization flag, initially false, and a reference to the configured
+Persistence store after initialization. The persistent catalogue maps
+practice-item identifiers to practice items. Saved lesson plans map
+lesson-plan identifiers to lesson plans.
+
+\subsubsection{Environment Variables}
+A configured standardized word set and an IPA transcription resource are
+available to validate practice words and generate their expected IPA
+transcriptions. Image cue assets are referenced by an identifier supplied
+with the practice item; the module does not itself create or edit image
+assets.
+
+\subsubsection{Assumptions}
+The caller supplies an authenticated actor. 
+
+\subsubsection{Access Routine Semantics}
+For every operation, verify the actor's authorization. Raise \texttt{Denied}
+when the actor lacks the required permission. Raise \texttt{Missing} when
+an authorized request needs a practice item, or lesson plan
+that does not exist.
+
+\begin{description}
+\item[] \texttt{initialize(store)}\par
+Set the store and initialization flag on
+success. On failure, raise \texttt{Unavailable}.
+
+\item[] \texttt{listPracticeItems(...)}\par
+Return the practice items in the catalogue that match the supplied filters.
+When a target phoneme is supplied, an item matches if at least one of its
+\texttt{PracticeTarget} records contains that phoneme. When a position is
+also supplied, that target occurrence must also have the requested
+\texttt{WordPosition}. If either filter is absent, do not apply that filter.
+Return all matching items in a stable order when no filters are supplied.
+
+\item[] \texttt{createPracticeItem(actor, draft)}\par
+Validate that the draft contains at least one supported target phoneme and
+word-position association, the word, and a valid image cue
+reference. Generate the expected IPA
+transcription from the correct word. Reject the draft with \texttt{Invalid}
+if its word, target association, cue reference, or transcription cannot be
+validated. Store the new item and return it. 
+
+\item[] \texttt{updatePracticeItem(actor, itemId, draft)}\par
+Replace the catalogue content for the identified practice item after applying
+the same validation rules as
+\texttt{createPracticeItem}. Preserve the item's identifier. Lesson plans
+that refer to this item resolve to the updated catalogue record when next
+retrieved. Previously created session snapshots remain unchanged.
+
+\item[] \texttt{deletePracticeItem(actor, itemId)}\par
+Remove the item from the available catalogue. Raise \texttt{InUse} if the
+item is referenced by a saved lesson plan. Raise
+\texttt{Coverage} if removing the item would leave fewer than
+three available practice items for any supported target phoneme and word
+position combination. Otherwise remove the item.
+
+\item[] \texttt{listLessonPlans(actor)}\par
+List the catalogue of saved lesson plans.
+
+\item[] \texttt{createLessonPlan(actor, name, itemIds)}\par
+Validate the plan and confirm that every supplied practice-item
+identifier exists in the available catalogue. Require at least one practice
+item. Store the ordered sequence of item identifiers without changing their
+order and return the saved plan. Raise \texttt{Invalid} if the plan name
+or item sequence is invalid.
+
+\item[] \texttt{getLessonPlan(actor, planId)}\par
+Return the saved plan together with its practice items resolved in the
+saved order. Raise \texttt{Missing} if the plan or any referenced item
+cannot be found. Session Management uses this operation to obtain the
+practice content selected for a session.
+
+\item[] \texttt{updateLessonPlan(actor, plan)}\par
+Confirm that the plan identifier exists. Validate the plan name and every
+referenced practice item. Replace the saved name and ordered item sequence
+while preserving the plan identifier. Raise \texttt{Invalid} if the plan
+contains no items or references an unavailable item.
+
+\item[] \texttt{deleteLessonPlan(actor, planId)}\par
+Remove the saved plan. Practice items referenced by the deleted plan
+remain in the catalogue.
+\end{description}
+
+\subsubsection{Local Functions}
+
+\texttt{transcribe(word)} returns the expected IPA transcription for a word
+using the configured IPA transcription resource. If no transcription is
+available, practice-item creation or modification fails validation.
+
+\noindent\texttt{matches(item, target, position)} returns true when the item
+contains a target occurrence matching the supplied target phoneme and, when
+specified, the supplied word position.
+
+\noindent\texttt{validateCoverage(catalogue)} verifies that at least three
+practice items are available for every supported target phoneme and word
+position combination.
 
 \clearpage
 
