@@ -25,6 +25,8 @@
     linkcolor=red,
     urlcolor=blue
 }
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \input{../Comments.text}
 \input{../Common.text}
@@ -175,15 +177,47 @@ change.
 
 \begin{description}
 \item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
-  hardware on which the software is running.
+  hardware on which the software is running, including the tablet or computer
+  model and its microphone and audio capture hardware.
 \item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
-  initial input data.
-\item ...
+  audio input data (e.g., sample rate, bit depth, encoding, and file container).
+\item[\refstepcounter{acnum} \actheacnum \label{acModel}:] The speech
+  recognition and phoneme analysis model (e.g., moving from one pre-trained
+  wav2vec2 variant to another, or to a different architecture or framework).
+\item[\refstepcounter{acnum} \actheacnum \label{acPhonemeSet}:] The phoneme
+  inventory and the representation of phonemes (e.g., IPA symbols, ARPAbet, or
+  feature vectors) used to compare expected and recognized speech.
+\item[\refstepcounter{acnum} \actheacnum \label{acErrorTypes}:] The set of
+  speech error patterns detected. The system currently targets substitution
+  errors, and may later be extended to omissions, distortions, or other
+  patterns.
+\item[\refstepcounter{acnum} \actheacnum \label{acPopulation}:] The target
+  population and language, such as the age range (currently 4--6), and
+  dialect or language (currently monolingual North American English).
+\item[\refstepcounter{acnum} \actheacnum \label{acPractice}:] The content and
+  structure of practice activities, including the word lists, lesson
+  suggestion rules, and difficulty progression.
+\item[\refstepcounter{acnum} \actheacnum \label{acScoring}:] The algorithm for
+  scoring pronunciation and computing per-phoneme confidence.
+\item[\refstepcounter{acnum} \actheacnum \label{acVisual}:] The format and
+  presentation of results, progress charts, and exported reports.
+\item[\refstepcounter{acnum} \actheacnum \label{acUI}:] The user interface
+  framework and layout, including support for new device form factors and a
+  future patient-facing, homework, or mobile interface.
+\item[\refstepcounter{acnum} \actheacnum \label{acDB}:] The database
+  technology and schema used to persist session, patient, and progress data.
+\item[\refstepcounter{acnum} \actheacnum \label{acAuth}:] The authentication
+  and authorization mechanism (e.g., password policy, two-factor method,
+  consent-code scheme, and identity provider).
+\item[\refstepcounter{acnum} \actheacnum \label{acAudit}:] The audit trail
+  format and the data retention and backup policies.
+\item[\refstepcounter{acnum} \actheacnum \label{acDeploy}:] The hosting and
+  deployment environment (e.g., cloud provider, containerization, and
+  CI/CD pipeline).
+\item[\refstepcounter{acnum} \actheacnum \label{acPrivacy}:] Privacy and
+  regulatory requirements, such as amendments to PHIPA or the need to meet
+  additional jurisdictions' regulations.
 \end{description}
-
-\wss{Anticipated changes relate to changes that would be made in requirements,
-design or implementation choices.  They are not related to changes that are made
-at run-time, like the values of parameters.}
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
@@ -196,8 +230,22 @@ decisions will be changed.
 
 \begin{description}
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-  (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-\item ...
+  (Input: microphone audio and keyboard/touch, Output: screen display and
+  audio playback; Memory and database for persistence).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucAssistive}:] The assistive
+  role of the system. It will always support, and never replace, the clinical
+  judgment of the speech-language pathologist.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucArch}:] The web-based
+  client--server architecture of the system.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucAudioModality}:] Speech audio
+  as the primary input modality, with analysis at the phoneme level.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucUsers}:] The primary user
+  roles of speech-language pathologist and patient, with SLP-led sessions as
+  the core workflow.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucLicense}:] The open-source
+  GPL licensing of the software.
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucPHIPA}:] The requirement to
+  comply with PHIPA for handling personal health information.
 \end{description}
 
 \section{Module Hierarchy} \label{SecMH}
@@ -257,18 +305,38 @@ the modules. It can be seen that the graph is a directed acyclic graph
 system, and modules in the higher level of the hierarchy are essentially simpler
 because they use modules from the lower levels.
 
-\wss{The uses relation is not a data flow diagram.  In the code there will often
-be an import statement in module A when it directly uses module B.  Module B
-provides the services that module A needs.  The code for module A needs to be
-able to see these services (hence the import statement).  Since the uses
-relation is transitive, there is a use relation without an import, but the
-arrows in the diagram typically correspond to the presence of import statement.}
-
-\wss{If module A uses module B, the arrow is directed from A to B.}
-
 \begin{figure}[H]
 \centering
-%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
+\begin{tikzpicture}[
+  mod/.style={draw, rectangle, rounded corners, minimum width=3.4cm,
+              minimum height=0.9cm, align=center, font=\small},
+  uses/.style={-{Stealth[length=2mm]}, thick}
+]
+% Level 4 (top)
+\node[mod] (dash) at (0,6) {Clinician Dashboard /\\Results Visualization\\(\mref{mDashboard})};
+
+% Level 3
+\node[mod] (session) at (0,4) {Session Management\\(\mref{mSession})};
+
+% Level 2
+\node[mod] (lesson)   at (-4.8,2) {Lesson Plan\\(\mref{mLesson})};
+\node[mod] (analysis) at (0,2)    {Audio Analysis\\(\mref{mAudioAnalysis})};
+\node[mod] (audio)    at (4.8,2)  {Audio Input\\(\mref{mAudioInput})};
+
+% Level 1 (bottom)
+\node[mod] (patient) at (-4.8,0) {Patient Management\\(\mref{mPatient})};
+\node[mod] (hh)      at (4.8,0)  {Hardware Hiding\\(\mref{mHH})};
+
+% A uses B: arrow from A to B
+\draw[uses] (dash)    -- (session);
+\draw[uses] (dash.west) to[out=180, in=180, looseness=1.2] (patient.west);
+\draw[uses] (session) -- (lesson);
+\draw[uses] (session) -- (analysis);
+\draw[uses] (session) -- (audio);
+\draw[uses] (session) -- (patient);
+\draw[uses] (lesson)  -- (patient);
+\draw[uses] (audio)   -- (hh);
+\end{tikzpicture}
 \caption{Use hierarchy among modules}
 \label{FigUH}
 \end{figure}
@@ -311,6 +379,68 @@ usability checks and reporting (FR-AC1--3).
 \begin{description}
 \item[Secrets:]Hides the audio recording lifecycle. This includes hiding any input audio quality variations by using preprocessing. It also normalizes any differing input file formats. Finally, it ensures that the final audio file is valid for analysis by making quality assurance checks.  
 \item[Services:]Provides a fully processed audio file in the exact format that the following speech analysis model expects. It has all metadata needed to make an appropriate deduction. 
+\item[Implemented By:] PronouncedFish
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Audio Analysis Module (\mref{mAudioAnalysis})}
+
+\begin{description}
+\item[Secrets:] The algorithms and models used to convert recorded speech into
+  a phoneme-level assessment. This includes the machine learning model used to
+  recognize phonemes, the method for determining a phoneme's placement within
+  a word, the representation of phonemes as articulatory feature vectors, and
+  the distance metric used to compare recognized phonemes with expected ones.
+\item[Services:] Accepts a recorded audio attempt and the expected word or
+  phoneme sequence, and returns a phonemic analysis of the attempt. It
+  performs the following steps:
+  \begin{itemize}
+  \item Recognizes the sequence of phonemes in the audio using a pre-trained (Pasketti Challenge)
+    ML phoneme recognition model.
+  \item Identifies the placement of each phoneme within the word (initial,
+    medial, or final).
+  \item Represents each recognized and expected phoneme as a feature vector
+    using the PanPhon library.
+  \item Computes the Manhattan distance between the recognized and expected
+    phoneme vectors to quantify how far each attempt is from the target, which
+    identifies substitution errors (e.g., ``rabbit'' $\rightarrow$
+    ``wabbit'').
+  \end{itemize}
+  The resulting phoneme-level results (recognized phoneme, expected phoneme,
+  placement, distance, and confidence) are passed to the results and progress
+  modules. The output is intended to assist, and never replace, the clinical
+  judgment of the speech-language pathologist.
+\item[Implemented By:] Python (PyTorch/Hugging Face model, PanPhon library)
+\item[Type of Module:] Abstract Object
+\end{description}
+
+\subsubsection{Etc.}
+
+\subsubsection{Practice Items \& Lesson Plans (\mref{mPracticeItems})}
+\begin{description}
+\item[Secrets:] The internal representation and organization of the practice-item
+catalogue and saved lesson plans, including the associations between each
+practice item, its target speech challenge, target phoneme(s), word position,
+correct word, image cue, and expected IPA transcription. The module also hides
+the rules used to assemble, retrieve, and maintain reusable practice items for creating lesson plans.
+
+\item[Services:] Provides the SLP with ability to create, view, modify, and
+delete system practice items. Each practice item is associated with one or more target
+speech challenges and a relevant word position. Each item includes the correct
+word, an image cue, and its expected IPA transcription. The module provides
+access to practice items by target phoneme and word position (FR-PAR1 and
+FR-PAR3). The system baseline catalogue provides at least three practice items for each
+supported target phoneme in each supported word position, using words from a
+standardized set that are appropriate for the intended age range (FR-PAR2 and
+FR-PAR4).
+
+The module also supports the creation viewing, editing, and deleting of saved
+lesson plans by allowing the SLP to select practice items from the catalogue.
+A saved lesson plan can be selected and assigned to a patient session. 
+
+The module provides the selected lesson plan and its practice-item content to
+Session Management (\mref{mSessionManagement}) for use during a session.
+
 \item[Implemented By:] PronouncedFish
 \item[Type of Module:] Abstract Object
 \end{description}
@@ -475,14 +605,179 @@ R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
 
 \section{User Interfaces}
 
-\wss{Design of user interface for software and hardware.  Attach an appendix if
-needed. Drawings, Sketches, Figma}
+\subsection{SLP-Facing Dashboard and Interface}
+
+The following mock-ups represent the SLP dashboard and workflow, when there is not currently an ongoing patient session. They include features for an SLP such as viewing a list of their upcoming appointments, data analysis of sessions, and practice plans for their patients.
+
+\subsubsection{Wireframe 1}
+
+This represents the high-level caseload and session overview that an SLP requires. It presents patient cases requiring review, active caseloads, session schedules during a selected week, and other key details an SLP may want to view on the overview page.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W1.png}
+}
+\caption{\label{<Label>} Wireframe 1}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 2}
+
+This represents what an SLP may want to view for session analysis. It shows data visualizations for phoneme targets, accuracy estimates and trends, session attempts, and playback controls.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W2.png}
+}
+\caption{\label{<Label>} Wireframe 2}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 3}
+
+This represents another potential view option for session analysis. The represented visualization illustrates a mouth-placement map. This visualization would show the SLP where a selected sound in a session was produced in the mouth and include its place of articulation, and information on voicing. This wireframe was created upon previous supervisor feedback and insight that a data visualization of this manner would be useful.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W3.png}
+}
+\caption{\label{<Label>} Wireframe 3}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 4}
+
+This represents a feature which would allow an SLP to add and adjust practice plans for their patients. It includes options to configure a target sound/phoneme, word position, pacing, and repetition.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W4.png}
+}
+\caption{\label{<Label>} Wireframe 4}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 5}
+
+This represents another potential design for an SLP's practice plans. It shows a feature which would allow an SLP to select a target word and picture prompt and preview what a patient would see during a session.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W5.png}
+}
+\caption{\label{<Label>} Wireframe 5}
+\end{center}
+\end{figure}
+
+\subsection{Patient-Facing (In-Session) Interface}
+
+The following mock-ups represent what the screen would show when a session has been started. It is designed to be accessible and engaging to a child patient as the SLP goes through the practice items with them.
+
+\subsubsection{Wireframe 6}
+
+This represents what would be shown once a session is started. It is a start screen that establishes the theme before the practice begins.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W6.png}
+}
+\caption{\label{<Label>} Wireframe 6}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 7}
+
+This represents how a practice item would be presented during a session. ``Tap to Speak'' would be tapped when the practice is attempted.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W7.png}
+}
+\caption{\label{<Label>} Wireframe 7}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 8}
+
+This represents the results that would be shown after a practice item is attempted. It is meant to be supportive without making an unsuccessful attempt feel discouraging to a patient.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W8.png}
+}
+\caption{\label{<Label>} Wireframe 8}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 9}
+
+This represents what the interface shows when a session has been completed. It summarizes the activities that were performed.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W9.png}
+}
+\caption{\label{<Label>} Wireframe 9}
+\end{center}
+\end{figure}
+
+\subsubsection{Wireframe 10}
+
+This represents a practice activity with visual guidance on how a patient should attempt to make a sound.
+
+\begin{figure}[H]
+\begin{center}
+\rotatebox{0}
+{
+  \includegraphics[width=0.8\textwidth]{W10.png}
+}
+\caption{\label{<Label>} Wireframe 10}
+\end{center}
+\end{figure}
 
 \section{Design of Communication Protocols}
 
-\wss{If there is communication between hardware and software, it may be necessary
-to explain the design of the communication protocol.  This section should be filled
-in with NA if it is not appropriate for a given project.}
+The system does not use any custom hardware communication protocol. Two
+communication paths are described below.
+
+\subsection{Audio Capture}
+
+Audio is captured through the standard browser media interfaces
+(\texttt{MediaDevices.getUserMedia} and \texttt{MediaRecorder}), which are
+provided by the browser and operating system on the tablet (see \mref{mHH}).
+The browser asks the user for microphone permission, and the Audio Input Module
+(\mref{mAudioInput}) only begins recording once permission is granted. If
+permission is denied or no microphone is available, the failure is reported to
+the user and no recording is started. Recordings are encoded in a single fixed
+format (e.g., WAV at a fixed sample rate) so that the Audio Analysis Module
+(\mref{mAudioAnalysis}) always receives consistent input.
+
+\subsection{Tablet to Server}
+
+The tablet communicates with the server over an HTTPS connection. All data,
+including recorded audio, login information, and results, is encrypted in
+transit using TLS, and plain HTTP connections are rejected. This supports the
+PHIPA compliance requirement for personal health information. The tablet sends
+recordings to the server for analysis, and the server returns the phoneme-level
+results over the same connection.
 
 \section{Database Design} \label{SecDatabase}
 
@@ -619,7 +914,7 @@ classification is correct, incorrect, or unclassifiable. An SLP correction
 contains the SLP identity, optional correct/incorrect override, and any
 phoneme-level corrections to the observations or error records.
 \item[Session] Session identifier, patient identifier, SLP identity, session
-date, targets, practice items, SLP inputs, status (active or completed),
+date, session mode (testing or treatment), targets, practice items, SLP inputs, status (active or completed),
 and a sequence of completed attempts. Only a completed snapshot is accepted
 by \texttt{saveSession}.
 \item[SessionPair] Two distinct session identifiers ordered from baseline
@@ -633,6 +928,165 @@ retained patient identity reference.
 \item[HistoryExport, AuditCopy] Copies of authorized session history and
 audit events, respectively. The export formats are implementation decisions.
 \end{description}
+
+\clearpage
+\section{MIS of Session Management} \label{mis:session}
+
+\subsection{Module}
+SessionManager runs one clinician-supervised practice session for one
+patient, from setup to completion. It covers FR-SM1--4 and FR-PAR5--7, and the
+session-side parts of FR-AC3, FR-SA3, FR-DMR2--3, FR-DMR6--7, and FR-DMR11.
+
+\subsection{Uses}
+Audio Capture supplies a recording and its usability flags (FR-AC1 and FR-AC3). Speech Analysis supplies the analysis of a usable recording (FR-SA1 and FR-SA3). Practice Items \& Lesson Plans supplies items, their target phonemes, and image cues. Patient Records \& Progress Tracking provides patient information if authorized and stores the completed session. Clinician Dashboard / Results Visualization uses this module; this module does not use the Dashboard.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[SessionMode] Testing or Treatment. Testing gathers information about the
+patient's speech with no cues, hints, or modelling. Treatment allows support
+from the SLP.
+\item[SupportLevel] independent, semantic cue, or repetition/model. The support
+a child received for one attempt (FR-SM3 and FR-DMR2.1).
+\item[SessionSetup] Patient identifier, SessionMode, target phonemes, and
+practice items.
+\item[Prompt] A practice item and its image cue, presented for an attempt
+(FR-PAR5).
+\item[AttemptOutcome] Either \emph{flagged}, with the usability reasons from
+Audio Capture, or \emph{analysed}, with the resulting Attempt.
+\end{description}
+Session, Attempt, Actor, and SLP correction are the shared types in
+Section~\ref{sec:interface-types}. The Attempt records its SupportLevel.
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X X@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{startSession} & Actor, SessionSetup & Session &
+Denied, Missing, Invalid, Conflict, Unavailable\\
+\texttt{startAttempt} & practice item & Prompt & Inactive, Invalid, Busy\\
+\texttt{recordAttempt} & -- & AttemptOutcome & Inactive, NoAttempt,
+Unavailable\\
+\texttt{setSupport} & SupportLevel & -- & Inactive, NoAttempt, Invalid\\
+\texttt{repeatAttempt} & -- & Prompt & Inactive, NoAttempt\\
+\texttt{skipAttempt} & -- & -- & Inactive, NoAttempt\\
+\texttt{overrideAttempt} & attempt identifier, SLP correction & -- &
+Inactive, Missing, Invalid\\
+\texttt{getSnapshot} & -- & Session & Inactive\\
+\texttt{endSession} & -- & -- & Inactive, Denied, Invalid, Conflict,
+Unavailable\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+\begin{itemize}
+\item \texttt{session}: the active Session record, or absent. Initially absent.
+Its attempts are the retained attempts so far, in order.
+\item \texttt{actor}: the Actor who started the session.
+\item \texttt{current}: the open attempt, or absent. It holds the practice
+item, its SupportLevel (initially independent), and a state: prompted,
+flagged, or analysed. An analysed current attempt is also the last element of
+\texttt{session}'s attempts.
+\item \texttt{nextId}: counter used to give attempts identifiers that are
+unique within the session.
+\end{itemize}
+The session's SessionMode is part of the active Session record.
+
+\subsubsection{Environment Variables}
+A clock supplying the session date. The child-facing display, which shows the
+Prompt.
+
+\subsubsection{Assumptions}
+The caller supplies an authenticated actor. One session is active at a time.
+Each attempt is a single spoken target word (SRS A1), and the SLP supervises
+the session (SRS A7). Audio Capture and Speech Analysis return the values
+described in Section~\ref{sec:interface-types}. Recorded audio is used only
+for its attempt (FR-AC2).
+
+\subsubsection{Access Routine Semantics}
+Every routine except \texttt{startSession} raises \texttt{Inactive} when no
+session is active. Routines that act on the current attempt raise
+\texttt{NoAttempt} when \texttt{current} is absent.
+
+\begin{description}
+\item[] \texttt{startSession(actor, setup)}\par
+Raise \texttt{Conflict} if a session is already active. Confirm access to the
+setup's patient identifier through Patient Records \& Progress Tracking;
+\texttt{Denied}, \texttt{Missing}, and \texttt{Unavailable} propagate. Raise
+\texttt{Invalid} when the target set or item set is empty, when a target is
+outside the predetermined substitution list (FR-SM1 and FR-SA1), or when an
+item does not exercise at least one selected target. On success, create an
+active Session with a new identifier, the patient, the actor's SLP identity,
+the setup's SessionMode, the clock date, the targets, the items, no SLP inputs,
+and no attempts. Record the actor, clear \texttt{current}, and return the
+Session.
+\item[] \texttt{startAttempt(item)}\par
+Raise \texttt{Invalid} if the item is not in the session's practice items.
+Raise \texttt{Busy} if \texttt{current} is prompted or flagged and has not been
+repeated or skipped. If \texttt{current} is analysed, it is final and stays in
+the session. Set \texttt{current} to a prompted attempt for the item with
+independent support, and return the Prompt supplied by Practice Items
+(FR-PAR5).
+\item[] \texttt{recordAttempt()}\par
+Raise \texttt{Unavailable} if Audio Capture or Speech Analysis fails; the state
+is unchanged. Obtain a recording from Audio Capture. If the recording is
+flagged, set \texttt{current} to flagged, add nothing to the session, and
+return flagged (FR-AC3). Otherwise obtain the analysis from Speech Analysis
+for the item and its targets. Build an Attempt with a new identifier, the item,
+its targets, the SupportLevel of \texttt{current}, and the original analysis,
+which may classify it as unclassifiable (FR-SA3). Append it to the session's
+attempts, set \texttt{current} to analysed, and return analysed. The Dashboard
+sees the new attempt through \texttt{getSnapshot}.
+\item[] \texttt{setSupport(level)}\par
+Raise \texttt{Invalid} if the level is not in \texttt{allowedSupport(mode)},
+where mode is the session's SessionMode. Set the SupportLevel of
+\texttt{current}, and of its Attempt when analysed (FR-SM3 and FR-DMR2). The
+SLP may call this before or after \texttt{recordAttempt}.
+\item[] \texttt{repeatAttempt()}\par
+Discard \texttt{current}. If it was analysed, remove its Attempt from the
+session so that only the new attempt is retained. Start a new prompted attempt
+for the same item with independent support and return its Prompt (FR-SM2).
+\item[] \texttt{skipAttempt()}\par
+Discard \texttt{current} as in \texttt{repeatAttempt}. Retain no Attempt for it
+and set \texttt{current} to absent.
+\item[] \texttt{overrideAttempt(attemptId, correction)}\par
+Raise \texttt{Missing} if the identifier is not among the session's attempts.
+Raise \texttt{Invalid} if the correction does not name the actor's SLP identity
+or names a phoneme-level change for an observation that does not exist.
+Attach the correction to the Attempt. The original analysis is not changed
+(FR-SM4 and FR-DMR3). A new correction for the same attempt replaces the
+previous one.
+\item[] \texttt{getSnapshot()}\par
+Return a copy of the Session with its current attempts. The Session's status is
+active.
+\item[] \texttt{endSession()}\par
+Discard \texttt{current} if it is prompted or flagged. Form the completed
+snapshot: the session with status completed. Call
+\texttt{saveSession(actor, snapshot)} of Patient Records \& Progress Tracking.
+On success, set \texttt{session} and \texttt{current} to absent. On any
+exception (\texttt{Denied}, \texttt{Invalid}, \texttt{Conflict}, or
+\texttt{Unavailable}), propagate it and leave the session active and its
+attempts unchanged, so that calling \texttt{endSession} again submits an
+identical snapshot. A session with zero attempts may be ended and saved.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{allowedSupport(mode)} returns \{independent\} for Testing and
+\{independent, semantic cue, repetition/model\} for Treatment.
+
+\noindent The effective classification of an attempt is defined by
+\texttt{effectiveResult} in the Dashboard (Section~\ref{mis:dashboard}) and by
+\texttt{summarize} in Patient Records \& Progress Tracking
+(Section~\ref{mis:records}). This module does not compute it. The Dashboard
+treats a correct attempt as cued when its SupportLevel is semantic cue or
+repetition/model.
 
 \clearpage
 
@@ -1180,6 +1634,129 @@ Use a colour scale from 0 (least close) to 1 (closest). Use the corrected
 produced phoneme when the SLP supplies one. A pair with a missing feature
 vector or no classifiable or corrected produced phoneme has no heat-map
 value.
+
+\clearpage
+\section{Speech Analysis (\mref{mSpeechAnalysis})} \label{mis:analysis}
+
+\subsection{Module}
+Abstract object SpeechAnalysis. One instance converts a recorded attempt into
+a phoneme-level analysis (FR-SA1, FR-RDV2--3, and FR-HA3). The analysis is
+assistive only and does not replace the judgment of the SLP.
+
+\subsection{Uses}
+None. Session Management (\mref{mSessionManagement}) supplies the recording
+captured through Audio Capture (\mref{mAudioCapture}). The module relies on a
+pre-trained phoneme recognition model and the PanPhon feature table, which are
+external to PronouncedFish.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[ModelConfig] Identifies the phoneme recognition model and the minimum
+confidence below which a recognized phoneme is treated as unreliable.
+\item[Recording] Audio of one attempt in the format fixed by Audio Capture.
+\item[PracticeItem] One or more words. Each word has an expected IPA sequence
+and a set of acceptable variant pronunciations. The practice item and target
+phonemes are the same as those in Attempt
+(Section~\ref{sec:interface-types}).
+\item[Placement] One of initial, medial, or final: the position of an expected
+phoneme within its word.
+\item[Analysis] The original analysis of an Attempt
+(Section~\ref{sec:interface-types}): expected and recognized IPA sequences, an
+ordered sequence of SpeechError, confidence when available, aligned
+observations, and classification.
+\end{description}
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{initialize} & ModelConfig & -- & Unavailable\\
+\texttt{analyze} & Recording, PracticeItem & Analysis & Unavailable, Invalid\\
+\texttt{placement} & Word length in $\mathbb{N}$, position in $\mathbb{N}$ &
+Placement & Invalid\\
+\texttt{phonemeDistance} & Expected phoneme, produced phoneme &
+$\mathbb{N}$ or absent & Unavailable\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+An initialization flag, initially false, and the loaded recognition model and
+feature table after initialization. No patient data is retained between calls.
+
+\subsubsection{Environment Variables}
+The model files and the PanPhon feature table, read during
+\texttt{initialize}.
+
+\subsubsection{Assumptions}
+The recording was captured through Audio Capture in the agreed format. Each
+word of the practice item has a non-empty expected IPA sequence. Recognized
+phonemes are IPA symbols. Calls to \texttt{analyze} are independent.
+
+\subsubsection{Access Routine Semantics}
+Every operation except \texttt{initialize} and \texttt{placement} raises
+\texttt{Unavailable} when the module has not been initialized or the model
+fails.
+
+\begin{description}
+\item[] \texttt{initialize(config)}\par
+Load the model and the PanPhon feature table, and set the initialization flag
+on success. On failure, raise \texttt{Unavailable}.
+\item[] \texttt{analyze(recording, item)}\par
+Raise \texttt{Invalid} if the recording cannot be decoded or the item has no
+expected phonemes. Otherwise:
+\begin{enumerate}
+\item Recognize the phoneme sequence in the recording, with a confidence value
+for each recognized phoneme when the model provides one.
+\item If no phonemes are recognized, or every recognized phoneme falls below
+the minimum confidence, return an analysis with absent recognized IPA, no
+SpeechError, every observation unclassifiable, and an unclassifiable
+classification. This is not an exception.
+\item Otherwise, for each word apply \texttt{align} between the recognized
+sequence and the expected sequence and each acceptable variant. Use the
+alignment of lowest cost, preferring the expected sequence on a tie.
+\item Produce one observation for each target occurrence. A pair of identical
+phonemes is accepted, a pair of different phonemes is incorrect, and an
+expected phoneme with no counterpart is incorrect with an absent produced
+phoneme. Additions are not target occurrences and produce no observation.
+\item Create one SpeechError per difference: a Substitution for a pair of
+different phonemes, an Omission for an expected phoneme with no counterpart,
+and an Addition for a recognized phoneme with no counterpart. Record the
+expected position of each Substitution and Omission and the insertion location
+of each Addition. Order errors by word occurrence and position.
+\item Classify the attempt as correct when no SpeechError exists and as
+incorrect otherwise.
+\end{enumerate}
+The result is the original machine analysis. SLP corrections and overrides are
+applied by Session Management and never change it.
+\item[] \texttt{placement(length, position)}\par
+Raise \texttt{Invalid} unless $1 \le position \le length$. Return initial if
+$position = 1$, final if $position = length$ and $length > 1$, and medial
+otherwise.
+\item[] \texttt{phonemeDistance(expected, produced)}\par
+Return $\sum_{i=1}^{n}|A_i-B_i|$ where $A$ and $B$ are the PanPhon feature
+vectors of the two phonemes (the Manhattan distance). Return absent if either
+phoneme has no feature vector.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{align(expected, recognized)} returns an alignment of two phoneme
+sequences into pairs, omissions, and additions with minimum total cost. A pair
+costs \texttt{phonemeDistance} of its phonemes. An omission or addition costs a
+constant gap cost no smaller than the greatest possible pair distance. A pair
+with an absent distance costs the gap cost. Ties are broken deterministically,
+preferring pairs over gaps and then the earliest alignment.
+
+\noindent The Dashboard normalizes a distance to the closeness scale
+$1 - \frac{distance}{2n}$ (Section~\ref{mis:dashboard}), so both modules use
+the same SRS feature vectors, and recognition confidence is reported separately.
 
 \clearpage
 
