@@ -39,6 +39,11 @@
 \newcommand{\uctheucnum}{UC\theucnum}
 \newcommand{\uref}[1]{UC\ref{#1}}
 
+\usepackage{xltabular}
+\usepackage{booktabs}
+\usepackage{array}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcounter{mnum}
 \newcommand{\mthemnum}{M\themnum}
 \newcommand{\mref}[1]{M\ref{#1}}
@@ -1869,36 +1874,84 @@ the same SRS feature vectors, and recognition confidence is reported separately.
 
 \section{Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+\begin{table}[hp]
+\caption{List of AI Tools Used} \label{aiToolsUsed}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Tool Number} & \textbf{Name} & \textbf{Model} \\
+\midrule
+1 & ChatGPT & GPT 5 Thinking Mini \\
+2 & ChatGPT & GPT 6.2 Astra \\
+3 & Claude & Sonnet 5 \\
+4 & Claude & Sonnet 5.5 Medium \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+Generative AI was predominately used for latex formatting and brainstorming. Work done in a text editor was passed into the LLM along with a template of how the output should look, and filled accordingly. It also helped with brainstorming once our ideas were exhausted. This ensures that there are no gaps in our design. More specific uses include:  
 
-\wss{For each of the uses, identify which parts of the document were affected.}
+\begin{xltabular}{\textwidth}{
+  >{\hsize=0.5\hsize}L
+  >{\hsize=0.5\hsize}L
+  >{\hsize=1\hsize}L
+}
 
-\wss{You do not need to report every interaction, but you should disclose the
-uses that materially contributed to your work}
+\caption{Usage Details for All AI Tools Used} \label{aiToolUsageDetails} \\
+
+\toprule
+\textbf{Tool Number} & \textbf{Location} & \textbf{Details} \\
+\midrule
+\endfirsthead
+
+\multicolumn{3}{c}{\tablename\ \thetable{} -- Continued from previous page} \\
+\toprule
+\textbf{Tool Number} & \textbf{Location} & \textbf{Details} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r}{Continued on next page} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+1 & (MIS) Audio Capture Module & Used to brainstorm ideas and identify potential gaps in manually generated ideas for the module's design and specification. \\
+
+1 & (MIS) Audio Input Adapter Module & Used to brainstorm ideas and identify potential gaps in manually generated ideas for the module's design and specification. \\
+
+2 & (General) & Used to merge the MIS and MG documents into a single document. \\
+
+1 & (1) Symbols, Abbreviations, and Acronyms & Used to identify and compile all abbreviations and acronyms appearing throughout the document. The resulting entries were reviewed and edited for accuracy. \\
+
+3 & (Anticipated and Unlikely Changes, Audio Analysis Module Decomposition and MIS, Use Hierarchy Between Modules, Design of Communication Protocols) & Provided point-form notes for each section and used the AI to develop them into paragraphs. All generated content was manually reviewed and revised for accuracy and consistency with the design. \\
+
+3 & (MIS) Practice Items and Lesson Plans & Used to brainstorm ideas and identify potential gaps in manually generated ideas for the module's design and specification. \\
+
+2 & (MIS) Patient Management Module & Used to brainstorm ideas and identify potential gaps in manually generated ideas for the module's design and specification. \\
+
+2 & (MIS) Persistence Module & Used to brainstorm ideas and identify potential gaps in manually generated ideas for the module's design and specification. \\
+
+4 & (Traceability Matrix) & Used to identify anticipated changes and incorporate them into the Traceability Matrix. The generated entries were manually reviewed to ensure consistency with the rest of the document and the SRS. \\
+
+4 & (Traceability Matrix) & Provided a rough model of the Traceability Matrix and used the AI to populate initial module-to-requirement mappings. Each entry was manually reviewed, and missing or inappropriate module mappings were added or removed. \\
+
+4 & (Session Management Module Decomposition) & Provided bullet-point notes outlining the intended content and used the AI to format them into professional, consistent prose. \\
+
+4 & (MIS) Session Management Module & Used to generate a rough draft of the Session Management MIS, which was subsequently edited and formatted to ensure consistency with the requirements and the rest of the document. \\
+
+4 & (Connections Between Requirements and Design) & Used to generate a rough draft of the connections between the requirements and design documents. The generated content was manually edited to ensure consistency with the SRS and account for changes made to the design. \\
+
+\end{xltabular}
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+AI generated results did not need formal cross-verification with any credible sources since all ideas stemmed from our own ideation. Generated latex code was always proof read to ensure correctness and that no unwanted changes were made. Any generated paragraphs were written using our own jot notes and used as an initial draft to be revised. The brainstorming assistance was given context for all currently generated ideas and asked for suggestions that we might miss. Since the LLM is always going to provide ideas, regardless of how we covered the important ones, we proofread each of its suggestions and only picked ones that made sense for our context. 
 
 \newpage{}
 
