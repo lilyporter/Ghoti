@@ -4,6 +4,21 @@
     "docs/CDs/MLReport/custom.bib",
     "docs/CDs/MLReport/main.tex"
   ],
+  "docs/CDs/Wireframe/Wireframe.tex": [
+    "docs/CDs/Wireframe/W1.png",
+    "docs/CDs/Wireframe/W10.png",
+    "docs/CDs/Wireframe/W2.png",
+    "docs/CDs/Wireframe/W3.png",
+    "docs/CDs/Wireframe/W4.png",
+    "docs/CDs/Wireframe/W5.png",
+    "docs/CDs/Wireframe/W6.png",
+    "docs/CDs/Wireframe/W7.png",
+    "docs/CDs/Wireframe/W8.png",
+    "docs/CDs/Wireframe/W9.png",
+    "docs/CDs/Wireframe/Wireframe.tex",
+    "docs/Comments.text",
+    "docs/Common.text"
+  ],
   "docs/Checklists/Code-Checklist.tex": [
     "docs/Checklists/Code-Checklist.tex",
     "docs/Comments.text"
@@ -47,18 +62,11 @@
   "docs/Checklists/Writing-Checklist.tex": [
     "docs/Checklists/Writing-Checklist.tex"
   ],
-  "docs/Design/SoftArchitecture/MG.tex": [
+  "docs/Design/design.tex": [
     "docs/Comments.text",
     "docs/Common.text",
-    "docs/Design/SoftArchitecture/MG.tex",
-    "refs/References.bib"
-  ],
-  "docs/Design/SoftDetailedDes/MIS.tex": [
-    "docs/Comments.text",
-    "docs/Common.text",
-    "docs/Design/SoftDetailedDes/MIS.tex",
+    "docs/Design/design.tex",
     "docs/Reflection.text",
-    "docs/SRS/SRS.tex",
     "refs/References.bib"
   ],
   "docs/DevelopmentPlan/DevelopmentPlan.tex": [

@@ -7,6 +7,16 @@
 \usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{amsmath, mathtools}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{colortbl}
+\usepackage{longtable}
+\usepackage{xfrac}
+\usepackage{siunitx}
+\usepackage[section]{placeins}
+\usepackage{caption}
+\usepackage{array}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -16,8 +26,8 @@
     urlcolor=blue
 }
 
-\input{../../Comments.text}
-\input{../../Common.text}
+\input{../Comments.text}
+\input{../Common.text}
 
 \newcounter{acnum}
 \newcommand{\actheacnum}{AC\theacnum}
@@ -33,7 +43,7 @@
 
 \begin{document}
 
-\title{Module Guide for \progname{}} 
+\title{Module Guide and Module Interface Specification for~PronouncedFish}
 \author{\authname}
 \date{\today}
 
@@ -46,8 +56,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+2026-11-18 & 1.0 & Initial Version\\
 \bottomrule
 \end{tabularx}
 
@@ -55,15 +64,15 @@ Date 2 & 1.1 & Notes\\
 
 \section{Reference Material}
 
-This section records information for easy reference. 
+This section records information for easy reference.
 
 \subsection{Abbreviations and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
+\begin{tabular}{l l}
+  \toprule
   \textbf{symbol} & \textbf{description}\\
-  \midrule 
+  \midrule
   AC & Anticipated Change\\
   DAG & Directed Acyclic Graph \\
   M & Module \\
@@ -76,7 +85,13 @@ This section records information for easy reference.
   UC & Unlikely Change \\
   \wss{etc.} & \wss{...}\\
   \bottomrule
-\end{tabular}\\
+\end{tabular}
+
+\subsection{Symbols}
+
+See SRS Documentation at \wss{give url}
+
+\wss{Also add any additional symbols, abbreviations or acronyms}
 
 \newpage
 
@@ -92,6 +107,13 @@ This section records information for easy reference.
 
 \section{Introduction}
 
+This document describes the software architecture and detailed module
+interfaces for PronouncedFish. The Software Requirements Specification (SRS)
+defines the requirements for the design. The full documentation and
+implementation can be found at \url{...}. \wss{provide the url for your repo}
+
+\wss{Fill in your project name and description}
+
 Decomposing a system into modules is a commonly accepted approach to developing
 software.  A module is a work assignment for a programmer or programming
 team~\citep{ParnasEtAl1984}.  We advocate a decomposition
@@ -99,7 +121,7 @@ based on the principle of information hiding~\citep{Parnas1972a}.  This
 principle supports design for change, because the ``secrets'' that each module
 hides represent likely future changes.  Design for change is valuable in SC,
 where modifications are frequent, especially during initial development as the
-solution space is explored.  
+solution space is explored.
 
 Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
 \begin{itemize}
@@ -130,16 +152,15 @@ potential readers of this document are as follows:
   decomposition, and flexibility of the design.
 \end{itemize}
 
-The rest of the document is organized as follows. Section
-\ref{SecChange} lists the anticipated and unlikely changes of the software
-requirements. Section \ref{SecMH} summarizes the module decomposition that
-was constructed according to the likely changes. Section \ref{SecConnection}
-specifies the connections between the software requirements and the
-modules. Section \ref{SecMD} gives a detailed description of the
-modules. Section \ref{SecTM} includes two traceability matrices. One checks
-the completeness of the design against the requirements provided in the SRS. The
-other shows the relation between anticipated changes and the modules. Section
-\ref{SecUse} describes the use relation between modules.
+Part~\ref{part:architecture} describes the anticipated and unlikely changes,
+module hierarchy and dependencies, module responsibilities, and traceability
+from requirements and anticipated changes to modules.
+Part~\ref{part:detailed} defines shared notation and types, followed by the
+module interface specifications.
+
+\clearpage
+
+\part{Software Architecture} \label{part:architecture}
 
 \section{Anticipated and Unlikely Changes} \label{SecChange}
 
@@ -227,26 +248,36 @@ Persistence is a software decision leaf that provides durable record storage.
 \label{TblMH}
 \end{table}
 
-\section{Connection Between Requirements and Design} \label{SecConnection}
+\section{Use Hierarchy Between Modules} \label{SecUse}
 
-The design of the system is intended to satisfy the requirements developed in
-the SRS. In this stage, the system is decomposed into modules. The connection
-between requirements and modules is listed in Table~\ref{TblRT}.
+In this section, the uses hierarchy between modules is
+provided. \citet{Parnas1978} said of two programs A and B that A {\em uses} B if
+correct execution of B may be necessary for A to complete the task described in
+its specification. That is, A {\em uses} B if there exist situations in which
+the correct functioning of A depends upon the availability of a correct
+implementation of B.  Figure \ref{FigUH} illustrates the use relation between
+the modules. It can be seen that the graph is a directed acyclic graph
+(DAG). Each level of the hierarchy offers a testable and usable subset of the
+system, and modules in the higher level of the hierarchy are essentially simpler
+because they use modules from the lower levels.
 
-\wss{The intention of this section is to document decisions that are made
-  ``between'' the requirements and the design.  To satisfy some requirements,
-  design decisions need to be made.  Rather than make these decisions implicit,
-  they are explicitly recorded here.  For instance, if a program has security
-  requirements, a specific design decision may be made to satisfy those
-  requirements with a password.}
+\wss{The uses relation is not a data flow diagram.  In the code there will often
+be an import statement in module A when it directly uses module B.  Module B
+provides the services that module A needs.  The code for module A needs to be
+able to see these services (hence the import statement).  Since the uses
+relation is transitive, there is a use relation without an import, but the
+arrows in the diagram typically correspond to the presence of import statement.}
 
-\paragraph{Speech error scope.}
-Phase 1 supports substitutions, omissions, and additions. Speech Analysis
-compares recognized IPA with the expected pronunciation and its acceptable
-variants. It reports a substitution when a different phoneme replaces an
-expected phoneme, an omission when an expected phoneme is absent, and an
-addition when an extra phoneme occurs before, between, or after expected
-phonemes. This extends the substitution cases in FR-SA1 and FR-RDV2--3.
+\wss{If module A uses module B, the arrow is directed from A to B.}
+
+\begin{figure}[H]
+\centering
+%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
+\caption{Use hierarchy among modules}
+\label{FigUH}
+\end{figure}
+
+%\section*{References}
 
 \section{Module Decomposition} \label{SecMD}
 
@@ -331,6 +362,8 @@ Session Management (\mref{mSessionManagement}) for use during a session.
 
 \subsubsection{Patient Records \& Progress Tracking (\mref{mPatientRecords})}
 
+See Section~\ref{mis:records} for the detailed interface specification.
+
 \begin{description}
 \item[Secrets:] The organization of the patient record, including
 how completed sessions are associated with the patient and how progress is
@@ -351,6 +384,8 @@ Persistence (\mref{mPersistence}) for durable reads and writes
 \end{description}
 
 \subsubsection{Clinician Dashboard / Results Visualization (\mref{mClinicianDashboard})}
+
+See Section~\ref{mis:dashboard} for the detailed interface specification.
 
 \begin{description}
 \item[Secrets:] The presentation rules for clinician-facing speech results.
@@ -374,6 +409,8 @@ vectors to a closeness scale from zero to one. Gaps receive no score.
 dashboard)
 \end{description}
 
+\subsubsection{Lesson Plan Module: Practice Items \& Lesson Plans (\mref{mPracticeItems})}
+
 \subsection{Software Decision Module}
 
 \begin{description}
@@ -381,7 +418,7 @@ dashboard)
   facts, or programming considerations. The secrets of this module are
   \emph{not} described in the SRS.
 \item[Services:] Includes data structure and algorithms used in the system that
-  do not provide direct interaction with the user. 
+  do not provide direct interaction with the user.
   % Changes in these modules are more likely to be motivated by a desire to
   % improve performance than by externally imposed changes.
 \item[Implemented By:] --
@@ -405,6 +442,27 @@ patient-record deletion and retention and retrieval of the audit trail
 Speech Analysis (\mref{mSpeechAnalysis}) hides model loading, invocation,
 and conversion of model output into phonemes and confidence values. It
 classifies attempts and identifies substitutions, omissions, and additions.
+
+\section{Connection Between Requirements and Design} \label{SecConnection}
+
+The design of the system is intended to satisfy the requirements developed in
+the SRS. In this stage, the system is decomposed into modules. The connection
+between requirements and modules is listed in Table~\ref{TblRT}.
+
+\wss{The intention of this section is to document decisions that are made
+  ``between'' the requirements and the design.  To satisfy some requirements,
+  design decisions need to be made.  Rather than make these decisions implicit,
+  they are explicitly recorded here.  For instance, if a program has security
+  requirements, a specific design decision may be made to satisfy those
+  requirements with a password.}
+
+\paragraph{Speech error scope.}
+Phase 1 supports substitutions, omissions, and additions. Speech Analysis
+compares recognized IPA with the expected pronunciation and its acceptable
+variants. It reports a substitution when a different phoneme replaces an
+expected phoneme, an omission when an expected phoneme is absent, and an
+addition when an extra phoneme occurs before, between, or after expected
+phonemes. This extends the substitution cases in FR-SA1 and FR-RDV2--3.
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -459,37 +517,6 @@ R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
 \caption{Trace Between Anticipated Changes and Modules}
 \label{TblACT}
 \end{table}
-
-\section{Use Hierarchy Between Modules} \label{SecUse}
-
-In this section, the uses hierarchy between modules is
-provided. \citet{Parnas1978} said of two programs A and B that A {\em uses} B if
-correct execution of B may be necessary for A to complete the task described in
-its specification. That is, A {\em uses} B if there exist situations in which
-the correct functioning of A depends upon the availability of a correct
-implementation of B.  Figure \ref{FigUH} illustrates the use relation between
-the modules. It can be seen that the graph is a directed acyclic graph
-(DAG). Each level of the hierarchy offers a testable and usable subset of the
-system, and modules in the higher level of the hierarchy are essentially simpler
-because they use modules from the lower levels.
-
-\wss{The uses relation is not a data flow diagram.  In the code there will often
-be an import statement in module A when it directly uses module B.  Module B
-provides the services that module A needs.  The code for module A needs to be
-able to see these services (hence the import statement).  Since the uses
-relation is transitive, there is a use relation without an import, but the
-arrows in the diagram typically correspond to the presence of import statement.}
-
-\wss{If module A uses module B, the arrow is directed from A to B.}
-
-\begin{figure}[H]
-\centering
-%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
-\caption{Use hierarchy among modules}
-\label{FigUH}
-\end{figure}
-
-%\section*{References}
 
 \section{User Interfaces}
 
@@ -643,8 +670,8 @@ This represents a practice activity with visual guidance on how a patient should
 
 \section{Design of Communication Protocols}
 
-\wss{If there is communication between hardware and software, it may be necessary 
-to explain the design of the communication protocol.  This section should be filled 
+\wss{If there is communication between hardware and software, it may be necessary
+to explain the design of the communication protocol.  This section should be filled
 in with NA if it is not appropriate for a given project.}
 
 \section{Database Design} \label{SecDatabase}
@@ -708,11 +735,351 @@ The SRS Phase 1 plan specifies a cloud database, and the Development Plan
 expects a relational database with row-level access control. The local demo
 uses JSON.
 
+\clearpage
+
+\part{Detailed Design} \label{part:detailed}
+
+\section{Notation and Shared Interface Types}
+
+\wss{You should describe your notation.  You can use what is below as
+  a starting point.}
+
+The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
+with the addition that template modules have been adapted from
+\cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
+\citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
+multiple assignment statement and conditional rules follow the form $(c_1
+\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
+
+The following table summarizes the primitive data types used by \progname.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\noindent
+\begin{tabular}{l l p{7.5cm}}
+\toprule
+\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\
+\midrule
+character & char & a single symbol or digit\\
+integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
+natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
+real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The specification of \progname \ uses some derived data types: sequences, strings, and
+tuples. Sequences are lists filled with elements of the same data type. Strings
+are sequences of characters. Tuples contain a list of values, potentially of
+different types. In addition, \progname \ uses functions, which
+are defined by the data types of their inputs and outputs. Local functions are
+described by giving their type signature followed by their specification.
+
+\subsection{Shared Interface Types} \label{sec:interface-types}
+
+The following records are shared by the session, records, dashboard, and
+persistence interfaces. Each identifier type denotes an opaque identifier
+for the named entity. An optional value is either present or absent.
+
+\begin{description}
+\item[StoreConfig] Configuration identifying a durable store.
+\item[Actor] An authenticated user identity and permissions to act on patient
+records or retrieve audit events.
+\item[Patient] Patient identifier and identifying information.
+\item[SpeechError] A record identifying a word occurrence in the practice
+item and one of the following error kinds.
+\begin{description}
+\item[Substitution] Expected phoneme, produced phoneme, and expected
+phoneme position within the word.
+\item[Omission] Expected phoneme and its position within the word.
+\item[Addition] Extra produced phoneme and its insertion location before,
+between, or after expected phonemes. A location is the number of expected
+phonemes preceding the insertion in that word. Multiple additions at the
+same location retain their recognized order.
+\end{description}
+\item[Attempt] Attempt identifier, practice item, target phonemes, support
+level, original analysis, and optional SLP correction. The analysis contains
+expected and recognized IPA sequences (recognized IPA may be absent),
+an ordered sequence of SpeechError, confidence when available, and
+classification. It also contains an aligned observation
+for each target occurrence, with an expected phoneme, optional produced
+phoneme, and status (accepted, incorrect, or unclassifiable). The attempt
+classification is correct, incorrect, or unclassifiable. An SLP correction
+contains the SLP identity, optional correct/incorrect override, and any
+phoneme-level corrections to the observations or error records.
+\item[Session] Session identifier, patient identifier, SLP identity, session
+date, targets, practice items, SLP inputs, status (active or completed),
+and a sequence of completed attempts. Only a completed snapshot is accepted
+by \texttt{saveSession}.
+\item[SessionPair] Two distinct session identifiers ordered from baseline
+to follow-up.
+\item[Progress] For a patient and target phoneme, dated session points
+containing session identifiers and eligible, correct, and incorrect target
+observations, with cue information where available. Includes an optional
+comparison and optional improvement or persistent-error indicators.
+\item[AuditEvent] Action, information type, timestamp, actor identity, and
+retained patient identity reference.
+\item[HistoryExport, AuditCopy] Copies of authorized session history and
+audit events, respectively. The export formats are implementation decisions.
+\end{description}
+
+\clearpage
+
+\section{Patient Records \& Progress Tracking (\mref{mPatientRecords})} \label{mis:records}
+
+\subsection{Module}
+PatientRecords covers FR-DMR1--11 and FR-HA9, with Session Management supplying
+session and attempt results.
+
+\subsection{Uses}
+Persistence supplies durable reads and atomic writes for patient records, sessions, and audit events.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+See the shared interface types in Section~\ref{sec:interface-types}.
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+In the table, every operation except \texttt{initialize} may raise
+\texttt{Unavailable} when the service has yet to initialize or persistence
+fails, and \texttt{Denied} if authorization fails.
+
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{initialize} & StoreConfig & -- & Unavailable\\
+\texttt{createPatient} & Actor, Patient & -- & Conflict\\
+\texttt{updatePatient} & Actor, Patient & -- & Missing\\
+\texttt{getPatient} & Actor, patient identifier & Patient & Missing\\
+\texttt{deletePatient} & Actor, patient identifier, Boolean confirmation & -- &
+Missing, Unconfirmed\\
+\texttt{saveSession} & Actor, completed Session & -- & Missing, Invalid, Conflict\\
+\texttt{getHistory} & Actor, patient identifier & Sequence of Session & Missing\\
+\texttt{exportHistory} & Actor, patient identifier & HistoryExport & Missing\\
+\texttt{getProgress} & Actor, patient identifier, target phoneme,
+optional SessionPair & Progress & Missing\\
+\texttt{getAudit} & Actor, retained patient identity reference &
+Sequence of AuditEvent & --\\
+\texttt{copyAudit} & Actor, retained patient identity reference &
+AuditCopy & --\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+An initialization flag, initially false, and a reference to the configured
+Persistence store after initialization. Patient data and audit events are
+maintained by Persistence.
+
+\subsubsection{Environment Variables}
+A clock supplying timestamps for audit events.
+
+\subsubsection{Assumptions}
+The caller supplies an authenticated actor. Access to a patient's records and
+access to the audit trail are independently authorized.
+
+\subsubsection{Access Routine Semantics}
+For all patient operations, evaluate authorization before returning patient
+data or writing it. Raise \texttt{Missing} when an authorized request refers
+to a patient absent from active records. Record successful create, view,
+modify, export, and delete actions with their information type, actor,
+timestamp, and patient reference. If the audit write fails, raise
+\texttt{Unavailable} before exposing the output or committing a mutation.
+
+\begin{description}
+\item[] \texttt{initialize(store)}\par
+Set the store and initialization flag on
+success. On failure, raise \texttt{Unavailable}.
+\item[] \texttt{createPatient(actor, patient)}\par
+Insert the patient and creation
+audit event. Raise \texttt{Conflict} for a duplicate identifier.
+\item[] \texttt{updatePatient(actor, patient)}\par
+Replace identifying information
+for the given identifier and append a modification event.
+\item[] \texttt{getPatient(actor, patientId)}\par
+Append a view event and return the
+patient record.
+\item[] \texttt{deletePatient(actor, patientId, confirmed)}\par
+Raise
+\texttt{Unconfirmed} if the SLP has not confirmed deletion for that patient.
+Otherwise remove the patient, sessions, and attempts from active records in
+one operation. Preserve prior audit events and append a deletion event
+under the retained patient identity reference.
+\item[] \texttt{saveSession(actor, session)}\par
+Validate completion, unique attempt
+identifiers, and the patient's association. Raise \texttt{Invalid} for a
+snapshot that fails validation. Commit the session, attempts, and modification
+event together. An identical retry leaves them unchanged. Raise
+\texttt{Conflict} when the session identifier already denotes a different
+snapshot. The original analysis remains intact when an override is present.
+\item[] \texttt{getHistory(actor, patientId)}\par
+Append a view event and return
+that patient's completed sessions ordered by date, with ties ordered by
+session identifier. A patient with no sessions has empty history.
+\item[] \texttt{exportHistory(actor, patientId)}\par
+Append an export event and
+return a copy of the same ordered history.
+\item[] \texttt{getProgress(actor, patientId, target, pair)}\par
+Compute progress
+from \texttt{summarize(history, target)} for this patient's history. If a
+pair is supplied, compare its session points. Raise \texttt{Missing} if
+either session is outside this patient's history. Return available session
+points with an absent comparison if either selected session has no eligible
+observations for the target. If no pair is supplied, return the history
+without a between-session comparison. Append a view event before returning.
+\item[] \texttt{getAudit(actor, patientRef)} and \texttt{copyAudit(actor, patientRef)}\par
+Return matching events in append order or a copy of them. Include retained
+events for deleted patients when the actor has audit access.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{summarize(history, target)} reports per-session target counts and
+support levels. Use phoneme-level corrections where present. Count accepted
+productions as correct and substitutions or omissions as incorrect. Exclude
+additions and unresolved unclassifiable occurrences. Attempt-level overrides
+leave phoneme counts unchanged.
+
+The correct rate is correct divided by eligible occurrences. Compare sessions
+as follow-up minus baseline. Use the two latest eligible sessions for trends:
+a higher rate indicates improvement, and errors in both indicate persistence.
+Fewer than two eligible sessions yields no comparison or trend.
+
+\clearpage
+\section{Clinician Dashboard / Results Visualization (\mref{mClinicianDashboard})} \label{mis:dashboard}
+
+\subsection{Module}
+Template ClinicianDashboard. One instance presents results for a clinician
+(FR-RDV1--9, FR-DMR8--10, and FR-HA7).
+
+\subsection{Uses}
+Session Management supplies the selected session
+snapshot and effective clinician overrides. Patient Records \& Progress
+Tracking (Section~\ref{mis:records}) supplies authorized longitudinal results.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\texttt{Dashboard} denotes a clinician view instance. Its result panels
+present attempt detail, a session summary and heat map, and per-target
+progress. Identifiers and snapshots use the types in
+Section~\ref{sec:interface-types}.
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{newDashboard} & Actor & Dashboard & Denied\\
+\texttt{showAttempt} & Dashboard, Session, attempt identifier & -- &
+Denied, Missing\\
+\texttt{showSession} & Dashboard, Session & -- & Denied\\
+\texttt{showProgress} & Dashboard, patient identifier, target phoneme,
+optional SessionPair & -- & Denied, Missing, Unavailable\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+The dashboard's actor, optional selected patient identifier, and displayed
+panels. Initially, the selection and panels are empty. All visible patient
+panels belong to the selected patient.
+
+\subsubsection{Environment Variables}
+The clinician display, updated when a result panel changes.
+
+\subsubsection{Assumptions}
+Session Management supplies authorized snapshots and a refreshed snapshot
+after an attempt completes, an override changes, or a session ends.
+Phoneme closeness uses the SRS phonological feature vectors. Recognition
+confidence is displayed separately.
+
+\subsubsection{Access Routine Semantics}
+When a request selects another patient, clear the previous patient's panels.
+Raise \texttt{Denied} and clear patient content if the actor lacks access.
+Preface results with an acknowledgement that the information is assistive
+and may be incorrect, and that interpretation is at the SLP's discretion.
+Use neutral wording on clinician result panels.
+
+\begin{description}
+\item[] \texttt{newDashboard(actor)}\par
+Return an empty dashboard for an authorized
+clinician. Raise \texttt{Denied} for other actors.
+\item[] \texttt{showAttempt(view, session, attemptId)}\par
+Display expected and recognized IPA side by side. For each error, show the
+expected-to-produced substitution, the omitted expected phoneme with a gap
+in the recognized IPA, or the added produced phoneme with a gap in the
+expected IPA. Show the beginning, middle, or end word position for a
+substitution or omission and the insertion location for an addition. Raise
+\texttt{Missing} if the attempt is absent from the supplied session. For an
+unclassifiable attempt, show its status and any recognized IPA that is
+available. When the SLP overrides a classification, show the effective
+classification, identify it as the SLP's decision, and keep the original
+analysis visible.
+\item[] \texttt{showSession(view, session)}\par
+Recompute the view from the supplied
+snapshot. Count correct, incorrect, and unresolved unclassifiable attempts
+using \texttt{effectiveResult}. Report substitution, omission, and addition
+counts separately, using corrected error records when supplied. Split
+correct attempts by independent and
+cued support. Show zero counts and an empty heat map for zero attempts, and
+leave rates with a zero denominator unavailable. Update the open attempt
+panel from the same snapshot if applicable. Apply \texttt{closeness} to
+eligible expected-to-produced pairs. A classification-only override does
+not change the pair, and unresolved unclassifiable results without an
+eligible pair have no heat-map value. Show omissions and additions as
+unscored gaps in the IPA comparison.
+\item[] \texttt{showProgress(view, patientId, target, pair)}\par
+Retrieve and display
+authorized progress for the given patient and target in date order.
+Display the selected pair's comparison and the trend indicators when
+available. If the target has fewer than two eligible session points or
+the selected pair lacks eligible observations, show the available points
+and indicate insufficient history. On
+\texttt{Missing} or \texttt{Unavailable}, clear the requested panel and
+report the exception.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{effectiveResult(attempt)} returns the SLP classification override
+when present and the original classification otherwise. A correct attempt
+with any additional cue or repetition is cued. A correct attempt recorded as
+independent is independent.
+
+\noindent\texttt{closeness(expected, produced)} returns
+$1 - \frac{\sum_{i=1}^{n}|A_i-B_i|}{2n}$ for the SRS feature vectors
+$A$ and $B$, each containing $n>0$ features in $\{-1,0,1\}$.
+Use a colour scale from 0 (least close) to 1 (closest). Use the corrected
+produced phoneme when the SLP supplies one. A pair with a missing feature
+vector or no classifiable or corrected produced phoneme has no heat-map
+value.
+
+\clearpage
+
 \section{Timeline}
 
 \wss{Schedule of tasks and who is responsible}
 
 \wss{You can point to GitHub if this information is included there}
+
+\renewcommand{\bibsection}{%
+  \section*{\refname}%
+  \addcontentsline{toc}{section}{\refname}%
+}
+\bibliographystyle {plainnat}
+\bibliography {../../refs/References}
+
+\clearpage
+
+\appendix
 
 \section{Generative AI Use Disclosure}
 
@@ -731,7 +1098,7 @@ inconsistencies.}
 
 \wss{For each of the uses, identify which parts of the document were affected.}
 
-\wss{You do not need to report every interaction, but you should disclose the 
+\wss{You do not need to report every interaction, but you should disclose the
 uses that materially contributed to your work}
 
 \subsection{Verification of AI-Generated Content}
@@ -749,7 +1116,43 @@ whether material was generated by a human or an AI system.}
 
 \newpage{}
 
-\bibliographystyle {plainnat}
-\bibliography{../../../refs/References}
+\section{Reflection}
+
+\wss{Not required for CAS 741 projects}
+
+The information in this section will be used to evaluate the team members on the
+graduate attribute of Problem Analysis and Design.
+
+\input{../Reflection.text}
+
+\begin{enumerate}
+  \item What went well while writing this deliverable?
+  \item What pain points did you experience during this deliverable, and how
+    did you resolve them?
+  \item Which of your design decisions stemmed from speaking to your client(s)
+  or a proxy (e.g. your peers, stakeholders, potential users)? For those that
+  were not, why, and where did they come from?
+  \item While creating the design doc, what parts of your other documents (e.g.
+  requirements, hazard analysis, etc), it any, needed to be changed, and why?
+  \item What are the limitations of your solution?  Put another way, given
+  unlimited resources, what could you do to make the project better? (LO\_ProbSolutions)
+  \item Give a brief overview of other design solutions you considered.  What
+  are the benefits and tradeoffs of those other designs compared with the chosen
+  design?  From all the potential options, why did you select the documented design?
+  (LO\_Explores)
+  \item (After you have implemented another team's module, which means this
+  isn't filled in until after the original deadline). What did you learn by
+  implementing another team's module? Were all the details you needed in the
+  documentation, or did you need to make assumptions, or ask the other team
+  questions?  If your team also had another team implement one of your modules,
+  what was this experience like?  Are there things in your documentation you
+  could have changed to make the process go more smoothly for when an
+  ``outsider'' completes some of the implementation?
+
+  Your reflection should be about concepts learned in your SE education, such as modular decomposition, cohesion, coupling, information hiding, etc.  You should critique the quality and utility of the specification you received.
+
+  You should create a PR for your implemented module.  A link to the PR should be part of your reflection.
+
+\end{enumerate}
 
 \end{document}
