@@ -546,22 +546,112 @@ classifies attempts and identifies substitutions, omissions, and additions.
 
 The design of the system is intended to satisfy the requirements developed in
 the SRS. In this stage, the system is decomposed into modules. The connection
-between requirements and modules is listed in Table~\ref{TblRT}.
-
-\wss{The intention of this section is to document decisions that are made
-  ``between'' the requirements and the design.  To satisfy some requirements,
-  design decisions need to be made.  Rather than make these decisions implicit,
-  they are explicitly recorded here.  For instance, if a program has security
-  requirements, a specific design decision may be made to satisfy those
-  requirements with a password.}
+between requirements and modules is listed in Table~\ref{TblRT}. Several
+requirements leave room for interpretation, and some design needs go beyond
+the SRS. Rather than leave these decisions implicit, each is recorded below
+with the requirements it responds to, the decision made, the reason, and the
+module that carries it out.
 
 \paragraph{Speech error scope.}
-Phase 1 supports substitutions, omissions, and additions. Speech Analysis
-compares recognized IPA with the expected pronunciation and its acceptable
-variants. It reports a substitution when a different phoneme replaces an
-expected phoneme, an omission when an expected phoneme is absent, and an
-addition when an extra phoneme occurs before, between, or after expected
-phonemes. This extends the substitution cases in FR-SA1 and FR-RDV2--3.
+\emph{Requirements:} FR-SA1, FR-RDV2--3, NFR-MAI2.\\
+\emph{Assumptions:} A6.\\
+\emph{Theoretical Methods:} TM1, TM2.\\
+\emph{Decision:} Phase 1 supports substitutions, omissions, and additions.
+Speech Analysis compares recognized IPA with the expected pronunciation and its
+acceptable variants. It reports a substitution when a different phoneme
+replaces an expected phoneme, an omission when an expected phoneme is absent,
+and an addition when an extra phoneme occurs before, between, or after expected
+phonemes. This extends the substitution cases in FR-SA1 and FR-RDV2--3.\\
+\emph{Rationale:} A6 already assumes that a length mismatch indicates an
+omission or addition, and TM2 pairs phonemes by position only when the
+sequences have equal length. Reporting the three types lets the SLP see the
+cause of a mismatch instead of an unexplained failure. Modelling
+\texttt{SpeechError} as a variant type also supports NFR-MAI2.\\
+\emph{Modules:} \mref{mSpeechAnalysis}, \mref{mPatientRecords}, \mref{mClinicianDashboard}.
+
+\paragraph{Alignment of recognized and expected phonemes.}
+\emph{Requirements:} FR-SA1, FR-SA2.\\
+\emph{Assumptions:} A3, A4, A6. \\
+\emph{Theoretical Models:} TM1, TM2. \\
+\emph{Decision:} Speech Analysis aligns the recognized sequence with the
+expected sequence before classifying differences, and produces one observation
+for each target occurrence. TM2's position-by-position pairing is the special
+case where both sequences have the same length.\\
+\emph{Rationale:} Positional pairing cannot locate an omission or addition,
+because every later phoneme shifts. Alignment is what makes the insertion
+location and word position reportable.\\
+\emph{Modules:} \mref{mSpeechAnalysis}.
+
+\paragraph{Acceptable variants.}
+\emph{Requirements:} FR-SA2.\\
+\emph{Assumptions:} A4.\\
+\emph{Decision:} Acceptable variants are applied when classifying every error
+type, not only substitutions.\\
+\emph{Rationale:} A4 defines variants as per-position sets of substitute
+phonemes. An omission or addition that reflects accepted pronunciation would
+otherwise be reported as an error.\\
+\emph{Modules:} \mref{mSpeechAnalysis}, \mref{mPracticeItems}.
+
+\paragraph{Unclassifiable attempts.}
+\emph{Requirements:} FR-SA3, FR-AC3.\\
+\emph{Assumptions:} A10.\\
+\emph{Decision:} An attempt whose confidence is below the threshold is
+classified as unclassifiable. It is shown with any available recognized IPA,
+and it is excluded from correct and incorrect counts and from progress until
+the SLP resolves it. The threshold value is not fixed by this design, because
+it comes from the validation study.\\
+\emph{Rationale:} FR-SA3 forbids forcing a classification on poor input.
+Excluding such attempts keeps unreliable results out of progress measures.\\
+\emph{Modules:} \mref{mSpeechAnalysis}, \mref{mSessionManagement},
+ \mref{mPatientRecords}, \mref{mClinicianDashboard}.
+
+\paragraph{SLP overrides and corrections.}
+\emph{Requirements:} FR-SM4, FR-DMR3, FR-DMR3.1, FR-RDV7.\\
+\emph{Decision:} An attempt-level override sets the effective classification.
+The original analysis is always kept and remains visible. The SLP may also
+correct individual phoneme observations or error records. Attempt-level
+overrides do not change phoneme-level counts.\\
+\emph{Rationale:} The SLP's judgement takes precedence, but results remain
+auditable. Phoneme counts depend on which phonemes were produced, which an
+attempt-level label does not change.\\
+\emph{Modules:} \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}.
+
+\paragraph{Support levels.}
+\emph{Requirements:} FR-SM3, FR-DMR2, FR-DMR2.1, FR-DMR11, FR-RDV4.\\
+\emph{Decision:} The SLP records one or more of the support levels (independent,
+semantic cue, repetition or model) used to support a patient for each attempt. For summaries, any correct
+attempt that needed a cue counts as cued, attempts that needed a repeat counts as repeated, and attempts that needed no help counts as independent.\\
+\emph{Rationale:} FR-RDV4 asks only for an independent versus cued split, while
+FR-SM3 and FR-DMR2 ask for the finer levels to be recorded. Storing the fine
+level and deriving the split keeps both.\\
+\emph{Modules:} \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mClinicianDashboard}.
+
+\paragraph{Session completion and saving.}
+\emph{Requirements:} FR-DMR1, FR-DMR6, FR-DMR7, FR-DMR2, FR-DMR3.\\
+\emph{Decision:} Session Management owns the live session. A completed session
+and its attempts are saved to Patient Records as a single operation, and a
+retry of the same save leaves one stored session. A failed save leaves records
+unchanged. Each session belongs to exactly one patient, and each attempt takes
+its patient from its session.\\
+\emph{Rationale:} Saving everything together or not at all prevents partial
+sessions, and the ownership rule enforces FR-DMR7 structurally.\\
+\emph{Modules:} \mref{mSessionManagement}, \mref{mPatientRecords},
+\mref{mPersistence}.
+
+\paragraph{Auditing and deletion.}
+\emph{Requirements:} FR-DMR4, FR-DMR5, NFR-USA2, SLP-R3.\\
+\emph{Decision:} Viewing, creating, modifying, exporting, and deleting a record
+each create an audit event. If the audit write fails, the operation fails
+without exposing data or committing a change. Audit events are append-only and
+keep a patient identity reference after the clinical record is deleted.
+Deletion requires SLP confirmation and removes the patient, sessions, and
+attempts from active records.\\
+\emph{Rationale:} Failing when auditing fails guarantees that every access is
+recorded. NFR-USA2 allows either confirmation or recovery within 72 hours, and
+the design takes confirmation, which keeps deleted data from lingering in a
+recoverable state. Retaining the reference lets the delete event remain
+traceable.\\
+\emph{Modules:} \mref{mPatientRecords}, \mref{mPersistence}.
 
 \section{Traceability Matrix} \label{SecTM}
 
