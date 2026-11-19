@@ -1014,8 +1014,7 @@ uses JSON.
 
 \section{Notation and Shared Interface Types}
 
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
+
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
@@ -1026,20 +1025,43 @@ multiple assignment statement and conditional rules follow the form $(c_1
 
 The following table summarizes the primitive data types used by \progname.
 
-\begin{center}
-\renewcommand{\arraystretch}{1.2}
-\noindent
-\begin{tabular}{l l p{7.5cm}}
-\toprule
-\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\
-\midrule
-character & char & a single symbol or digit\\
-integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
-natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
-real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
-\bottomrule
-\end{tabular}
-\end{center}
+
+The mathematical notation used throughout the MIS is summarized
+below.
+
+\begin{table}[H]
+    \centering
+    \caption{Mathematical Notation}
+    \label{tab:mathematical-notation}
+    \begin{tabularx}{\textwidth}{
+        @{}
+        >{\centering\arraybackslash}p{0.25\textwidth}
+        >{\raggedright\arraybackslash}X
+        @{}
+    }
+        \toprule
+        \textbf{Notation} & \textbf{Description} \\
+        \midrule
+        $\mathbb{N}$ & Set of positive integers starting at 1. \\
+        $\mathbb{Z}$ & Set of integers, including negative integers and zero. \\
+        $\mathbb{R}$ & Set of real numbers. \\
+        $\sum_{i=1}^{n}$ & Summation over the indexed range from 1 to $n$. \\
+        $|x|$ & Absolute value of $x$. \\
+        $\Rightarrow$ & Indicates logical implication or a condition leading to a result. \\
+        $\mid$ & Separates alternative cases in a conditional expression. \\
+        $\coloneqq$ & Denotes assignment or a state update. \\
+        $\leq,\ \geq$ & Less than or equal to; greater than or equal to. \\
+        $A \times B$ & Cartesian product of sets $A$ and $B$. \\
+        $\varnothing$ & Empty set. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+In conditional expressions, cases follow the form
+$(c_1 \Rightarrow r_1 \mid c_2 \Rightarrow r_2 \mid
+\ldots \mid c_n \Rightarrow r_n)$, where each condition
+$c_i$ is associated with its corresponding result $r_i$.
+
 
 \noindent
 The specification of \progname \ uses some derived data types: sequences, strings, and
