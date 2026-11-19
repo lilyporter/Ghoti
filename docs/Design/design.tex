@@ -318,18 +318,18 @@ because they use modules from the lower levels.
   uses/.style={-{Stealth[length=2mm]}, thick}
 ]
 % Level 4 (top)
-\node[mod] (dash) at (0,6) {Clinician Dashboard /\\Results Visualization\\(\mref{mDashboard})};
+\node[mod] (dash) at (0,6) {Clinician Dashboard /\\Results Visualization\\(\mref{mClinicianDashboard})};
 
 % Level 3
-\node[mod] (session) at (0,4) {Session Management\\(\mref{mSession})};
+\node[mod] (session) at (0,4) {Session Management\\(\mref{mSessionManagement})};
 
 % Level 2
-\node[mod] (lesson)   at (-4.8,2) {Lesson Plan\\(\mref{mLesson})};
-\node[mod] (analysis) at (0,2)    {Speech Analysis\\(\mref{mSpeechAnalysis})};
-\node[mod] (audio)    at (4.8,2)  {Audio Input\\(\mref{mAudioInput})};
+\node[mod] (lesson)   at (-4.8,2) {Lesson Plan\\(\mref{mPracticeItems})};
+\node[mod] (analysis) at (0,2)    {Audio Analysis\\(\mref{mSpeechAnalysis})};
+\node[mod] (audio)    at (4.8,2)  {Audio Input\\(\mref{mAudioCapture})};
 
 % Level 1 (bottom)
-\node[mod] (patient) at (-4.8,0) {Patient Management\\(\mref{mPatient})};
+\node[mod] (patient) at (-4.8,0) {Patient Management\\(\mref{mPatientRecords})};
 \node[mod] (hh)      at (4.8,0)  {Hardware Hiding\\(\mref{mHH})};
 
 % A uses B: arrow from A to B
@@ -517,8 +517,6 @@ vectors to a closeness scale from zero to one. Gaps receive no score.
 \item[Type of Module:] Abstract Data Type (one view instance per clinician
 dashboard)
 \end{description}
-
-\subsubsection{Lesson Plan Module: Practice Items \& Lesson Plans (\mref{mPracticeItems})}
 
 \subsection{Software Decision Module}
 
@@ -1152,6 +1150,7 @@ Section~\ref{sec:interface-types}. The Attempt records its SupportLevel.
 \subsubsection{Exported Constants}
 None.
 
+\subsubsection{Exported Access Programs}
 \noindent\begin{tabularx}{\textwidth}{@{}l X X X@{}}
 \toprule
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
