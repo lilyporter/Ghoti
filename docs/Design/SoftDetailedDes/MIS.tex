@@ -262,6 +262,105 @@ None.
 \bottomrule
 \end{tabularx}
 
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+An initialization flag, initially false, and a reference to the configured
+Persistence store after initialization. The persistent catalogue maps
+practice-item identifiers to practice items. Saved lesson plans map
+lesson-plan identifiers to lesson plans.
+
+\subsubsection{Environment Variables}
+A configured standardized word set and an IPA transcription resource are
+available to validate practice words and generate their expected IPA
+transcriptions. Image cue assets are referenced by an identifier supplied
+with the practice item; the module does not itself create or edit image
+assets.
+
+\subsubsection{Assumptions}
+The caller supplies an authenticated actor. 
+
+\subsubsection{Access Routine Semantics}
+For every operation, verify the actor's authorization before returning
+patient-specific information or changing stored data. Raise \texttt{Denied}
+when the actor lacks the required permission. Raise \texttt{Missing} when
+an authorized request refers to a patient, practice item, or lesson plan
+that does not exist or is not associated with the supplied patient.
+
+\begin{description}
+\item[] \texttt{initialize(store)}\par
+Configure the Persistence store.
+On success, set the initialization flag.
+If configuration fails, raise \texttt{Unavailable}.
+
+\item[] \texttt{listPracticeItems(...)}\par
+Return the practice items in the catalogue that match the supplied filters.
+When a target phoneme is supplied, an item matches if at least one of its
+\texttt{PracticeTarget} records contains that phoneme. When a position is
+also supplied, that target occurrence must also have the requested
+\texttt{WordPosition}. If either filter is absent, do not apply that filter.
+Return all matching items in a stable order when no filters are supplied.
+This operation supports SLP selection by target phoneme and word position
+(FR-PAR3).
+
+\item[] \texttt{createPracticeItem(actor, draft)}\par
+Validate that the draft contains at least one supported target phoneme and
+word-position association, a correct word from the configured standardized
+word set that is appropriate for children aged 4--6, and a valid image cue
+reference. Generate the expected IPA
+transcription from the correct word. Reject the draft with \texttt{Invalid}
+if its word, target association, cue reference, or transcription cannot be
+validated. Store the new item and return it. The resulting item is associated
+with its target phoneme(s) and word position(s) (FR-PAR1), and its prompt
+uses an image cue rather than a written target word (FR-PAR5 and FR-PAR5.1).
+
+\item[] \texttt{updatePracticeItem(actor, itemId, draft)}\par
+Replace the catalogue content for the identified practice item after applying
+the same validation and IPA-generation rules as
+\texttt{createPracticeItem}. Preserve the item's identifier. Lesson plans
+that refer to this item resolve to the updated catalogue record when next
+retrieved. Previously created session snapshots remain unchanged.
+
+\item[] \texttt{deletePracticeItem(actor, itemId)}\par
+Remove the item from the available catalogue. Raise \texttt{InUse} if the
+item is referenced by a saved lesson plan. Raise
+\texttt{Coverage} if removing the item would leave fewer than
+three available practice items for any supported target phoneme and word
+position combination (FR-PAR2). Otherwise remove the item.
+
+\item[] \texttt{listLessonPlans(actor, patientId)}\par
+Verify that the patient exists and that the actor is authorized to access
+the patient's records. Return the saved lesson plans associated with that
+patient. Return an empty sequence when the patient has no saved plans.
+
+\item[] \texttt{createLessonPlan(actor, patientId, name, itemIds)}\par
+Verify patient access, that the plan name is valid, and that every supplied
+practice-item identifier exists in the available catalogue. Require at
+least one practice item. Store the ordered sequence of item identifiers
+without changing its order, associate the new plan with the supplied
+patient, and return the saved plan. Raise \texttt{Invalid} if the plan name
+or item sequence is invalid.
+
+\item[] \texttt{getLessonPlan(actor, patientId, planId)}\par
+Verify access to the supplied patient and confirm that the plan belongs to
+that patient. Return the plan together with its practice items resolved in
+the saved order. Raise \texttt{Missing} if the plan or any referenced item
+cannot be found. Session Management uses this operation to obtain the
+practice content selected for a session.
+
+\item[] \texttt{updateLessonPlan(actor, patientId, plan)}\par
+Verify access to the patient and confirm that the plan identifier belongs
+to that patient. Validate the plan name and every referenced practice item.
+Replace the saved name and ordered item sequence while preserving the plan
+identifier and patient association. Raise \texttt{Invalid} if the plan
+contains no items or references an unavailable item.
+
+\item[] \texttt{deleteLessonPlan(actor, patientId, planId)}\par
+Verify access to the patient and confirm that the plan belongs to that
+patient. Remove the saved plan. Practice items referenced by the deleted
+plan remain in the catalogue.
+\end{description}
+
 
 \clearpage
 \section{MIS of Patient Records \& Progress Tracking} \label{mis:records}
