@@ -337,6 +337,7 @@ because they use modules from the lower levels.
 
 \begin{figure}[H]
 \centering
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
   mod/.style={draw, rectangle, rounded corners, minimum width=3.4cm,
               minimum height=0.9cm, align=center, font=\small},
@@ -349,13 +350,13 @@ because they use modules from the lower levels.
 \node[mod] (session) at (0,4) {Session Management\\(\mref{mSessionManagement})};
 
 % Level 2
-\node[mod] (lesson)   at (-4.8,2) {Lesson Plan\\(\mref{mPracticeItems})};
-\node[mod] (analysis) at (0,2)    {Audio Analysis\\(\mref{mSpeechAnalysis})};
-\node[mod] (audio)    at (4.8,2)  {Audio Input\\(\mref{mAudioCapture})};
+\node[mod] (lesson)   at (-4.8,2) {Practice Items \&\\Lesson Plans\\(\mref{mPracticeItems})};
+\node[mod] (analysis) at (0,2)    {Speech Analysis\\(\mref{mSpeechAnalysis})};
+\node[mod] (audio)    at (4.8,2)  {Audio Capture\\(\mref{mAudioCapture})};
 
 % Level 1 (bottom)
-\node[mod] (patient) at (-4.8,0) {Patient Management\\(\mref{mPatientRecords})};
-\node[mod] (hh)      at (4.8,0)  {Hardware Hiding\\(\mref{mHH})};
+\node[mod] (patient) at (-4.8,0) {Patient Records \&\\Progress Tracking\\(\mref{mPatientRecords})};
+\node[mod] (hh)      at (4.8,0)  {Audio Input Adapter\\(\mref{mHH})};
 
 % A uses B: arrow from A to B
 \draw[uses] (dash)    -- (session);
@@ -366,7 +367,8 @@ because they use modules from the lower levels.
 \draw[uses] (session) -- (patient);
 \draw[uses] (lesson)  -- (patient);
 \draw[uses] (audio)   -- (hh);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Use hierarchy among modules}
 \label{FigUH}
 \end{figure}
@@ -443,6 +445,10 @@ usability checks and reporting (FR-AC1--3).
 \item[Implemented By:] Python (PyTorch/Hugging Face model, PanPhon library)
 \item[Type of Module:] Abstract Object
 \end{description}
+
+Speech Analysis (\mref{mSpeechAnalysis}) hides model loading, invocation,
+and conversion of model output into phonemes and confidence values. It
+classifies attempts and identifies substitutions, omissions, and additions.
 
 \subsubsection{Session Management (\mref{mSessionManagement})}
 
@@ -560,20 +566,17 @@ dashboard)
 
 \begin{description}
 \item[Secrets:] The durable storage representation of patient records,
-sessions, attempts, and audit events.
+sessions, attempts, audit events, practice items, and lesson plans.
 \item[Services:] Provides storage and retrieval operations to Patient Records
 \& Progress Tracking (\mref{mPatientRecords}). Stores a completed session
 and its attempts as a single operation and preserves their patient association
 and original and overridden results (FR-DMR2--3 and FR-DMR6--7). Supports
 patient-record deletion and retention and retrieval of the audit trail
-(FR-DMR4--5 and FR-HA9).
+(FR-DMR4--5 and FR-HA9). Provides durable storage for the practice-item
+catalogue and saved lesson plans (Section~\ref{mis:practice}).
 \item[Implemented By:] PronouncedFish
 \item[Type of Module:] Abstract Object
 \end{description}
-
-Speech Analysis (\mref{mSpeechAnalysis}) hides model loading, invocation,
-and conversion of model output into phonemes and confidence values. It
-classifies attempts and identifies substitutions, omissions, and additions.
 
 \section{Connection Between Requirements and Design} \label{SecConnection}
 
@@ -743,7 +746,7 @@ FR-DMR4  & \mref{mPatientRecords}, \mref{mPersistence}\\
 FR-DMR5  & \mref{mPatientRecords}, \mref{mPersistence}\\
 FR-DMR6  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
 FR-DMR7  & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
-FR-DMR8  & \mref{mPatientRecords}, \mref{mClinicianDashboard}. \mref{mPersistence}\\
+FR-DMR8  & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
 FR-DMR9  & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
 FR-DMR10 & \mref{mPatientRecords}, \mref{mClinicianDashboard}, \mref{mPersistence}\\
 FR-DMR11 & \mref{mSessionManagement}, \mref{mPatientRecords}, \mref{mPersistence}\\
@@ -810,7 +813,7 @@ This represents the high-level caseload and session overview that an SLP require
 {
   \includegraphics[width=0.8\textwidth]{W1.png}
 }
-\caption{\label{<Label>} Wireframe 1}
+\caption{Wireframe 1}\label{fig:wireframe-1}
 \end{center}
 \end{figure}
 
@@ -824,7 +827,7 @@ This represents what an SLP may want to view for session analysis. It shows data
 {
   \includegraphics[width=0.8\textwidth]{W2.png}
 }
-\caption{\label{<Label>} Wireframe 2}
+\caption{Wireframe 2}\label{fig:wireframe-2}
 \end{center}
 \end{figure}
 
@@ -838,7 +841,7 @@ This represents another potential view option for session analysis. The represen
 {
   \includegraphics[width=0.8\textwidth]{W3.png}
 }
-\caption{\label{<Label>} Wireframe 3}
+\caption{Wireframe 3}\label{fig:wireframe-3}
 \end{center}
 \end{figure}
 
@@ -852,7 +855,7 @@ This represents a feature which would allow an SLP to add and adjust practice pl
 {
   \includegraphics[width=0.8\textwidth]{W4.png}
 }
-\caption{\label{<Label>} Wireframe 4}
+\caption{Wireframe 4}\label{fig:wireframe-4}
 \end{center}
 \end{figure}
 
@@ -866,7 +869,7 @@ This represents another potential design for an SLP's practice plans. It shows a
 {
   \includegraphics[width=0.8\textwidth]{W5.png}
 }
-\caption{\label{<Label>} Wireframe 5}
+\caption{Wireframe 5}\label{fig:wireframe-5}
 \end{center}
 \end{figure}
 
@@ -884,7 +887,7 @@ This represents what would be shown once a session is started. It is a start scr
 {
   \includegraphics[width=0.8\textwidth]{W6.png}
 }
-\caption{\label{<Label>} Wireframe 6}
+\caption{Wireframe 6}\label{fig:wireframe-6}
 \end{center}
 \end{figure}
 
@@ -898,7 +901,7 @@ This represents how a practice item would be presented during a session. ``Tap t
 {
   \includegraphics[width=0.8\textwidth]{W7.png}
 }
-\caption{\label{<Label>} Wireframe 7}
+\caption{Wireframe 7}\label{fig:wireframe-7}
 \end{center}
 \end{figure}
 
@@ -912,7 +915,7 @@ This represents the results that would be shown after a practice item is attempt
 {
   \includegraphics[width=0.8\textwidth]{W8.png}
 }
-\caption{\label{<Label>} Wireframe 8}
+\caption{Wireframe 8}\label{fig:wireframe-8}
 \end{center}
 \end{figure}
 
@@ -926,7 +929,7 @@ This represents what the interface shows when a session has been completed. It s
 {
   \includegraphics[width=0.8\textwidth]{W9.png}
 }
-\caption{\label{<Label>} Wireframe 9}
+\caption{Wireframe 9}\label{fig:wireframe-9}
 \end{center}
 \end{figure}
 
@@ -940,7 +943,7 @@ This represents a practice activity with visual guidance on how a patient should
 {
   \includegraphics[width=0.8\textwidth]{W10.png}
 }
-\caption{\label{<Label>} Wireframe 10}
+\caption{Wireframe 10}\label{fig:wireframe-10}
 \end{center}
 \end{figure}
 
@@ -954,8 +957,8 @@ communication paths are described below.
 Audio is captured through the standard browser media interfaces
 (\texttt{MediaDevices.getUserMedia} and \texttt{MediaRecorder}), which are
 provided by the browser and operating system on the tablet (see \mref{mHH}).
-The browser asks the user for microphone permission, and the Audio Input Module
-(\mref{mAudioInput}) only begins recording once permission is granted. If
+The browser asks the user for microphone permission, and Audio Capture
+(\mref{mAudioCapture}) only begins recording once permission is granted. If
 permission is denied or no microphone is available, the failure is reported to
 the user and no recording is started. Recordings are encoded in a single fixed
 format (e.g., WAV at a fixed sample rate) so that the Speech Analysis Module
@@ -1037,20 +1040,10 @@ uses JSON.
 
 \section{Notation and Shared Interface Types}
 
-
-
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
 \cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
-\citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
-multiple assignment statement and conditional rules follow the form $(c_1
-\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
-
-The following table summarizes the primitive data types used by \progname.
-
-
-The mathematical notation used throughout the MIS is summarized
-below.
+\citet{HoffmanAndStrooper1995} and is summarized below.
 
 \begin{table}[H]
     \centering
@@ -1143,6 +1136,445 @@ audit events, respectively. The export formats are implementation decisions.
 \end{description}
 
 \clearpage
+
+\section{Audio Input Adapter (\mref{mHH})} \label{mis:audio-adapter}
+
+The following section describes the syntax, semantics, and access programs offered by the Audio Input Adapter module.
+
+\subsection{Module}
+
+The Audio Input Adapter covers FR-AC1, NFR-POR1--3, and LC5. Its purpose is to provide an abstraction layer between the physical audio input resources and the software responsible for processing audio.
+
+\subsection{Uses}
+
+The Audio Input Adapter uses the underlying platform's audio input capabilities to discover and access compatible audio sources. These may include dedicated microphones, file uploads, and other supported audio input interfaces provided by different browsers and operating systems.
+
+The module uses a general audio input interface with corresponding implementations for each supported source. This allows the system to support different hardware and input methods without requiring changes to the modules that consume audio.
+
+\subsection{Syntax}
+
+The following subsection describes the syntax used by the Audio Input Adapter module, including its exported types, constants, and access programs.
+
+\subsubsection{Exported Types}
+
+The module uses the shared interface types defined in Section~\ref{sec:interface-types}. It provides an \texttt{AudioInputSource} reference representing a compatible audio input resource. This reference allows other modules to interact with an audio source without needing to know its underlying implementation.
+
+The module supplies an audio input source instance to the Audio Capture module. At this stage, the module only provides a reference to a resource capable of supplying audio; it does not capture or store any audio data.
+
+If no compatible audio input resource is supported by the current platform, the module raises a \texttt{SourceUnavailable} exception. This allows the Audio Capture module to notify the SLP that the requested input source is unsupported.
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+The following access programs provide the ability to discover, inspect, and register with compatible audio input sources. The first three programs provide information about the sources supported by the current platform, while the remaining programs determine whether a source can be accessed and attempt to register with it.
+
+\begin{table}[H]
+\centering
+\caption{Exported Access Programs for the Audio Input Adapter Module}
+\label{tab:audio-adapter}
+
+\noindent
+\small
+\begin{tabularx}{\textwidth}{
+    @{}
+    >{\raggedright\arraybackslash}p{0.30\textwidth}
+    >{\raggedright\arraybackslash}p{0.16\textwidth}
+    >{\raggedright\arraybackslash}p{0.23\textwidth}
+    >{\raggedright\arraybackslash}X
+    @{}
+}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{getCompatibleSources}
+& --
+& List of Audio Input Sources
+& Source Discovery Exception\\
+
+\texttt{getCompatibleSourceTypes}
+& --
+& List of Source Types
+& Source Discovery Exception\\
+
+\texttt{getSourceByType}
+& Source Type
+& Audio Input Source
+& Source Discovery Exception, Source Unavailable\\
+
+\texttt{isSourceAvailable}
+& Source Type or Audio Input Source
+& Boolean
+& Source Discovery Exception\\
+
+\texttt{registerWithSource}
+& Audio Input Source
+& Boolean
+& Permission Denied, Source Unavailable\\
+\bottomrule
+\end{tabularx}
+\normalsize
+\end{table}
+
+
+
+\subsection{Semantics}
+
+The following subsection describes the semantics followed by the Audio Input Adapter module, including its state variables, environment variables, assumptions, access routine semantics, and local function semantics.
+
+\subsubsection{State Variables}
+
+The module maintains two lists:
+
+\begin{itemize}
+    \item A list of all currently available compatible audio input sources discovered on the system.
+    \item A list of audio input sources with which the system is currently registered.
+\end{itemize}
+
+These lists are updated whenever the module scans for available sources or successfully registers with an audio input source.
+
+\subsubsection{Environment Variables}
+
+The module relies on environment variables describing the current platform and its available audio input capabilities. These include:
+
+\begin{itemize}
+    \item The operating system and browser currently being used.
+    \item The audio input APIs supported by the current platform, including microphone access and file upload capabilities.
+    \item The availability of physical audio input devices.
+    \item The permission status associated with accessing the requested audio input resources.
+\end{itemize}
+
+These variables are used during source discovery and registration to determine which audio input resources are supported and accessible.
+
+\subsubsection{Assumptions}
+
+\begin{enumerate}
+    \item The underlying platform provides mechanisms for discovering and accessing audio input resources.
+    \item The necessary permissions to access an audio input source can be requested at the time of registration.
+    \item There is only one audio input adapter interface for a given device and source type.
+    \item The module does not provide audio recording capabilities. Actual recording, processing, and storage are responsibilities of the Audio Capture module.
+    \item The availability of an audio input source may change during execution due to changes in connected devices or platform permissions.
+\end{enumerate}
+
+\subsubsection{Access Routine Semantics}
+
+The module provides operations for discovering compatible audio input sources, checking their availability, and registering with a selected source.
+
+\begin{description}
+
+\item[] \texttt{getCompatibleSources}\par
+Scan the current platform for all compatible audio input sources. Return a list of references to the discovered adapters. If the scan fails, raise \texttt{SourceDiscoveryException}. The operation does not attempt to register with or interact with any discovered source.
+
+\item[] \texttt{getCompatibleSourceTypes}\par
+Scan the current platform for compatible audio input sources and return a list of the corresponding supported source types. This allows the caller to determine which input methods are supported without needing to inspect individual adapter implementations. If the scan fails, raise \texttt{SourceDiscoveryException}.
+
+\item[] \texttt{getSourceByType}\par
+Scan the current platform for compatible audio input sources and locate the adapter corresponding to the specified source type. Return a reference to the matching adapter. If the scan fails, raise \texttt{SourceDiscoveryException}. If no compatible adapter exists for the specified type, raise \texttt{SourceUnavailable}.
+
+\item[] \texttt{isSourceAvailable}\par
+Given a source type or audio input source reference, determine whether the corresponding source is currently available for registration. Return \texttt{true} if the source is accessible and can be registered with, and \texttt{false} otherwise. If the availability check cannot be completed due to a discovery failure, raise \texttt{SourceDiscoveryException}. This operation does not attempt to obtain permissions or register with the source.
+
+\item[] \texttt{registerWithSource}\par
+Given an audio input source reference, attempt to register with the corresponding source. This involves obtaining the necessary permissions and establishing access to the audio input resource. If the required permissions have not yet been granted, the underlying platform may prompt the user to grant them. If registration succeeds, add the source to the list of registered sources and return \texttt{true}. If registration fails due to insufficient permissions, raise \texttt{PermissionDeniedException}. If the source is no longer available or cannot be accessed, raise \texttt{SourceUnavailableException}. A failed registration must not add the source to the list of registered sources.
+
+\end{description}
+
+\subsubsection{Local Functions}
+
+\begin{description}
+
+\item[]\texttt{scanAvailableSources}\par
+Scan the current platform for all compatible audio input adapters. Update the module's internal list of available sources with the results of the scan. This function is responsible for translating the platform's available audio input resources into the module's internal state representation. If the scan fails, the corresponding discovery exception is raised.
+\end{description}
+
+\clearpage
+
+\section{Audio Capture (\mref{mAudioCapture})} \label{mis:audio-capture}
+
+The following section describes the syntax, semantics, and access programs offered by the Audio Capture module.
+
+\subsection{Module}
+
+The Audio Capture module covers FR-AC1--3, FR-SM2, NFR-PER1, NFR-SAP2, and NFR-LAL1. Its purpose is to use an audio input adapter to capture audio, apply the necessary preprocessing, and persist recordings when required. The module may also perform lightweight validation and analysis to identify recording errors and report unusable audio.
+
+\subsection{Uses}
+
+The Audio Capture module uses the Audio Input Adapter module to access the currently registered audio input resource. It is responsible for managing the lifecycle of audio data, beginning with recording and ending when the audio is ready to be passed to the Speech Analysis module.
+
+The module may perform several processing stages, including background noise reduction, input format normalization, resampling, and metadata generation. These stages ensure that recordings are in a suitable format for subsequent analysis.
+
+The module also uses a persistence resource to store recordings when required. The SLP may configure whether raw audio is retained for the duration of a patient's visitation cycle, the current session, or not retained permanently at all. Regardless of the persistence setting, recordings are temporarily cached so that they can be referenced throughout the current session.
+
+\subsection{Syntax}
+
+The following subsection describes the syntax used by the Audio Capture module, including its exported types, constants, and access programs.
+
+\subsubsection{Exported Types}
+
+The module supplies a processed audio recording to the Speech Analysis module for further analysis. A recording may be represented by an audio file, a unique recording identifier, or a reference to its associated metadata and audio data.
+
+The module also provides a recording status indicating whether a recording was successfully captured and processed. If a failure occurs during recording, validation, or processing, the appropriate exception is raised.
+
+The resulting recording is made available to the Speech Analysis module through its recording reference. If permanent storage is enabled, the reference may also identify the persisted recording.
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+External modules, primarily the Session Manager, interact with the Audio Capture module through its recording control operations. Preprocessing, validation, caching, and persistence are handled internally by local functions.
+
+\begin{table}[H]
+\centering
+\caption{Exported Access Programs for the Audio Capture Module}
+\label{tab:audio-capture}
+
+\small
+\begin{tabularx}{\textwidth}{
+    @{}
+    >{\raggedright\arraybackslash}p{0.29\textwidth}
+    >{\raggedright\arraybackslash}p{0.16\textwidth}
+    >{\raggedright\arraybackslash}p{0.24\textwidth}
+    >{\raggedright\arraybackslash}X
+    @{}
+}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{startRecording} & -- & -- & RecordingFailed\\
+\texttt{stopRecording} & -- & Recording ID & RecordingFailed\\
+\texttt{pauseRecording} & -- & -- & RecordingFailed\\
+\texttt{resumeRecording} & -- & -- & RecordingFailed\\
+\texttt{saveMostRecentRecording} & -- & Recording ID & RecordingFailed, Unavailable\\
+\bottomrule
+\end{tabularx}
+\normalsize
+\end{table}
+
+\subsection{Semantics}
+
+The following subsection describes the semantics followed by the Audio Capture module, including its state variables, environment variables, assumptions, access routine semantics, and local function semantics.
+
+\subsubsection{State Variables}
+
+The module maintains the following state variables
+
+
+\begin{itemize}
+    \item A recording status indicating the current state of the module. Possible states include \texttt{Idle}, \texttt{Recording}, \texttt{Paused}, and \texttt{Processing}.
+    \item A recording buffer used to temporarily store audio data while a recording is in progress.
+    \item A reference to the most recently completed and validated recording, allowing it to be cached and accessed before being passed to the Speech Analysis module or permanently persisted.
+\end{itemize}
+
+The module may also maintain references to recordings cached during the current session. However, the Session Manager is responsible for maintaining the association between recordings and their corresponding session data.
+
+\subsubsection{Environment Variables}
+
+The primary environment variable used by this module is the registered audio input adapter supplied by the Audio Input Adapter module. This provides access to the microphone, file system, or other supported audio input resource.
+
+The module also relies on the following environmental information:
+
+\begin{itemize}
+    \item Available storage space, to determine whether recordings can be cached or permanently persisted.
+    \item Recording configuration, including sample rate, encoding, and supported audio formats.
+    \item Persistence configuration, determining whether recordings should be retained for the current session, visitation cycle, or not permanently stored.
+\end{itemize}
+
+These variables influence how recordings are captured, processed, and stored.
+
+\subsubsection{Assumptions}
+
+\begin{enumerate}
+    \item Exactly one recording may be in progress at a time.
+    \item The system has successfully registered with a valid Audio Input Adapter and obtained the necessary permissions before recording begins.
+    \item The registered audio input adapter remains available throughout the recording lifecycle.
+    \item The Speech Analysis module has access to validated recordings produced by this module through their corresponding recording references.
+    \item The system provides sufficient temporary memory to cache recordings during the current session.
+    \item The recording configuration specifies a supported output format suitable for subsequent speech analysis.
+\end{enumerate}
+
+\subsubsection{Access Routine Semantics}
+
+The Audio Capture module exposes operations that allow the Session Manager to control when audio recording begins, pauses, resumes, and ends. The Session Manager may use these operations to support different recording workflows.
+
+For example, the SLP may choose to record continuously throughout a session, start and stop recording around individual target words, or temporarily pause recording while providing instructions or hints to the child.
+
+\begin{description}
+
+\item[] \texttt{startRecording}\par
+Initialize the audio recorder and begin capturing audio from the currently registered audio input adapter. Set the module's recording status to \texttt{Recording} and initialize the recording buffer. If the module is not in a valid state to begin recording, or if the audio input resource cannot be accessed, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{stopRecording}\par
+Stop capturing audio and finalize the current recording buffer. Set the recording status to \texttt{Processing} and execute the internal validation, caching, and preprocessing pipeline. Once processing is complete, store a reference to the resulting recording as the most recent recording and return its unique recording identifier. If the recording cannot be finalized, validated, or processed, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{pauseRecording}\par
+Temporarily suspend audio capture while preserving the current recording buffer. Set the recording status to \texttt{Paused}. The recording may subsequently be continued using \texttt{resumeRecording()}. If no recording is currently in progress or the underlying audio resource cannot be paused, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{resumeRecording}\par
+Resume audio capture using the existing recording buffer. Set the recording status to \texttt{Recording} and continue appending audio data to the current recording. If the module is not currently in the \texttt{Paused} state or the audio input resource cannot resume capture, raise \texttt{RecordingFailed}.
+
+\item[] \texttt{saveMostRecentRecording}\par
+Persist the most recently completed and validated recording using the configured persistence settings. Return the unique recording identifier associated with the persisted recording. If no completed recording is available, or if persistence fails, raise \texttt{RecordingFailed} or \texttt{Unavailable}, respectively. The operation does not modify the original recording or its processed contents.
+
+\end{description}
+
+The module may additionally support configurable automation, including automatically saving a recording when recording is stopped and automatically extracting relevant audio clips from a longer recording. These behaviours are controlled internally and do not require additional external access programs.
+
+\subsubsection{Local Functions}
+
+The following local functions are used internally to manage the recording lifecycle and prepare audio data for the Speech Analysis module.
+
+\begin{description}
+
+\item[] \texttt{validateRecording}\par
+Perform lightweight validation to ensure that the captured audio is non-empty, uncorrupted, sufficiently clear, and in a supported format. If the recording fails validation, raise an appropriate recording validation exception so that the system can report that the audio is unusable.
+
+\item[] \texttt{cacheRecording}\par
+Temporarily store a validated recording in session-accessible memory. This ensures that the recording remains available for reference and subsequent processing throughout the current session, regardless of whether permanent persistence is enabled.
+
+\item[] \texttt{preprocessRecording}\par
+Apply the necessary preprocessing operations to prepare the audio for speech analysis. These operations may include background noise reduction, audio normalization, resampling, and input format conversion. Return the resulting processed recording.
+
+\item[] \texttt{initializeRecorder}\par
+Configure and initialize the audio recorder using the currently registered audio input adapter and the configured recording parameters. Ensure that the module is in a valid state to begin capturing audio.
+
+\item[] \texttt{releaseRecorder}\par
+Release the resources associated with the active audio recorder when recording is no longer required. Ensure that the module returns to the \texttt{Idle} state and that unnecessary hardware resources are no longer held.
+
+\item[] \texttt{postprocessRecording}\par
+Perform the final processing steps after a recording has been captured and validated. This function acts as an umbrella routine for generating recording metadata, assigning a unique recording identifier, updating the most recent recording reference, and persisting the recording when required by the configured settings.
+
+\end{description}
+
+\clearpage
+
+\section{Speech Analysis (\mref{mSpeechAnalysis})} \label{mis:analysis}
+
+\subsection{Module}
+Abstract object SpeechAnalysis. One instance converts a recorded attempt into
+a phoneme-level analysis (FR-SA1, FR-RDV2--3, and FR-HA3). The analysis is
+assistive only and does not replace the judgment of the SLP.
+
+\subsection{Uses}
+None. Session Management (\mref{mSessionManagement}) supplies the recording
+captured through Audio Capture (\mref{mAudioCapture}). The module relies on a
+pre-trained phoneme recognition model and the PanPhon feature table, which are
+external to PronouncedFish.
+
+\subsection{Syntax}
+
+\subsubsection{Exported Types}
+\begin{description}
+\item[ModelConfig] Identifies the phoneme recognition model and the minimum
+confidence below which a recognized phoneme is treated as unreliable.
+\item[Recording] Audio of one attempt in the format fixed by Audio Capture.
+\item[PracticeItem] One or more words. Each word has an expected IPA sequence
+and a set of acceptable variant pronunciations. The practice item and target
+phonemes are the same as those in Attempt
+(Section~\ref{sec:interface-types}).
+\item[Placement] One of initial, medial, or final: the position of an expected
+phoneme within its word.
+\item[Analysis] The original analysis of an Attempt
+(Section~\ref{sec:interface-types}): expected and recognized IPA sequences, an
+ordered sequence of SpeechError, confidence when available, aligned
+observations, and classification.
+\end{description}
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\midrule
+\texttt{initialize} & ModelConfig & -- & Unavailable\\
+\texttt{analyze} & Recording, PracticeItem & Analysis & Unavailable, Invalid\\
+\texttt{placement} & Word length in $\mathbb{N}$, position in $\mathbb{N}$ &
+Placement & Invalid\\
+\texttt{phonemeDistance} & Expected phoneme, produced phoneme &
+$\mathbb{N}$ or absent & Unavailable\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+An initialization flag, initially false, and the loaded recognition model and
+feature table after initialization. No patient data is retained between calls.
+
+\subsubsection{Environment Variables}
+The model files and the PanPhon feature table, read during
+\texttt{initialize}.
+
+\subsubsection{Assumptions}
+The recording was captured through Audio Capture in the agreed format. Each
+word of the practice item has a non-empty expected IPA sequence. Recognized
+phonemes are IPA symbols. Calls to \texttt{analyze} are independent.
+
+\subsubsection{Access Routine Semantics}
+Every operation except \texttt{initialize} and \texttt{placement} raises
+\texttt{Unavailable} when the module has not been initialized or the model
+fails.
+
+\begin{description}
+\item[] \texttt{initialize(config)}\par
+Load the model and the PanPhon feature table, and set the initialization flag
+on success. On failure, raise \texttt{Unavailable}.
+\item[] \texttt{analyze(recording, item)}\par
+Raise \texttt{Invalid} if the recording cannot be decoded or the item has no
+expected phonemes. Otherwise:
+\begin{enumerate}
+\item Recognize the phoneme sequence in the recording, with a confidence value
+for each recognized phoneme when the model provides one.
+\item If no phonemes are recognized, or every recognized phoneme falls below
+the minimum confidence, return an analysis with absent recognized IPA, no
+SpeechError, every observation unclassifiable, and an unclassifiable
+classification. This is not an exception.
+\item Otherwise, for each word apply \texttt{align} between the recognized
+sequence and the expected sequence and each acceptable variant. Use the
+alignment of lowest cost, preferring the expected sequence on a tie.
+\item Produce one observation for each target occurrence. A pair of identical
+phonemes is accepted, a pair of different phonemes is incorrect, and an
+expected phoneme with no counterpart is incorrect with an absent produced
+phoneme. Additions are not target occurrences and produce no observation.
+\item Create one SpeechError per difference: a Substitution for a pair of
+different phonemes, an Omission for an expected phoneme with no counterpart,
+and an Addition for a recognized phoneme with no counterpart. Record the
+expected position of each Substitution and Omission and the insertion location
+of each Addition. Order errors by word occurrence and position.
+\item Classify the attempt as correct when no SpeechError exists and as
+incorrect otherwise.
+\end{enumerate}
+The result is the original machine analysis. SLP corrections and overrides are
+applied by Session Management and never change it.
+\item[] \texttt{placement(length, position)}\par
+Raise \texttt{Invalid} unless $1 \le position \le length$. Return initial if
+$position = 1$, final if $position = length$ and $length > 1$, and medial
+otherwise.
+\item[] \texttt{phonemeDistance(expected, produced)}\par
+Return $\sum_{i=1}^{n}|A_i-B_i|$ where $A$ and $B$ are the PanPhon feature
+vectors of the two phonemes (the Manhattan distance). Return absent if either
+phoneme has no feature vector.
+\end{description}
+
+\subsubsection{Local Functions}
+\texttt{align(expected, recognized)} returns an alignment of two phoneme
+sequences into pairs, omissions, and additions with minimum total cost. A pair
+costs \texttt{phonemeDistance} of its phonemes. An omission or addition costs a
+constant gap cost no smaller than the greatest possible pair distance. A pair
+with an absent distance costs the gap cost. Ties are broken deterministically,
+preferring pairs over gaps and then the earliest alignment.
+
+\noindent The Dashboard normalizes a distance to the closeness scale
+$1 - \frac{distance}{2n}$ (Section~\ref{mis:dashboard}), so both modules use
+the same SRS feature vectors, and recognition confidence is reported separately.
+
+\clearpage
+
 \section{MIS of Session Management} \label{mis:session}
 
 \subsection{Module}
@@ -1302,6 +1734,7 @@ treats a correct attempt as cued when its SupportLevel is semantic cue or
 repetition/model.
 
 \clearpage
+
 \section{MIS of Practice Items \& Lesson Plans} \label{mis:practice}
 
 \subsection{Module}
@@ -1312,10 +1745,12 @@ execute the active session or control the order in which items are presented;
 those responsibilities belong to Session Management.
 
 \subsection{Uses}
-Persistence supplies durable storage and retrieval for the practice-item
-catalogue and saved lesson plans. Patient Records \& Progress Tracking supplies patient lookup and authorization when a
-lesson plan is associated with a patient. Session Management recieves a
-copy of the selected lesson plan, including its practice-item details, when the SLP starts a session. 
+Persistence (Section~\ref{mis:persistence}) supplies durable storage and
+retrieval for the practice-item catalogue and saved lesson plans. Patient
+Records \& Progress Tracking supplies patient lookup and authorization when a
+lesson plan is associated with a patient. Session Management receives a copy
+of the selected lesson plan, including its practice-item details, when the SLP
+starts a session.
 
 \subsection{Syntax}
 
@@ -1346,13 +1781,14 @@ practice-item record used by Session Management. When the SLP starts a
 session, Session Management receives the \texttt{LessonPlanContent} and
 copies its ordered \texttt{PracticeItem} records into the session snapshot.
 Each attempt refers to the corresponding practice item by its identifier.
-Later catalogue edits do not change the practice-item content retained
+Later catalogue edits do not change the practice-item content retained in
+existing session snapshots.
 
 \subsubsection{Exported Constants}
 None.
 
 \subsubsection{Exported Access Programs}
-\noindent\begin{tabularx}{\textwidth}{@{} l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{3.5cm} @{}}
+\noindent\begin{tabularx}{\textwidth}{@{}l L >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3cm}@{}}
 \toprule
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
 \midrule
@@ -1385,7 +1821,7 @@ with the practice item; the module does not itself create or edit image
 assets.
 
 \subsubsection{Assumptions}
-The caller supplies an authenticated actor. 
+The caller supplies an authenticated actor.
 
 \subsubsection{Access Routine Semantics}
 For every operation, verify the actor's authorization. Raise \texttt{Denied}
@@ -1412,7 +1848,7 @@ word-position association, the word, and a valid image cue
 reference. Generate the expected IPA
 transcription from the correct word. Reject the draft with \texttt{Invalid}
 if its word, target association, cue reference, or transcription cannot be
-validated. Store the new item and return it. 
+validated. Store the new item and return it.
 
 \item[] \texttt{updatePracticeItem(actor, itemId, draft)}\par
 Replace the catalogue content for the identified practice item after applying
@@ -1471,315 +1907,6 @@ position combination.
 
 \clearpage
 
-```latex
-\section{Audio Input Adapter (\mref{mHH})} \label{mis:audio-adapter}
-
-The following section describes the syntax, semantics, and access programs offered by the Audio Input Adapter module.
-
-\subsection{Module}
-
-The Audio Input Adapter covers FR-AC1, NFR-POR1--3, and LC5. Its purpose is to provide an abstraction layer between the physical audio input resources and the software responsible for processing audio.
-
-\subsection{Uses}
-
-The Audio Input Adapter uses the underlying platform's audio input capabilities to discover and access compatible audio sources. These may include dedicated microphones, file uploads, and other supported audio input interfaces provided by different browsers and operating systems.
-
-The module uses a general audio input interface with corresponding implementations for each supported source. This allows the system to support different hardware and input methods without requiring changes to the modules that consume audio.
-
-\subsection{Syntax}
-
-The following subsection describes the syntax used by the Audio Input Adapter module, including its exported types, constants, and access programs.
-
-\subsubsection{Exported Types}
-
-The module uses the shared interface types defined in Section~\ref{sec:interface-types}. It provides an \texttt{AudioInputSource} reference representing a compatible audio input resource. This reference allows other modules to interact with an audio source without needing to know its underlying implementation.
-
-The module supplies an audio input source instance to the Audio Capture module. At this stage, the module only provides a reference to a resource capable of supplying audio; it does not capture or store any audio data.
-
-If no compatible audio input resource is supported by the current platform, the module raises a \texttt{SourceUnavailable} exception. This allows the Audio Capture module to notify the SLP that the requested input source is unsupported.
-
-\subsubsection{Exported Constants}
-
-None.
-
-\subsubsection{Exported Access Programs}
-
-The following access programs provide the ability to discover, inspect, and register with compatible audio input sources. The first three programs provide information about the sources supported by the current platform, while the remaining programs determine whether a source can be accessed and attempt to register with it.
-
-\begin{table}[H]
-\centering
-\caption{Exported Access Programs for the Audio Input Adapter Module}
-\label{tab:audio-adapter}
-
-\noindent
-\small
-\begin{tabularx}{\textwidth}{
-    @{}
-    >{\raggedright\arraybackslash}p{0.27\textwidth}
-    >{\raggedright\arraybackslash}p{0.16\textwidth}
-    >{\raggedright\arraybackslash}p{0.26\textwidth}
-    >{\raggedright\arraybackslash}X
-    @{}
-}
-\toprule
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
-\midrule
-\texttt{getCompatibleSources}
-& --
-& List of Audio Input Sources
-& Source Discovery Exception\\
-
-\texttt{getCompatibleSourceTypes}
-& --
-& List of Source Types
-& Source Discovery Exception\\
-
-\texttt{getSourceByType}
-& Source Type
-& Audio Input Source
-& Source Discovery Exception, Source Unavailable\\
-
-\texttt{isSourceAvailable}
-& Source Type or Audio Input Source
-& Boolean
-& Source Discovery Exception\\
-
-\texttt{registerWithSource}
-& Audio Input Source
-& Boolean
-& Permission Denied, Source Unavailable\\
-\bottomrule
-\end{tabularx}
-\normalsize
-\end{table}
-
-
-
-\subsection{Semantics}
-
-The following subsection describes the semantics followed by the Audio Input Adapter module, including its state variables, environment variables, assumptions, access routine semantics, and local function semantics.
-
-\subsubsection{State Variables}
-
-The module maintains two lists:
-
-\begin{itemize}
-    \item A list of all currently available compatible audio input sources discovered on the system.
-    \item A list of audio input sources with which the system is currently registered.
-\end{itemize}
-
-These lists are updated whenever the module scans for available sources or successfully registers with an audio input source.
-
-\subsubsection{Environment Variables}
-
-The module relies on environment variables describing the current platform and its available audio input capabilities. These include:
-
-\begin{itemize}
-    \item The operating system and browser currently being used.
-    \item The audio input APIs supported by the current platform, including microphone access and file upload capabilities.
-    \item The availability of physical audio input devices.
-    \item The permission status associated with accessing the requested audio input resources.
-\end{itemize}
-
-These variables are used during source discovery and registration to determine which audio input resources are supported and accessible.
-
-\subsubsection{Assumptions}
-
-\begin{enumerate}
-    \item The underlying platform provides mechanisms for discovering and accessing audio input resources.
-    \item The necessary permissions to access an audio input source can be requested at the time of registration.
-    \item There is only one audio input adapter interface for a given device and source type.
-    \item The module does not provide audio recording capabilities. Actual recording, processing, and storage are responsibilities of the Audio Capture module.
-    \item The availability of an audio input source may change during execution due to changes in connected devices or platform permissions.
-\end{enumerate}
-
-\subsubsection{Access Routine Semantics}
-
-The module provides operations for discovering compatible audio input sources, checking their availability, and registering with a selected source.
-
-\begin{description}
-
-\item[] \texttt{getCompatibleSources}\par
-Scan the current platform for all compatible audio input sources. Return a list of references to the discovered adapters. If the scan fails, raise \texttt{SourceDiscoveryException}. The operation does not attempt to register with or interact with any discovered source.
-
-\item[] \texttt{getCompatibleSourceTypes}\par
-Scan the current platform for compatible audio input sources and return a list of the corresponding supported source types. This allows the caller to determine which input methods are supported without needing to inspect individual adapter implementations. If the scan fails, raise \texttt{SourceDiscoveryException}.
-
-\item[] \texttt{getSourceByType}\par
-Scan the current platform for compatible audio input sources and locate the adapter corresponding to the specified source type. Return a reference to the matching adapter. If the scan fails, raise \texttt{SourceDiscoveryException}. If no compatible adapter exists for the specified type, raise \texttt{SourceUnavailable}.
-
-\item[] \texttt{isSourceAvailable}\par
-Given a source type or audio input source reference, determine whether the corresponding source is currently available for registration. Return \texttt{true} if the source is accessible and can be registered with, and \texttt{false} otherwise. If the availability check cannot be completed due to a discovery failure, raise \texttt{SourceDiscoveryException}. This operation does not attempt to obtain permissions or register with the source.
-
-\item[] \texttt{registerWithSource}\par
-Given an audio input source reference, attempt to register with the corresponding source. This involves obtaining the necessary permissions and establishing access to the audio input resource. If the required permissions have not yet been granted, the underlying platform may prompt the user to grant them. If registration succeeds, add the source to the list of registered sources and return \texttt{true}. If registration fails due to insufficient permissions, raise \texttt{PermissionDeniedException}. If the source is no longer available or cannot be accessed, raise \texttt{SourceUnavailableException}. A failed registration must not add the source to the list of registered sources.
-
-\end{description}
-
-\subsubsection{Local Functions}
-
-\begin{description}
-
-\item[]\texttt{scanAvailableSources}\par
-Scan the current platform for all compatible audio input adapters. Update the module's internal list of available sources with the results of the scan. This function is responsible for translating the platform's available audio input resources into the module's internal state representation. If the scan fails, the corresponding discovery exception is raised.
-\end{description}
-\section{Audio Capture (\mref{mAudioCapture})} \label{mis:audio-capture}
-
-The following section describes the syntax, semantics, and access programs offered by the Audio Capture module.
-
-\subsection{Module}
-
-The Audio Capture module covers FR-AC1--3, FR-SM2, NFR-PER1, NFR-SAP2, and NFR-LAL1. Its purpose is to use an audio input adapter to capture audio, apply the necessary preprocessing, and persist recordings when required. The module may also perform lightweight validation and analysis to identify recording errors and report unusable audio.
-
-\subsection{Uses}
-
-The Audio Capture module uses the Audio Input Adapter module to access the currently registered audio input resource. It is responsible for managing the lifecycle of audio data, beginning with recording and ending when the audio is ready to be passed to the Speech Analysis module.
-
-The module may perform several processing stages, including background noise reduction, input format normalization, resampling, and metadata generation. These stages ensure that recordings are in a suitable format for subsequent analysis.
-
-The module also uses a persistence resource to store recordings when required. The SLP may configure whether raw audio is retained for the duration of a patient's visitation cycle, the current session, or not retained permanently at all. Regardless of the persistence setting, recordings are temporarily cached so that they can be referenced throughout the current session.
-
-\subsection{Syntax}
-
-The following subsection describes the syntax used by the Audio Capture module, including its exported types, constants, and access programs.
-
-\subsubsection{Exported Types}
-
-The module supplies a processed audio recording to the Speech Analysis module for further analysis. A recording may be represented by an audio file, a unique recording identifier, or a reference to its associated metadata and audio data.
-
-The module also provides a recording status indicating whether a recording was successfully captured and processed. If a failure occurs during recording, validation, or processing, the appropriate exception is raised.
-
-The resulting recording is made available to the Speech Analysis module through its recording reference. If permanent storage is enabled, the reference may also identify the persisted recording.
-
-\subsubsection{Exported Constants}
-
-None.
-
-\subsubsection{Exported Access Programs}
-
-External modules, primarily the Session Manager, interact with the Audio Capture module through its recording control operations. Preprocessing, validation, caching, and persistence are handled internally by local functions.
-
-\begin{table}[H]
-\centering
-\caption{Exported Access Programs for the Audio Capture Module}
-\label{tab:audio-capture}
-
-\small
-\begin{tabularx}{\textwidth}{
-    @{}
-    >{\raggedright\arraybackslash}p{0.27\textwidth}
-    >{\raggedright\arraybackslash}p{0.16\textwidth}
-    >{\raggedright\arraybackslash}p{0.26\textwidth}
-    >{\raggedright\arraybackslash}X
-    @{}
-}
-\toprule
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
-\midrule
-\texttt{startRecording} & -- & -- & RecordingFailed\\
-\texttt{stopRecording} & -- & Recording ID & RecordingFailed\\
-\texttt{pauseRecording} & -- & -- & RecordingFailed\\
-\texttt{resumeRecording} & -- & -- & RecordingFailed\\
-\texttt{saveMostRecentRecording} & -- & Recording ID & RecordingFailed, Unavailable\\
-\bottomrule
-\end{tabularx}
-\normalsize
-\end{table}
-
-\subsection{Semantics}
-
-The following subsection describes the semantics followed by the Audio Capture module, including its state variables, environment variables, assumptions, access routine semantics, and local function semantics.
-
-\subsubsection{State Variables}
-
-The module maintains the following state variables
-
-
-\begin{itemize}
-    \item A recording status indicating the current state of the module. Possible states include \texttt{Idle}, \texttt{Recording}, \texttt{Paused}, and \texttt{Processing}.
-    \item A recording buffer used to temporarily store audio data while a recording is in progress.
-    \item A reference to the most recently completed and validated recording, allowing it to be cached and accessed before being passed to the Speech Analysis module or permanently persisted.
-\end{itemize}
-
-The module may also maintain references to recordings cached during the current session. However, the Session Manager is responsible for maintaining the association between recordings and their corresponding session data.
-
-\subsubsection{Environment Variables}
-
-The primary environment variable used by this module is the registered audio input adapter supplied by the Audio Input Adapter module. This provides access to the microphone, file system, or other supported audio input resource.
-
-The module also relies on the following environmental information:
-
-\begin{itemize}
-    \item Available storage space, to determine whether recordings can be cached or permanently persisted.
-    \item Recording configuration, including sample rate, encoding, and supported audio formats.
-    \item Persistence configuration, determining whether recordings should be retained for the current session, visitation cycle, or not permanently stored.
-\end{itemize}
-
-These variables influence how recordings are captured, processed, and stored.
-
-\subsubsection{Assumptions}
-
-\begin{enumerate}
-    \item Exactly one recording may be in progress at a time.
-    \item The system has successfully registered with a valid Audio Input Adapter and obtained the necessary permissions before recording begins.
-    \item The registered audio input adapter remains available throughout the recording lifecycle.
-    \item The Speech Analysis module has access to validated recordings produced by this module through their corresponding recording references.
-    \item The system provides sufficient temporary memory to cache recordings during the current session.
-    \item The recording configuration specifies a supported output format suitable for subsequent speech analysis.
-\end{enumerate}
-
-\subsubsection{Access Routine Semantics}
-
-The Audio Capture module exposes operations that allow the Session Manager to control when audio recording begins, pauses, resumes, and ends. The Session Manager may use these operations to support different recording workflows.
-
-For example, the SLP may choose to record continuously throughout a session, start and stop recording around individual target words, or temporarily pause recording while providing instructions or hints to the child.
-
-\begin{description}
-
-\item[] \texttt{startRecording}\par
-Initialize the audio recorder and begin capturing audio from the currently registered audio input adapter. Set the module's recording status to \texttt{Recording} and initialize the recording buffer. If the module is not in a valid state to begin recording, or if the audio input resource cannot be accessed, raise \texttt{RecordingFailed}.
-
-\item[] \texttt{stopRecording}\par
-Stop capturing audio and finalize the current recording buffer. Set the recording status to \texttt{Processing} and execute the internal validation, caching, and preprocessing pipeline. Once processing is complete, store a reference to the resulting recording as the most recent recording and return its unique recording identifier. If the recording cannot be finalized, validated, or processed, raise \texttt{RecordingFailed}.
-
-\item[] \texttt{pauseRecording}\par
-Temporarily suspend audio capture while preserving the current recording buffer. Set the recording status to \texttt{Paused}. The recording may subsequently be continued using \texttt{resumeRecording()}. If no recording is currently in progress or the underlying audio resource cannot be paused, raise \texttt{RecordingFailed}.
-
-\item[] \texttt{resumeRecording}\par
-Resume audio capture using the existing recording buffer. Set the recording status to \texttt{Recording} and continue appending audio data to the current recording. If the module is not currently in the \texttt{Paused} state or the audio input resource cannot resume capture, raise \texttt{RecordingFailed}.
-
-\item[] \texttt{saveMostRecentRecording}\par
-Persist the most recently completed and validated recording using the configured persistence settings. Return the unique recording identifier associated with the persisted recording. If no completed recording is available, or if persistence fails, raise \texttt{RecordingFailed} or \texttt{Unavailable}, respectively. The operation does not modify the original recording or its processed contents.
-
-\end{description}
-
-The module may additionally support configurable automation, including automatically saving a recording when recording is stopped and automatically extracting relevant audio clips from a longer recording. These behaviours are controlled internally and do not require additional external access programs.
-
-\subsubsection{Local Functions}
-
-The following local functions are used internally to manage the recording lifecycle and prepare audio data for the Speech Analysis module.
-
-\begin{description}
-
-\item[] \texttt{validateRecording}\par
-Perform lightweight validation to ensure that the captured audio is non-empty, uncorrupted, sufficiently clear, and in a supported format. If the recording fails validation, raise an appropriate recording validation exception so that the system can report that the audio is unusable.
-
-\item[] \texttt{cacheRecording}\par
-Temporarily store a validated recording in session-accessible memory. This ensures that the recording remains available for reference and subsequent processing throughout the current session, regardless of whether permanent persistence is enabled.
-
-\item[] \texttt{preprocessRecording}\par
-Apply the necessary preprocessing operations to prepare the audio for speech analysis. These operations may include background noise reduction, audio normalization, resampling, and input format conversion. Return the resulting processed recording.
-
-\item[] \texttt{initializeRecorder}\par
-Configure and initialize the audio recorder using the currently registered audio input adapter and the configured recording parameters. Ensure that the module is in a valid state to begin capturing audio.
-
-\item[] \texttt{releaseRecorder}\par
-Release the resources associated with the active audio recorder when recording is no longer required. Ensure that the module returns to the \texttt{Idle} state and that unnecessary hardware resources are no longer held.
-
-\item[] \texttt{postprocessRecording}\par
-Perform the final processing steps after a recording has been captured and validated. This function acts as an umbrella routine for generating recording metadata, assigning a unique recording identifier, updating the most recent recording reference, and persisting the recording when required by the configured settings.
-
-\end{description}
 \section{Patient Records \& Progress Tracking (\mref{mPatientRecords})} \label{mis:records}
 
 \subsection{Module}
@@ -1787,7 +1914,8 @@ PatientRecords covers FR-DMR1--11 and FR-HA9, with Session Management supplying
 session and attempt results.
 
 \subsection{Uses}
-Persistence supplies durable reads and atomic writes for patient records, sessions, and audit events.
+Persistence (Section~\ref{mis:persistence}) supplies durable reads and atomic
+writes for patient records, sessions, and audit events.
 
 \subsection{Syntax}
 
@@ -1904,6 +2032,7 @@ a higher rate indicates improvement, and errors in both indicate persistence.
 Fewer than two eligible sessions yields no comparison or trend.
 
 \clearpage
+
 \section{Clinician Dashboard / Results Visualization (\mref{mClinicianDashboard})} \label{mis:dashboard}
 
 \subsection{Module}
@@ -2017,127 +2146,160 @@ vector or no classifiable or corrected produced phoneme has no heat-map
 value.
 
 \clearpage
-\section{Speech Analysis (\mref{mSpeechAnalysis})} \label{mis:analysis}
+
+\section{Persistence (\mref{mPersistence})} \label{mis:persistence}
 
 \subsection{Module}
-Abstract object SpeechAnalysis. One instance converts a recorded attempt into
-a phoneme-level analysis (FR-SA1, FR-RDV2--3, and FR-HA3). The analysis is
-assistive only and does not replace the judgment of the SLP.
+Persistence is an abstract object that stores patient records, completed
+sessions and their attempts, audit events, practice items, and lesson plans.
+It hides the storage representation and transaction mechanism.
 
 \subsection{Uses}
-None. Session Management (\mref{mSessionManagement}) supplies the recording
-captured through Audio Capture (\mref{mAudioCapture}). The module relies on a
-pre-trained phoneme recognition model and the PanPhon feature table, which are
-external to PronouncedFish.
+The clinical operations use the shared types in
+Section~\ref{sec:interface-types}. The catalogue operations use PracticeItem,
+LessonPlan, and LessonPlanContent from Section~\ref{mis:practice}.
 
 \subsection{Syntax}
 
 \subsubsection{Exported Types}
 \begin{description}
-\item[ModelConfig] Identifies the phoneme recognition model and the minimum
-confidence below which a recognized phoneme is treated as unreliable.
-\item[Recording] Audio of one attempt in the format fixed by Audio Capture.
-\item[PracticeItem] One or more words. Each word has an expected IPA sequence
-and a set of acceptable variant pronunciations. The practice item and target
-phonemes are the same as those in Attempt
-(Section~\ref{sec:interface-types}).
-\item[Placement] One of initial, medial, or final: the position of an expected
-phoneme within its word.
-\item[Analysis] The original analysis of an Attempt
-(Section~\ref{sec:interface-types}): expected and recognized IPA sequences, an
-ordered sequence of SpeechError, confidence when available, aligned
-observations, and classification.
+\item[PatientRef] The retained patient identity reference in an AuditEvent.
+It identifies the same patient before and after deletion of the active record.
+\item[WriteMode] Either \texttt{insert} for a new identifier or \texttt{replace}
+for updating an existing record.
 \end{description}
 
 \subsubsection{Exported Constants}
 None.
 
 \subsubsection{Exported Access Programs}
-\noindent\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+Every program may raise \texttt{Unavailable} if the store cannot be used.
+
+\noindent\begin{tabularx}{\textwidth}{@{}l L L L@{}}
 \toprule
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
 \midrule
-\texttt{initialize} & ModelConfig & -- & Unavailable\\
-\texttt{analyze} & Recording, PracticeItem & Analysis & Unavailable, Invalid\\
-\texttt{placement} & Word length in $\mathbb{N}$, position in $\mathbb{N}$ &
-Placement & Invalid\\
-\texttt{phonemeDistance} & Expected phoneme, produced phoneme &
-$\mathbb{N}$ or absent & Unavailable\\
+\texttt{initialize} & StoreConfig & -- & --\\
+\texttt{createPatient} & Patient, AuditEvent & -- & Conflict\\
+\texttt{updatePatient} & Patient, AuditEvent & -- & Missing\\
+\texttt{readPatient} & Patient identifier, AuditEvent & Patient & Missing\\
+\texttt{deletePatient} & Patient identifier, AuditEvent & -- & Missing\\
+\texttt{saveSession} & Session, AuditEvent & -- & Missing, Invalid, Conflict\\
+\texttt{readHistory} & Patient identifier, AuditEvent & Sequence of Session &
+Missing\\
+\texttt{readAudit} & PatientRef & Sequence of AuditEvent & --\\
+\bottomrule
+\end{tabularx}
+
+\medskip
+\noindent\begin{tabularx}{\textwidth}{@{}l L L L@{}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Other Exceptions}\\
+\midrule
+\texttt{listPracticeItems} & -- & Sequence of PracticeItem & --\\
+\texttt{writePracticeItem} & PracticeItem, WriteMode & -- & Missing, Conflict\\
+\texttt{deletePracticeItem} & Practice-item identifier & -- & Missing, InUse\\
+\texttt{listLessonPlans} & -- & Sequence of LessonPlan & --\\
+\texttt{readLessonPlan} & Lesson-plan identifier & LessonPlanContent & Missing\\
+\texttt{writeLessonPlan} & LessonPlan, WriteMode & -- & Missing, Conflict\\
+\texttt{deleteLessonPlan} & Lesson-plan identifier & -- & Missing\\
 \bottomrule
 \end{tabularx}
 
 \subsection{Semantics}
 
 \subsubsection{State Variables}
-An initialization flag, initially false, and the loaded recognition model and
-feature table after initialization. No patient data is retained between calls.
+A Boolean initialization flag, initially false, and an optional reference to
+the configured store, initially absent. The store holds active patients by
+patient identifier, completed sessions by session identifier, the append-only
+sequence of audit events, and practice items and lesson plans by their
+respective identifiers. Each stored session belongs to one active patient
+and contains its ordered attempts. Each saved lesson plan references
+existing practice items in the order specified by the plan.
 
 \subsubsection{Environment Variables}
-The model files and the PanPhon feature table, read during
-\texttt{initialize}.
+The durable store identified by StoreConfig.
 
 \subsubsection{Assumptions}
-The recording was captured through Audio Capture in the agreed format. Each
-word of the practice item has a non-empty expected IPA sequence. Recognized
-phonemes are IPA symbols. Calls to \texttt{analyze} are independent.
+Patient Records \& Progress Tracking authorizes clinical and audit access,
+checks deletion confirmation, and supplies the audit event for each clinical
+operation. Each supplied event describes the requested action and information
+type and includes its timestamp, actor identity, and the matching PatientRef.
+Practice Items \& Lesson Plans authorizes catalogue access and validates
+practice content, plan content, and minimum catalogue coverage.
 
 \subsubsection{Access Routine Semantics}
-Every operation except \texttt{initialize} and \texttt{placement} raises
-\texttt{Unavailable} when the module has not been initialized or the model
-fails.
+After initialization, each operation observes a consistent store state.
+Writes are atomic and durable on success. A failed operation leaves stored
+records and audit events unchanged. Every operation except
+\texttt{initialize} raises \texttt{Unavailable} before initialization.
 
 \begin{description}
 \item[] \texttt{initialize(config)}\par
-Load the model and the PanPhon feature table, and set the initialization flag
-on success. On failure, raise \texttt{Unavailable}.
-\item[] \texttt{analyze(recording, item)}\par
-Raise \texttt{Invalid} if the recording cannot be decoded or the item has no
-expected phonemes. Otherwise:
-\begin{enumerate}
-\item Recognize the phoneme sequence in the recording, with a confidence value
-for each recognized phoneme when the model provides one.
-\item If no phonemes are recognized, or every recognized phoneme falls below
-the minimum confidence, return an analysis with absent recognized IPA, no
-SpeechError, every observation unclassifiable, and an unclassifiable
-classification. This is not an exception.
-\item Otherwise, for each word apply \texttt{align} between the recognized
-sequence and the expected sequence and each acceptable variant. Use the
-alignment of lowest cost, preferring the expected sequence on a tie.
-\item Produce one observation for each target occurrence. A pair of identical
-phonemes is accepted, a pair of different phonemes is incorrect, and an
-expected phoneme with no counterpart is incorrect with an absent produced
-phoneme. Additions are not target occurrences and produce no observation.
-\item Create one SpeechError per difference: a Substitution for a pair of
-different phonemes, an Omission for an expected phoneme with no counterpart,
-and an Addition for a recognized phoneme with no counterpart. Record the
-expected position of each Substitution and Omission and the insertion location
-of each Addition. Order errors by word occurrence and position.
-\item Classify the attempt as correct when no SpeechError exists and as
-incorrect otherwise.
-\end{enumerate}
-The result is the original machine analysis. SLP corrections and overrides are
-applied by Session Management and never change it.
-\item[] \texttt{placement(length, position)}\par
-Raise \texttt{Invalid} unless $1 \le position \le length$. Return initial if
-$position = 1$, final if $position = length$ and $length > 1$, and medial
-otherwise.
-\item[] \texttt{phonemeDistance(expected, produced)}\par
-Return $\sum_{i=1}^{n}|A_i-B_i|$ where $A$ and $B$ are the PanPhon feature
-vectors of the two phonemes (the Manhattan distance). Return absent if either
-phoneme has no feature vector.
+Open the store identified by \texttt{config} and set the initialization flag.
+Raise \texttt{Unavailable} if the store cannot be opened. On failure, retain
+the previous initialization state and store reference.
+
+\item[] \texttt{createPatient(patient, event)}, \texttt{updatePatient(patient, event)}\par
+Create a patient record or replace the identifying information for an
+existing patient, respectively. Append the supplied event in the same
+transaction. Raise \texttt{Conflict} on creation if the identifier is
+already in use or has been retired. Raise \texttt{Missing} on update if the
+patient is absent from active records.
+
+\item[] \texttt{readPatient(patientId, event)}, \texttt{readHistory(patientId, event)}\par
+Raise \texttt{Missing} if the patient is absent from active records. Read
+the patient or the patient's completed sessions, respectively. Append the
+supplied view or export event before returning the result. Order sessions by
+date, breaking ties by session identifier. Return an empty sequence for a
+patient with no completed sessions.
+
+\item[] \texttt{deletePatient(patientId, event)}\par
+Raise \texttt{Missing} if the patient is absent from active records. Remove
+the active patient and all associated sessions and attempts, and append the
+deletion event in a single transaction. Retain the patient's identity
+reference and all prior audit events.
+
+\item[] \texttt{saveSession(session, event)}\par
+Raise \texttt{Invalid} if the session is incomplete, lacks a patient
+identifier, or contains duplicate attempt identifiers. Raise \texttt{Missing}
+if the patient is absent from active records. If the session identifier
+already exists, return success for an identical snapshot without appending
+another event, or raise \texttt{Conflict} for a different snapshot. Otherwise
+store the session and its ordered attempts and append the modification event
+in one transaction. Preserve each attempt's support level, original analysis,
+and any SLP correction.
+
+\item[] \texttt{readAudit(patientRef)}\par
+Return all matching events in append order, including those for a deleted
+patient. Return an empty sequence if the reference has no matching events.
+
+\item[] \texttt{listPracticeItems()}, \texttt{listLessonPlans()}\par
+Return the corresponding records in a stable identifier order. Return an
+empty sequence when the collection is empty.
+
+\item[] \texttt{readLessonPlan(planId)}\par
+Return the identified plan and its current practice items in the saved item
+order from the same store state. Raise \texttt{Missing} if the plan is absent.
+
+\item[] \texttt{writePracticeItem(item, mode)}, \texttt{writeLessonPlan(plan, mode)}\par
+Store the supplied record under its identifier. Raise \texttt{Conflict} if
+\texttt{insert} targets an existing identifier, or \texttt{Missing} if
+\texttt{replace} targets an absent identifier. For a lesson plan, check in
+the same transaction that every referenced practice item exists. Raise
+\texttt{Missing} for an absent item and preserve the supplied item order on
+success.
+
+\item[] \texttt{deletePracticeItem(itemId)}, \texttt{deleteLessonPlan(planId)}\par
+Remove the identified record. Raise \texttt{Missing} for an absent
+identifier. Check in the same transaction that no saved lesson plan
+references a practice item being deleted. Raise \texttt{InUse} if a
+reference exists. Previously saved session snapshots retain their own
+practice-item content.
 \end{description}
 
 \subsubsection{Local Functions}
-\texttt{align(expected, recognized)} returns an alignment of two phoneme
-sequences into pairs, omissions, and additions with minimum total cost. A pair
-costs \texttt{phonemeDistance} of its phonemes. An omission or addition costs a
-constant gap cost no smaller than the greatest possible pair distance. A pair
-with an absent distance costs the gap cost. Ties are broken deterministically,
-preferring pairs over gaps and then the earliest alignment.
-
-\noindent The Dashboard normalizes a distance to the closeness scale
-$1 - \frac{distance}{2n}$ (Section~\ref{mis:dashboard}), so both modules use
-the same SRS feature vectors, and recognition confidence is reported separately.
+None.
 
 \clearpage
 
@@ -2150,14 +2312,14 @@ the same SRS feature vectors, and recognition confidence is reported separately.
 \midrule
 \endfirsthead
 
-\multicolumn{2}{l}{\textit{Table \thetable{} continued from previous page}}\\
+\multicolumn{3}{l}{\textit{Table \thetable{} continued from previous page}}\\
 \toprule
-\textbf{Req.} & \textbf{Modules}\\
+\textbf{Deliverable} & \textbf{Due Date} & \textbf{Responsibility}\\
 \midrule
 \endhead
 
 \midrule
-\multicolumn{2}{r}{\textit{Continued on next page}}\\
+\multicolumn{3}{r}{\textit{Continued on next page}}\\
 \endfoot
 
 \bottomrule
@@ -2168,7 +2330,7 @@ Model Training Scripts & Nov 27th, 2026 & James Araiche\\
 Proof Of Concept Complete & Dec 1st, 2026 & Entire Team\\
 Implementation of Audio Input Module & Jan 8th, 2026 & Gurmanjot Minhas\\
 Implementation of Speech Analysis Module & Jan 15th, 2026 & Sarah Dorfman\\
-Design Documenet Rev 0 & Jan 18th, 2027 & Entire Team\\
+Design Document Rev 0 & Jan 18th, 2027 & Entire Team\\
 Implementation of Other Capstone Team's Module & Jan 21st, 2027 & Entire Team\\
 Implementation of Audio Capture Module & Jan 30th, 2027 & Lily Porter\\
 Revision 0 Presentations & Feb 1st - 11th, 2027 & Entire team\\
