@@ -320,7 +320,7 @@ because they use modules from the lower levels.
 
 % Level 2
 \node[mod] (lesson)   at (-4.8,2) {Lesson Plan\\(\mref{mLesson})};
-\node[mod] (analysis) at (0,2)    {Audio Analysis\\(\mref{mAudioAnalysis})};
+\node[mod] (analysis) at (0,2)    {Speech Analysis\\(\mref{mSpeechAnalysis})};
 \node[mod] (audio)    at (4.8,2)  {Audio Input\\(\mref{mAudioInput})};
 
 % Level 1 (bottom)
@@ -383,7 +383,7 @@ usability checks and reporting (FR-AC1--3).
 \item[Type of Module:] Abstract Object
 \end{description}
 
-\subsubsection{Audio Analysis Module (\mref{mAudioAnalysis})}
+\subsubsection{Speech Analysis Module (\mref{mSpeechAnalysis})}
 
 \begin{description}
 \item[Secrets:] The algorithms and models used to convert recorded speech into
@@ -932,8 +932,8 @@ The browser asks the user for microphone permission, and the Audio Input Module
 (\mref{mAudioInput}) only begins recording once permission is granted. If
 permission is denied or no microphone is available, the failure is reported to
 the user and no recording is started. Recordings are encoded in a single fixed
-format (e.g., WAV at a fixed sample rate) so that the Audio Analysis Module
-(\mref{mAudioAnalysis}) always receives consistent input.
+format (e.g., WAV at a fixed sample rate) so that the Speech Analysis Module
+(\mref{mSpeechAnalysis}) always receives consistent input.
 
 \subsection{Tablet to Server}
 
@@ -2201,7 +2201,7 @@ Please note that we combined the MG and MIS into this one document so the reflec
   or a proxy (e.g. your peers, stakeholders, potential users)? For those that
   were not, why, and where did they come from?
 
-        Almost all of our design decisions stemmed from our supervisor, who acts as a proxy to our clients (SLPs). Others were software decisions made through group discussions. We were told that most SLPs use iPads for their sessions, so it brought up the idea of the audio input adapter module, as future expansions would need some abstract adapter to interface with various OS or hardware. We determined that an audio capture module would be helpful as well in case any pre-processing was needed. We were also told that SLPs would love to have a replay feature that lets them play back recordings from a session, so a save feature may be integrated here too. For session management, patient management, practice items, and dashboard element modules, we conducted interviews with our stakeholders using wireframe sketches. These discussions inspired a need for related features, so we partitioned them into related, abstract modules. A big part of our design is the audio analysis portion so it was a common understanding between us and the supervisors that this was a necessary portion. This is essential so we could put other ML models, or analysis mechanisms in general, even if they are unrelated to SLP needs. For example, it leaves it open for accent coaches as well. 
+        Almost all of our design decisions stemmed from our supervisor, who acts as a proxy to our clients (SLPs). Others were software decisions made through group discussions. We were told that most SLPs use iPads for their sessions, so it brought up the idea of the audio input adapter module, as future expansions would need some abstract adapter to interface with various OS or hardware. We determined that an audio capture module would be helpful as well in case any pre-processing was needed. We were also told that SLPs would love to have a replay feature that lets them play back recordings from a session, so a save feature may be integrated here too. For session management, patient management, practice items, and dashboard element modules, we conducted interviews with our stakeholders using wireframe sketches. These discussions inspired a need for related features, so we partitioned them into related, abstract modules. A big part of our design is the speech analysis portion so it was a common understanding between us and the supervisors that this was a necessary portion. This is essential so we could put other ML models, or analysis mechanisms in general, even if they are unrelated to SLP needs. For example, it leaves it open for accent coaches as well. 
 
   \item While creating the design doc, what parts of your other documents (e.g.
   requirements, hazard analysis, etc), it any, needed to be changed, and why?
