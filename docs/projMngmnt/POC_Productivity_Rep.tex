@@ -22,19 +22,13 @@ This document summarizes the contributions of each team member up to the POC
 Demo.  The time period of interest is the time between the beginning of the term
 and the POC demo.
 
-\wss{Please do not delete sections or modify the table formats.  Standardization
-helps the instructors and TAs to review these documents. You may add sections to
-the report.}
-
-\wss{Remove the instructor guidelines/comments in the final version.}
-
-\wss{Fill in the requested information, like project url, TA name, supervisor name, etc.}
-
 \section{Demo Plans}
 
-\wss{What is your feasibility risk?}
+During the POC demonstration, we will be demonstrating an initial version of our software at work. The current interface is based on the \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/CDs/Wireframe/Wireframe.pdf}{wireframe sketches} mentioned in our custom document, which we got feedback from our supervisors on. 
 
-\wss{What will you be demonstrating}
+The main element we want to show is that our speech processing model is able to interpret child audio at the accuracy detailed in our \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/SRS/SRS.pdf}{SRS}. To achieve this, we found datasets on \href{https://talkbank.org/phon/}{TalkBank} which allow usage for educational and research purposes. Based on this, we extracted all audio files and labelled them with their produced and expected IPA transcriptions. Next, we used an open machine learning based child audio processing model called the Pasketti model. This model may be fine tuned with our data to achieve our specified accuracy. 
+
+The goal is to show that we can achieve an acceptable IPA transcription accuracy within 10 seconds of audio input for a variety of test cases. This may be using the model directly, or by fine tuning it with our obtained dataset. The microphone used will be from an iPad, and the output results and analysis will be shown on the computer. 
 
 \section{Team Meeting Attendance}
 
@@ -123,11 +117,7 @@ Name 5 & Num\\
 
 \section{TA Document Discussion Attendance}
 
-\wss{For each team member how many of the informal document discussion meetings
-with the TA were attended over the time period of interest. The first row is the
-total number of discussion meetings scheduled by the TA with the team.}
-
-\noindent \textbf{TA's Name: } [fill in this information]
+\noindent \textbf{TA's Name: } Tanya Djavaherpour
 
 \begin{table}[H]
 \centering
@@ -136,34 +126,19 @@ total number of discussion meetings scheduled by the TA with the team.}
 \textbf{Student} & \textbf{Meetings}\\
 \midrule
 Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Hemal Rajput & 4\\
+James Araiche & 4\\
+Gurmanjot Minhas & 4\\
+Lily Porter & 4\\
+Sarah Dorfman & 4\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the attendance can be provided here.}
+All group members were present for each TA meeting. 
+No additional meetings with the TA occured. 
 
 \section{Commits, Lines Added and Lines Deleted, Pull Requests}
-
-\wss{For each team member how many commits to the main branch have been made
-over the time period of interest.  The total is the total number of commits for
-the entire team since the beginning of the term.  The percentage is the
-percentage of the total commits made by each team member.}
-
-\wss{There are also columns for lines added and lines deleted to give a sense of
-the magnitude of each team member's contributions.  Note that these numbers can
-be somewhat misleading, as a team member who does refactoring may have high
-numbers in both columns, while a team member who implements a large new feature
-may have a high number of lines added, but few lines deleted.  As for all commit
-information, these numbers will be interpreted with care.}
-
-\wss{The pull requests column counts the number of pull requests created by each
-team member.  This is a measure of how many contributions were made in branches,
-which may not be reflected in the commit counts for the main branch.}
 
 \begin{table}[H]
 \centering
@@ -173,25 +148,23 @@ which may not be reflected in the commit counts for the main branch.}
 \textbf{Lines Deleted} & \textbf{Pull Requests}\\
 \midrule
 Total & Num & 100\% & total added & total deleted & total PRs\\
-Name 1 & Num & \% & num & num & num\\
-Name 2 & Num & \% & num & num & num\\
-Name 3 & Num & \% & num & num & num\\
-Name 4 & Num & \% & num & num & num\\
-Name 5 & Num & \% & num & num & num\\
+Hemal Rajput & 16 & 9.6\% & 3662 & 2660 & 13\\
+Gurmanjot Minhas & 23 & 13.9\% & 1254 & 526 & 15\\
+James Araiche & 38 & 22.9\% & 2106 & 796 & 21\\
+Lily Porter & 36 & 21.7\% & 12838 & 1012 & 18\\
+Sarah Dorfman & 53 & 31.9\% & 1097 & 628 & 12\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.  For
-instance, if a team member has more commits to unmerged branches, these numbers
-can be provided here.  If multiple people contribute to a commit, git allows for
-multi-author commits.}
+Since the bulk of revision 0 was documentation, these numbers provide
+little insight to how much work was done by each member. Some people commit
+their work in micro-commits, whereas others do it all at once. Some people copy
+paste text from other text editors so long paragraphs appear on one line, whereas
+others spread them out in the document. Therefore these insights should be taken 
+with a grain of salt.  
 
 \section{Issue Tracker}
-
-\wss{For each team member how many issues have they authored (including open and
-closed issues (O+C)) and how many have they been assigned (only counting closed
-issues (C only)) over the time period of interest.}
 
 \begin{table}[H]
 \centering
@@ -199,22 +172,28 @@ issues (C only)) over the time period of interest.}
 \toprule
 \textbf{Student} & \textbf{Authored (O+C)} & \textbf{Assigned (C only)}\\
 \midrule
-Name 1 & Num & Num \\
-Name 2 & Num & Num \\
-Name 3 & Num & Num \\
-Name 4 & Num & Num \\
-Name 5 & Num & Num \\
+Hemal Rajput & 34 & 5 \\
+Gurmanjot Minhas & 8 & 9 \\
+James Araiche & 13 & 7 \\
+Lily Porter & 31 & 6 \\
+Sarah Dorfman & 8 & 8 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.}
+Everyone has roughly the same number of closed issues. There should be 
+an issue assigned for each document section worked on, so this makes sense.
+Hemal and Lily have significantly more issues created than everyone else. This
+is because Hemal was in charge of making issues for all TA feedback, and Lily
+is in charge of maintaining the Github with issues for all meetings, lectures, 
+and assigned documentation.  
 
 \section{CICD via GitHub Actions}
 
-\wss{Say how CICD technology is used and will be used in your project.}
+\href{https://github.com/lilyporter/Ghoti/tree/main/.github/workflows}{CI/CD} has been used to compile all of the Latex files upon every commit. Since the work so far has been documentation heavy, the provided pipeline has not yet been expanded. 
 
-\wss{Provide links to your CICD yaml files}
+The plan is that once we start writing the actual software, it will be used to run unit tests, and regression tests to make sure key elements are not broken. It will also be used to run Linters to maintain proper code standards. A more detailed description of how it will be used for automated testing can be found in the \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/VnVPlan/VnVPlan.pdf}{VnV Plan} document. 
+
 
 \section{Custom Documents (CDs)}
 
@@ -236,16 +215,6 @@ triggers, if they are found to be too weak, strong or ambiguous.}
 
 \section{Additional Productivity Metrics}
 
-\wss{If your team has additional metrics of productivity, please feel free to
-add them to this report.  If not, please explicitly state that there are no additional
-metrics.}
-
-\wss{Additional metrics can include things like code reviews done, pull requests
-created, count of joining meetings late, count of number of times contributions
-had to be corrected, number of internal deadlines missed, test cases written, etc.}
-
-\wss{We are looking for data on these metrics, not just a list of additional
-metrics the team is planning on tracking.  However, if all you have is a plan,
-please share it here.}
+Our group has no additional metrics for this deliverable. 
 
 \end{document}
