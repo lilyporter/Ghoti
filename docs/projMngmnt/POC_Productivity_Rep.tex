@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{float}
+\usepackage{longtable}
 \restylefloat{table}
 
 \usepackage{booktabs}
@@ -38,39 +39,27 @@ the report.}
 
 \section{Team Meeting Attendance}
 
-\wss{For each team member how many team meetings have they attended over the
-time period of interest.  This number should be determined from the meeting
-issues in the team's repo.  The first entry in the table should be the total
-number of team meetings held by the team.}
-
 \begin{table}[H]
 \centering
 \begin{tabular}{ll}
 \toprule
 \textbf{Student} & \textbf{Meetings}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 8\\
+Hemal & 8\\
+Gurman & 8\\
+James & 8\\
+Lily & 8\\
+Sarah & 8\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.}
+One extra team meeting was conducted between James and Sarah to discuss research for the machine learning portion of the project. This task was explicitly assigned to them so no other team members needed to be in attendance. Therefore, it is excluded from the total count to clearly indicate the attendance for meetings held for the whole team.
 
 \section{Supervisor/Stakeholder Meeting Attendance}
 
-\wss{For each team member how many supervisor/stakeholder team meetings have
-they attended over the time period of interest.  This number should be determined
-from the supervisor meeting issues in the team's repo.  The first entry in the
-table should be the total number of supervisor and team meetings held by the
-team.  If there is no supervisor, there will usually be meetings with
-stakeholders (potential users) that can serve a similar purpose.}
-
-\noindent \textbf{Supervisor's Name: } [fill in this information]
+\noindent \textbf{Supervisor's Name: } Dr. Lyn Turkstra, Dr. Daniel Pape
 
 \begin{table}[H]
 \centering
@@ -78,30 +67,17 @@ stakeholders (potential users) that can serve a similar purpose.}
 \toprule
 \textbf{Student} & \textbf{Meetings}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 4\\
+Hemal & 4\\
+Gurman & 4\\
+James & 4\\
+Lily & 4\\
+Sarah & 4\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the counts can be provided here.}
-
 \section{Lecture Attendance}
-
-\wss{For each team member how many lectures have they attended over the time
-period of interest.  This number should be determined from the lecture issues in
-the team's repo. You can find the number of lectures in the time period of
-interest by looking at the
-\href{https://calendar.google.com/calendar/u/0/embed?src=rnboqiaki1k2la7rpu3bn0um58@group.calendar.google.com&ctz=America/Toronto}
-{Google calendar} for the capstone course. The first entry in the
-table should be the total number of lectures held for the class during the period of interest.}
-
-\wss{NOTE: There will be approximately 13 lectures between the start of class
-and the POC demos}
 
 \begin{table}[H]
 \centering
@@ -109,17 +85,17 @@ and the POC demos}
 \toprule
 \textbf{Student} & \textbf{Lectures}\\
 \midrule
-Total & Num\\
-Name 1 & Num\\
-Name 2 & Num\\
-Name 3 & Num\\
-Name 4 & Num\\
-Name 5 & Num\\
+Total & 12\\
+Hemal & 11\\
+Gurman & 11\\
+James & 11\\
+Lily & 11\\
+Sarah & 11\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\wss{If needed, an explanation for the lecture attendance can be provided here.}
+Majority of us missed the VnV plan lecture due the fact it was midterm season. Sarah had attended the VnV lecture and was able to fill us in on important information that we missed.
 
 \section{TA Document Discussion Attendance}
 
@@ -218,22 +194,56 @@ Name 5 & Num & Num \\
 
 \section{Custom Documents (CDs)}
 
-\wss{What is the plan (as documented in TeamComposition.csv) for the team's
-CDs?  Should the CDs be modified now that the team knows more about the
-project?}
+As documented in TeamComposition.csv, our original plan was to submit a User/Stakeholder/Client interview report as the fall course deliverable (CD) and a usability report in the winter term. Since then, we have learned that our supervisors prefer to review mockups of PronouncedFish, as this lets them give feedback and shape the app to fit their clinical workflow. We have drafted and iterated on several mockups and presented them to our supervisors for comment. Because of this, we have replaced the interview report with a wireframe report as our fall CD. The report captures the main features of the app and the supervisor feedback on its layout and functionality. For example, the mouth-placement map and progress-over-time graphs in the session analysis wireframes were added after supervisors said these visualizations would be useful. Our plan for the winter CD is unchanged: a usability report. By then we expect to have a working prototype in the hands of our supervisors and their students, which will give us valuable feedback for improving the project.
 
 \section{Team Charter Trigger Items}
 
-\wss{Provide a summary of the quantified triggers identified in the team's
-charter.}
+The following triggers are taken from the team charter.
 
-\wss{Provide a list of any violations of the triggers.  If the team wishes, the
-violations can be summarized on aggregate, instead of naming specific team
-members.}
+\begin{itemize}
+    \item[\textbf{Attendance:}] Missing a team meeting without notifying
+    the team in advance (1--3 days for personal or school conflicts) is a
+    trigger. Attendance is tracked at every meeting, with the following
+    thresholds:
+    \begin{itemize}
+        \item Below 80\%: the member is flagged after each meeting.
+        \item Below 60\%: a team discussion is held and an improvement
+        plan may be created.
+        \item Below 50\%: a meeting with the TA is arranged.
+        \item Below 30\%: a meeting with Dr.\ Smith is arranged.
+    \end{itemize}
+    Arriving without required meeting materials, without notifying the
+    team beforehand, is also a trigger.
 
-\wss{Provide a plan to address the violations.  This could include revising the
-triggers, if they are found to be too weak, strong or ambiguous.}
+    \item[\textbf{Quality:}] A pattern of failing to deliver quality work
+    for meetings or deliverables is a trigger. The team discusses next
+    steps at a team meeting and, if the pattern continues, raises it with
+    Dr.\ Smith.
 
+    \item[\textbf{Attitude:}] A violation of the code of conduct is a
+    trigger. The issue is first discussed between the individuals
+    involved, then at the team level, then with the TAs or professor. Serious
+    or harmful conflicts go directly to Dr.\ Smith.
+
+    \item[\textbf{Stay on track:}] Missing two project deadlines triggers
+    frequent or daily check-ins. If deadlines continue to be missed, the
+    team will arrange a discussion with Dr.\ Smith.
+
+    \item[\textbf{Workload:}] An uneven distribution of GitHub issues
+    among team members is a trigger. The team will reconvene to
+    redistribute tasks.
+\end{itemize}
+
+\begin{longtable}[c]{| c | c |}
+\caption{Team Charter Violations.\label{CharterViolations}}\\
+    \hline
+     \multicolumn{2}{| c |}{No violations to report!}\\
+     \hline
+     \endfirsthead
+ \end{longtable}
+
+Since the team has no violations to report, there does not need to be any changes made to the team charter.
+ 
 \section{Additional Productivity Metrics}
 
 \wss{If your team has additional metrics of productivity, please feel free to
