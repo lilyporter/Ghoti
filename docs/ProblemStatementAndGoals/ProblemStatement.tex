@@ -4,7 +4,7 @@
 \usepackage{booktabs}
 \usepackage{xurl}
 
-\title{Problem Statement and Goals\\\progname}
+\title{Problem Statement and Goals\\PronouncedFish}
 
 \author{\authname}
 
@@ -24,6 +24,7 @@
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
 September 28, 2026 & All & Initial Revision for Deliverable 1\\
+November 18, 2026 & Hemal Rajput & Updated with feedback.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -33,152 +34,168 @@ September 28, 2026 & All & Initial Revision for Deliverable 1\\
 \subsection{Problem}
 
 Around 440,000 Canadians deal with some kind of speech, language, or communication issue \cite{cdac2026statistics}; this includes 7-10\% of preschool children in Canada \cite{gaines2006earlyid}.
-A common speech impediment in children is substitution, which is when an expected phoneme is replaced by another (e.g. a child may pronounce “Rabbit” as “Wabbit”) \cite{asha2025ssd}.
-For detection of said issues, speech language pathologists (SLPs) and researchers have used various tools for analyzing speech and helping individuals improve.
-Current phonetic detection tools for researchers and SLPs are proprietary, not compliant with the Personal Health Information Protection Act (PHIPA), and/or poor in performance (e.g. speed and accuracy) \cite{supervisor2026initialcomm}.
-This means that available tools are insufficient for research and for treating substitution speech impediments in children.
-There should be a substitution treatment tool for child SLPs that is open-source, PHIPA-compliant, performant, and expandable to other professions (e.g. accent coaches) and other speech differences beyond execution.  
+Common speech sound errors in children include substitutions, omissions, and
+additions. A substitution replaces an expected phoneme, as when a child
+pronounces \textit{rabbit} as \textit{wabbit}. An omission leaves out an
+expected phoneme, and an addition introduces an extra one \cite{asha2025ssd}.
+Speech-language pathologists (SLPs) and researchers use tools to analyze speech and
+help individuals improve. Trained professionals in the field identified barriers
+in available tools, including proprietary access, privacy concerns, and
+limitations in speed and accuracy \cite{supervisor2026initialcomm}.
+
+These limitations create a need for an open-source tool that helps pediatric
+SLPs identify speech sound errors quickly enough to guide supervised practice
+and testing. It must protect patient information under Ontario's Personal
+Health Information Protection Act (PHIPA). PronouncedFish supports clinicians
+in reviewing speech patterns and tracking progress across sessions.
 
 \subsection{Inputs and Outputs}
 
 \subsubsection{Inputs}
 
-\textbf{Patient side} 
+\textbf{Patient}
 
 \begin{itemize}
-    \item Patient's speech patterns: When a patient is in a session with specialist, they will be prompted to speak into a microphone that will send the data to the system for phonetic processing. 
-    \item Patient's login credentials: If a patient wants to view their progress outside of a session or do take-home exercises, they will need to access their data by logging into the system with their credentials.
+    \item \textbf{Patient's speech.} During a session with an SLP, the patient
+      speaks into a microphone in response to guided practice or test items.
+      These spoken responses are the input for phonetic analysis.
 \end{itemize}
 
-\noindent\textbf{Specialist side} 
+\noindent\textbf{SLP}
 
 \begin{itemize}
-    \item Specialist's login credentials: The specialist will need to be able to log in to the administration side of the system to access lessons and patient data. They will do so by logging in with their credentials. 
-    \item Specialist's Selection of Profession: The specialist selects what their profession is, as the system is uniquely tuned to a specialist's needs based on their selected profession (SLP, Accent Coach, Researcher, etc.). 
-    \item Patient Selection: The specialist will need to use the system to access any given patient's data to identify problems and track progress. 
-    \item Model Selection: The specialist will select the type of speech impediment that they want to work on with a patient to improve specific phonemes.
-\end{itemize}
-
-\noindent\textbf{Both Sides} 
-
-\begin{itemize}
-    \item Select unavailable phonemes: Some patients will be physically unable to use certain phonemes based on biological or neurological limitations. Thus, the specialist for in-person sessions and the patient for homework or out-of-clinic sessions will select which phonemes the patient cannot produce. 
+    \item \textbf{Patient selection.} The SLP selects the patient whose
+      speech will be analyzed and whose progress will be tracked.
+    \item \textbf{Session setup and lesson creation.} The SLP selects guided
+      practice or testing, chooses target phonemes and items for the session,
+      and creates lessons for guided practice.
+    \item \textbf{SLP observations.} The SLP records cue levels and can correct
+      the system's interpretation of an attempt.
 \end{itemize}
 
 \subsubsection{Outputs}
 
-\textbf{Both Sides} 
+\textbf{SLP}
+
+The clinician dashboard provides the following outputs to the SLP.
 
 \begin{itemize}
-    \item Phonemic speech analysis: During a session, after each exercise and the phonemic analysis is complete, the system will display the phonemes it perceived from the patient and compare it against the phonemes it expected to hear from the exercise. This information will be available to both the patient and specialist to track progress. 
-    \item Patient data and progress tracking: The system will be able to display the patient's progress on improving their pronunciation of phonemes. It will show all the areas the patient is excelling at and which areas they need to improve on. This data will be a simplified version of the overall metrics of success used by the system so patients can easily understand how they are progressing. This also helps to prevent hackers from harvesting all of the sensitive data from a compromised account. 
-    \item Suggested lessons for improvement: While the patient is in-session with the specialist or while they are at home, the system can recommend lessons for them to do to improve their phoneme pronunciation. The choice to use lessons recommended by the system is strictly up to the specialist and/or patient. 
-\end{itemize}
-
-\noindent\textbf{Specialist Side} 
-
-\begin{itemize}
-    \item Detailed metrics and data: The system will output the full range of data for specialists so that they can engage in a deeper analysis of a given patient's progress.
+    \item \textbf{Phonemic speech analysis.} After an attempt is analyzed, the
+      dashboard compares the phonemes the system recognized with the phonemes
+      expected for the item. It presents both in IPA and flags substitutions,
+      omissions, and additions.
+    \item \textbf{Patient data and progress tracking.} The dashboard displays
+      session summaries and detailed results so the SLP can see where the
+      patient is progressing and which target phonemes still need practice.
+    \item \textbf{Recording playback.} Authorized SLPs can replay audio from
+      completed attempts in the patient's session history to review results
+      across sessions.
 \end{itemize}
 
 \subsection{Stakeholders}
 
 \subsubsection{Primary Stakeholders}
-\textbf{Speech Language Pathologists -} Speech Language Pathologists are the main user group for this application. Their job revolves around correcting speech disorders, so this tool would serve as their assistant during everyday activities. It may be used to assess speech patterns, and to discover what phonemes are being misspoken. They will be able to use the tool’s feedback to speed up and adjust treatment as necessary.
+\textbf{Speech-language pathologists.} SLPs are the main user group for this
+application. PronouncedFish serves as an assistant during their everyday
+activities. They can use it to assess speech patterns, identify which phonemes
+a child has difficulty producing, and use the feedback to adjust treatment.
 \vspace{1.0em}
 
-\noindent\textbf{Patients -} Patients (primarily children) would interact with this application very often. Their improvement is directly tied to how accurately the application assesses their speaking when providing feedback to a clinician. Due to their young age, it is assumed that they have little digital literacy and education. This is a key consideration when designing an interface for them to complete homework, or when giving them feedback. 
+\noindent\textbf{Patients.} Children interact with the application during
+guided practice and testing with their SLP. Children may have limited
+experience with digital tools, so activities should be age-appropriate and
+easy to follow with the clinician's guidance.
 
 \subsubsection{Secondary Stakeholders}
-\textbf{Parents and Guardians -} Patient Guardians are not the main user group for this application but hold a large interest in how it performs. For them to trust that it is giving their dependent person good treatment, it needs to be accurate. It must also keep their personal data safe. Besides indirect concerns, they may be occasional users when tracking their child’s progress, or when assisting them with homework, making them an important consideration.
+\textbf{Parents and guardians.} Parents and guardians have a direct interest
+in how the application supports their child's care. They depend on accurate
+feedback to the SLP and on safeguards for their child's recordings and other
+personal information.
 
 \subsubsection{Tertiary Stakeholders}
-\textbf{Academia (Linguistics Students, Cognitive Science Researchers) -} There are several uses for this application in academia. This tool may be leveraged to extract and analyze pediatric speech to uncover hidden patterns during research. It may also be used as a tool for aspiring SLPs to reference when learning speech language pathology. 
+\textbf{Academia (linguistics students and cognitive science researchers).}
+Future applications of the underlying speech-analysis tool could help
+researchers study patterns in pediatric speech and give aspiring SLPs
+examples to refer to while learning speech-language pathology.
 \vspace{1.0em}
 
-\noindent\textbf{Governments -} In Ontario, PHIPA protects patient confidentiality. Therefore, local governments would be concerned with how the application maintains patient data, to properly protect their privacy. 
-
+\noindent\textbf{Governments.} In Ontario, PHIPA protects patient confidentiality.
+Governments have an interest in how the application handles and safeguards
+patient data.
 
 \subsection{Environment}
 
-\noindent\textbf{Hardware:}
+PronouncedFish is designed for supervised pediatric speech-language therapy
+sessions. The iPad interface uses Safari, and a local server analyzes speech.
+
+\noindent\textbf{Hardware}
 \begin{itemize}
-    \item PC (desktop or laptop, Specs to be determined)
-    \item Microphone (built-in or external)
+    \item iPad with a built-in or external microphone.
+    \item Local computer to run the speech-analysis service.
 \end{itemize}
 
-\noindent\textbf{Software/Firmware:}
+\noindent\textbf{Software}
 \begin{itemize}
-    \item Web browser (Google Chrome or Edge)
-    \item Windows 10 and 11 Operating System
-    \item Any required drivers for microphone
-    \item Supports HTTPS connections
+    \item Safari on iPad.
+    \item An encrypted connection to the local service.
 \end{itemize}
 
 \section{Goals}
-The overall objective of this project is to provide assistance to pediatric speech-language pathologists during their patient sessions. 
-This will be a software tool that can act as an in-session assistant to pediatric speech-language pathologists (SLPs) during speech 
-therapy sessions, helping them identify speech challenges quickly and tailor therapy more effectively. The system will be strictly 
-assistive, augmenting the clinician's expertise but not replacing their professional judgement.\\
 
-\noindent
-Listed below are the overall goals for this project:
+The overall objective of this project is to provide assistance to pediatric
+SLPs during their patient sessions. PronouncedFish acts as an in-session
+assistant, helping SLPs identify speech challenges quickly and tailor therapy
+more effectively. The system is strictly assistive and supports the
+clinician's professional judgment.
 
 \begin{itemize}
-    \item Develop a web-based software tool that functions as an in-session assistant of pediatric SLPs.
-    \item Analyze real-time speech of a patient at the phonetic level to identify and flag speech substitution speech patterns, a common pediatric speech challenge where an expected phoneme is replaced by another.
-    \item Include an interactive interface for SLPs, allowing them to record and analyze speech during session, including insights and data visualizations on produced sounds and identified speech pattern challenges.
-    \item Include features and activities within the interface that the SLP can lead a patient through to help them improve on speech challenges during a session.
+    \item Enable an SLP to create a lesson and lead a patient through guided
+      activities that target specific speech challenges. The SLP can also
+      run a supervised testing session.
+    \item Enable the SLP to record a patient's speech and review a
+      comparison of the expected and recognized sounds during the session.
+      The comparison identifies substitutions, omissions, and additions.
+      Compare the flagged errors with SLP-reviewed reference examples and
+      check that results arrive in time for the SLP to use them during the
+      session.
+    \item Enable the SLP to review visualizations of the sounds produced and
+      the flagged speech patterns, and correct the system's interpretation
+      when it differs from their clinical judgment.
+    \item Enable authorized SLPs to review session records, replay completed
+      attempts, and compare a patient's progress on target phonemes across
+      sessions.
 \end{itemize}
-
-\noindent
-To achieve these goals there are two primary components:
-\begin{enumerate}
-    \item \textbf{Speech Analysis Model:}
-    The core technical component of the system. It will be responsible for processing audio input and extracting phonetic information from speech in real-time. The goals of this component are:
-    \begin{itemize}
-        \item Accept real-time audio input of a patient's speech during a therapy session.
-        \item Transcribe and classify the speech of a patient at the phonetic level.
-        \item Identify substitution speech patterns.
-        \item Operate with sufficient speed and accuracy to be useful during a live speech therapy session.
-    \end{itemize}
-
-    \item \textbf{SLP User Interface:}
-    The “assistant” component of the system, interacted with by the SLP. It will be responsible for visually representing analysis results and supporting the SLP's workflow during the session. The goals of this component are:
-    \begin{itemize}
-        \item Provide an interactive dashboard for the SLP to record a patient's speech in real-time.
-        \item Display data visualisations of the sounds produced, and flagged speech patterns.
-        \item Present session data in a way that supports the SLP's clinical process.
-        \item Offer guided activities and exercises that the SLP can provide to the patient during sessions to target a patient's specific speech challenges.
-        \item Display session tracking and patient progress data
-    \end{itemize}
-\end{enumerate}
-
 
 \section{Stretch Goals}
 The following are goals for possible expansion of the project after the main goals are achieved:
 \begin{itemize}
-    \item \textbf{Patient-Facing/Homework Interface:} An additional interface for patients, allowing then to complete at home practice activities to improve their speech. 
+    \item \textbf{Patient-Facing/Homework Interface:} An additional interface for patients, allowing them to complete at-home practice activities to improve their speech.
         \begin{itemize}
             \item Account for different types of users (SLP \& patients).
         \end{itemize}
     \item \textbf{Mobile Application:} An Android/iOS application for patients to practice their speech and complete homework activities on a mobile device.
-    \item \textbf{Broader Speech Pattern Detection:} The detection of additional types of speech pattern challenges beyond just substitution.
-        \begin{itemize}
-            \item Cluster reduction and omisison patterns.
-            \item Distortion patterns.
-        \end{itemize}
-    \item \textbf{Additional Interfaces:} Develop interfaces for other uses of the underlying speech analysis model, such as an accent coach application.
-    \item \textbf{OS Application:} Adapting the web-based system into an application that can be run natively on different operation systems (ex: Windows, Linux, macOS).
+    \item \textbf{Broader Speech Pattern Detection:} Identify distortion
+      patterns and other speech differences beyond the current scope.
+    \item \textbf{Automatic Lesson Recommendations:} Suggest practice
+      lessons based on the patient's needs and session history.
+    \item \textbf{Additional Interfaces:} Develop interfaces for other
+      professions and uses of the underlying speech analysis model, such as
+      an accent coach application.
+    \item \textbf{OS Application:} Adapting the web-based system into an application that can be run natively on different operating systems (ex: Windows, Linux, macOS).
 \end{itemize}
 
 \section{Custom Documents (CDs)}
 
 This project is not a research project. 
 
-For the fall term, the custom document of choice is the User/Stakeholder/Client interview report. Since the team will be continuously discussing the project scope with our supervisors and stakeholders, we decided this document will most accurately display our progress. 
+For the fall term, the custom document of choice is the
+Wireframe Report. Through discussions with our
+supervisors and stakeholders, the team will use the report to present the wireframes
+and receive feedback and insights from the superivision team.
 
-For the Winter term, the custom document of choice is the Usability report. After many discussions with stakeholders, a clear idea of the tests needed to prove the usability of the product will be available.
+For the winter term, the custom document of choice is the Usability Report.
+The team will use it to evaluate how easily SLPs can carry out supervised
+sessions and determine where the workflow could be improved.
 
 \newpage{}
 
@@ -190,14 +207,20 @@ For the Winter term, the custom document of choice is the Usability report. Afte
     \item \textbf{What pain points did you experience during this deliverable, and how
     did you resolve them?}
     Since this was the first deliverable and the group's first time working with the LaTeX files in the repo template, there were a few initial challenges and technical difficulties with viewing the PDFs as they would be generated after editing the LaTeX files. We resolved this by communicating our challenges, helping each other, and trying different methods. 
-    Additionally, after the initial meeting on the deliverable, there was a little further debate on what features should count as goals vs stretch goals and what the PoC should encompass. This stalled the writing of those respective sections while the group engaged in further discussion to come to a consensus. 
+    Additionally, after the initial meeting on the deliverable, there was a little further debate on what features should count as goals vs stretch goals and what the Proof of Concept (PoC) should encompass. This stalled the writing of those respective sections while the group engaged in further discussion to come to a consensus.
     \item \textbf{How did you and your team adjust the scope of your goals to ensure
     they are suitable for a Capstone project (not overly ambitious but also of
     appropriate complexity for a senior design project)?}
-    After discussing our project idea with our supervisors, Daniel Pape and Lyn Turkstra (subject matter experts in SLP and speech analysis), we were able to narrow our scope for our PoC model. We came to understand that speech challenges encompasses several different categories and it would likely be difficult to target each one. This led us to narrow the scope to addressing only one subtype of speech challenge (substitutions), with other types as stretch goals.
+    After discussing our project idea with our supervisors, Daniel Pape and Lyn Turkstra (subject matter experts in SLP and speech analysis), we were able to narrow our scope for our PoC model. We came to understand that speech challenges encompasses several different categories and it would likely be difficult to target each one. We initially limited the PoC to substitutions. We later expanded the capstone scope to include omissions and additions.
     Additionally, we had ideas for multiple types of interfaces that could use our model (an SLP interface, a patient interface, an accent coach interface, etc). We ultimately decided to narrow our scope to focus on the SLP interface, the most important option given our overall project goal: assist speech language pathologists during speech therapy sessions. The other types of interfaces were relegated to stretch goals.
 
 \end{enumerate}  
+
+\section*{Appendix --- Generative AI Use Disclosure}
+
+Codex (GPT-6.2) helped apply GitHub issue feedback and align this document
+with the Development Plan. The revisions were checked against the issue
+feedback and approved scope decisions.
 
 \bibliographystyle{IEEEtran}
 \bibliography{../../refs/References}
