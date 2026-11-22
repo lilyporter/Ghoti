@@ -472,7 +472,7 @@ Output: Each attempt has its own analysis and encrypted recording. The authorize
 
 Test Case Derivation: FR-AC2; ST-N10 verifies encryption.
 
-How test will be performed: Save two distinguishable recordings, reopen the history and verify playback and attempt association.
+How test will be performed: Save two recordings with distinct expected phoneme results. Reopen both attempts in history and compare the recording and analysis with the expected values for each attempt. Fail the test if either attempt uses the other recording in its analysis.
 
 \item{ST-F03 Flag audio quality failures\\}
 
@@ -899,7 +899,7 @@ model changes, as required by the Development Plan.
 
     Output/Result: The \WordLatencyPercentile{} is at most \WordLatencyLimit{} in each mode (NFR-PER1). Report median, maximum, timeouts, and recognition time separately. Treat attempts without a result as exceeding the response limit.
 
-    How test will be performed: Use browser timestamps for recording completion and visible result. Include upload, server processing, and rendering. Use the nearest-rank percentile.
+    How test will be performed: Use browser timestamps for recording completion and visible result. Include upload, server processing, and rendering. Use the nearest-rank percentile. Also log clip duration and report server processing time divided by clip duration (real-time factor), as described in the Development Plan.
 
 \end{enumerate}
 
@@ -920,7 +920,7 @@ separately from clinician access.
 
     Output/Result: The SLP completes the tasks independently within one hour of first use (NFR-USA1).
 
-    How test will be performed: Record elapsed time, tasks completed, and assistance during the test.
+    How test will be performed: The UI/UX Lead observes without prompting. Record total time. For each task, log elapsed time, completion, errors, and requests for help. After the timed run, ask the SLP which steps were unclear and record their feedback.
 
 \end{enumerate}
 
