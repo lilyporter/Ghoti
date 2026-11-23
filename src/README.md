@@ -1,7 +1,14 @@
 # PronouncedFish
 
-The iPad plays prerecorded speech. The laptop runs Pasketti and shows the
-completed session at `/slp`. The demo stores results in local JSON.
+This demo illustrates SLP-led guided practice. The iPad shows picture prompts,
+and prerecorded responses stand in for a child speaking. The laptop runs
+Pasketti and shows the SLP the target phones, model output, and audio playback
+at `/slp`. The demo stores sessions in local JSON.
+
+The [SRS](../docs/SRS/SRS.tex) treats guided practice and standardized testing
+as separate workflows. The dashboard's match counts compare model output
+with the practice targets. Its Penney history uses recordings from different
+speakers and illustrates session review.
 
 ## Setup
 

@@ -173,7 +173,7 @@ export default function SessionDashboard({ samples, sampleError }) {
             {session.completed_at && <time dateTime={session.completed_at}>{new Date(session.completed_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</time>}
             <div className="dash-session-score" role="status">
               <strong>{exact} / {rows.length}</strong>
-              <span>Words matched{unassessable > 0 && <small>{unassessable} unassessed</small>}</span>
+              <span>Model word matches{unassessable > 0 && <small>{unassessable} unassessed</small>}</span>
             </div>
           </section>}
         </div>
@@ -185,7 +185,7 @@ export default function SessionDashboard({ samples, sampleError }) {
               {historyIndex >= 0 && <button className="dash-text-button" onClick={() => selectSession(null)}>Current session</button>}
             </div>
             {playError && <p className="dash-load-error" role="alert">{playError}</p>}
-            <div className="dash-table-wrap"><table><thead><tr><th>Word</th><th>Target</th><th>Recognized</th><th>Comparison</th><th>Playback</th></tr></thead><tbody>
+            <div className="dash-table-wrap"><table><thead><tr><th>Word</th><th>Target phones</th><th>Model output</th><th>Comparison</th><th>Playback</th></tr></thead><tbody>
               {attemptRows.map(({ sample, result }) => <tr key={sample.id}>
                 <td><strong>{sample.target_word}</strong></td>
                 <td className="dash-phone">{phoneText(result.analysis.expected_phones)}</td>
@@ -201,7 +201,7 @@ export default function SessionDashboard({ samples, sampleError }) {
           <section className="dash-card dash-attempts">
             <div className="dash-attempts-header"><h2>Previous sessions</h2><span className="dash-pill">{history.length} sessions</span></div>
             {historyError && <p className="dash-load-error" role="alert">Could not load recording history.</p>}
-            {history.length > 0 && <div className="dash-table-wrap"><table><thead><tr><th>Session</th><th>Attempts</th><th>Words matched</th><th>Analysis</th></tr></thead><tbody>
+            {history.length > 0 && <div className="dash-table-wrap"><table><thead><tr><th>Session</th><th>Attempts</th><th>Model matches</th><th>Analysis</th></tr></thead><tbody>
               {history.map(({ id, attempts }, index) => <tr key={id}>
                 <td><strong>Session {index + 1}</strong></td>
                 <td>{attempts.length}</td>
@@ -213,8 +213,8 @@ export default function SessionDashboard({ samples, sampleError }) {
           <section id="practice" className="dash-card dash-home-practice">
             <h2>Practice goals</h2>
             {maya.goals.map(goal => <div className="dash-goal" key={goal.title}><div><span className="dash-pill">{goal.sound}</span><strong>{goal.title}</strong></div><small>Goal {goal.target}%</small></div>)}
-            <h3>At-home practice</h3>
-            <p>{maya.practice.schedule}</p><div className="dash-practice-words">{maya.practice.words.map(word => <span key={word}>{word}</span>)}</div>
+            <h3>Practice words</h3>
+            <div className="dash-practice-words">{maya.practice.words.map(word => <span key={word}>{word}</span>)}</div>
           </section>
         </div>
         <section id="notes" className="dash-card dash-clinical-notes"><h2>Clinical notes</h2>{maya.notes.map(note => <article key={note.date}><div><strong>{note.title}</strong><span>{note.author} · {note.date}</span></div><p>{note.text}</p></article>)}</section>
