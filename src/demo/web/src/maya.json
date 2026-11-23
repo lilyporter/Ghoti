@@ -1,0 +1,44 @@
+{
+  "goals": [
+    {
+      "sound": "/s/",
+      "title": "Initial sounds in words",
+      "target": 80
+    },
+    {
+      "sound": "/s/",
+      "title": "Final sounds in words",
+      "target": 80
+    },
+    {
+      "sound": "/ʃ/",
+      "title": "Short phrases",
+      "target": 75
+    }
+  ],
+  "practice": {
+    "title": "Word practice",
+    "schedule": "5 minutes · 3 days a week",
+    "words": [
+      "sun",
+      "soup",
+      "seal",
+      "shoe",
+      "ship"
+    ]
+  },
+  "notes": [
+    {
+      "date": "Oct 7 · 10:35 AM",
+      "author": "Jordan Lee",
+      "title": "A little more independence",
+      "text": "Maya started initial /s/ words with fewer reminders today. A mirror cue helped her keep airflow steady. Continue word practice before moving to phrases."
+    },
+    {
+      "date": "Oct 3 · 2:15 PM",
+      "author": "Jordan Lee",
+      "title": "Home practice check-in",
+      "text": "Family reported two short practice sessions this week. Maya enjoyed choosing the pictures. Keep practice brief and offer a second try without rushing."
+    }
+  ]
+}
