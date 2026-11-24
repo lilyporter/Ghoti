@@ -22,12 +22,13 @@ python -m pronouncedfish_engine download-model --model-dir engine/models/paskett
 npm --prefix demo/web ci
 ```
 
-Reuse your local `demo/audio/manifest.json` and referenced WAVs. For a new
-playlist, put the WAVs under `demo/audio/` and add one object per clip in playback order:
-
-```json
-{"samples":[{"id":"child-01","label":"Child voice 1","filename":"penney/T65_u7.wav","target_word":"spoon","expected_phones":["s","p","u","n"]}]}
-```
+The [example playlist](demo/audio/manifest.example.json) lists the ten prompts,
+target phones, and expected WAV paths under `demo/audio/`. The branch contains
+the playlist but the recordings must be supplied separately. Use authorized
+Penney clips under `penney/` and Paidologos clips under `real/`, or use your own
+permitted recordings of the same words. To use different filenames, copy the
+example to `demo/audio/manifest.json` and update its paths locally. An existing
+local playlist takes precedence.
 
 Optional past sessions can be generated from the Penney dataset export:
 
@@ -35,8 +36,7 @@ Optional past sessions can be generated from the Penney dataset export:
 python -m demo.prepare_history "C:/path/to/Penney/dataset.csv"
 ```
 
-The playlist, recordings, generated results, tests, and Supabase configuration
-are local. Supabase is independent of the demo.
+Recordings, generated results, and local playlist overrides are Git-ignored.
 
 ## Run
 

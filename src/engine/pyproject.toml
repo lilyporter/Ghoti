@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "pronouncedfish-engine"
 version = "0.1.0"
 description = "Local Pasketti phonetic recognition for PronouncedFish"
-readme = "README.md"
 requires-python = ">=3.9,<3.13"
 dependencies = [
     "torch==2.6.0",

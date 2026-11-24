@@ -55,10 +55,10 @@ class SavedAttempt(BaseModel):
 
 @lru_cache(maxsize=1)
 def _manifest():
-    try:
-        data = json.loads((SAMPLES / "manifest.json").read_text(encoding="utf-8"))
-    except FileNotFoundError as error:
-        raise HTTPException(status_code=503, detail="Local demo playlist is missing") from error
+    playlist = SAMPLES / "manifest.json"
+    if not playlist.is_file():
+        playlist = SAMPLES / "manifest.example.json"
+    data = json.loads(playlist.read_text(encoding="utf-8"))
     return {item["id"]: item for item in data["samples"]}
 
 
