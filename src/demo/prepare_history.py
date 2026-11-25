@@ -6,9 +6,9 @@ import json
 from pathlib import Path, PureWindowsPath
 from shutil import copyfile
 
-from pronouncedfish_engine import PaskettiRecognizer, analyze, load_audio
+from pronouncedfish_engine import analyze, load_audio
 
-from demo.api.main import MODEL, SAMPLES
+from demo.api.main import SAMPLES, get_recognizer
 
 
 SESSION_IDS = ("D10", "D38", "T44", "T65")
@@ -24,7 +24,7 @@ def main():
 
     clips = SAMPLES / "penney"
     clips.mkdir(exist_ok=True)
-    model = PaskettiRecognizer(MODEL)
+    model = get_recognizer()
     sessions = []
     for session_id in SESSION_IDS:
         attempts = []

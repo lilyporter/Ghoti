@@ -7,10 +7,10 @@ from typing import Optional, Union
 from .assets import MODEL_VERSION, verify_model
 from .audio import MAX_DURATION_SECONDS, SAMPLE_RATE_HZ
 from .phonetics import tokenize_pasketti
-from .recognition import AudioInput, RecognitionResult
+from .recognition import AudioInput, PhonemeRecognizer, RecognitionResult
 
 
-class PaskettiRecognizer:
+class PaskettiRecognizer(PhonemeRecognizer):
     """Load a pinned local snapshot once, then recognize one utterance at a time.
 
     Construction verifies weights and never downloads. All inference uses FP32;

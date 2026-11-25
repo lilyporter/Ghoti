@@ -13,7 +13,7 @@ from fastapi import FastAPI, HTTPException, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict
 
-from pronouncedfish_engine import PaskettiRecognizer, analyze, load_audio
+from pronouncedfish_engine import PaskettiRecognizer, PhonemeRecognizer, analyze, load_audio
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -63,7 +63,9 @@ def _manifest():
 
 
 @lru_cache(maxsize=1)
-def _recognizer():
+def get_recognizer() -> PhonemeRecognizer:
+    if not MODEL.is_dir():
+        raise HTTPException(status_code=503, detail="Local recognition model is missing")
     # Load on first analysis, then retain the 1.26 GB checkpoint in memory.
     return PaskettiRecognizer(MODEL)
 
@@ -150,12 +152,10 @@ def analyze_sample(sample_id: str):
     path = SAMPLES / item["filename"]
     if not path.is_file():
         raise HTTPException(status_code=503, detail="Sample audio is missing")
-    if not MODEL.is_dir():
-        raise HTTPException(status_code=503, detail="Local recognition model is missing")
     try:
         started = perf_counter()
         with _inference_lock:
-            recognizer = _recognizer()
+            recognizer = get_recognizer()
             model_ms = (perf_counter() - started) * 1000
             prepared = perf_counter()
             audio = load_audio(path)

@@ -3,6 +3,7 @@
 from .audio import load_audio
 from .analysis import analyze
 from .pasketti import PaskettiRecognizer
-from .recognition import AudioInput, RecognitionResult
+from .recognition import AudioInput, PhonemeRecognizer, RecognitionResult
 
-__all__ = ["AudioInput", "RecognitionResult", "PaskettiRecognizer", "load_audio", "analyze"]
+__all__ = ["AudioInput", "RecognitionResult", "PhonemeRecognizer", "PaskettiRecognizer",
+           "load_audio", "analyze"]
