@@ -104,11 +104,13 @@ def analyze(
 
     from jiwer import process_words
 
+    # Jiwer aligns space-delimited items, so each complete IPA phone is one unit.
     hypothesis = " ".join(_canonical(p) for p in heard)
     comparisons = [
         process_words(" ".join(_canonical(p) for p in variant), hypothesis)
         for variant in variants
     ]
+    # Fewest edits wins. The primary target comes first and wins ties.
     chosen = min(range(len(variants)), key=lambda i: (
         comparisons[i].substitutions + comparisons[i].deletions + comparisons[i].insertions
     ))
