@@ -1,0 +1,64 @@
+.dashboard{min-height:100vh;display:grid;grid-template-columns:224px minmax(0,1fr);background:#f3f6f9;color:#18374b;font-family:Inter,'Segoe UI',Arial,sans-serif;font-size:14px}
+.dashboard h1,.dashboard h2,.dashboard p{margin:0}
+.dashboard button{font:inherit;cursor:pointer}
+.dash-sidebar{position:sticky;top:0;align-self:start;display:flex;flex-direction:column;height:100dvh;overflow-y:auto;background:#fff;border-right:1px solid var(--fish-line);z-index:5}
+.dash-brand{height:55px;padding:0 12px;display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:14px;font-weight:800}
+.dash-brand .mascot-small{width:29px;height:30px}
+.dash-sidebar nav{display:grid;gap:7px;padding:18px 12px}
+.dash-nav-item{display:flex;align-items:center;gap:12px;padding:12px;white-space:nowrap;border-radius:8px;font-size:14px;font-weight:500;line-height:1.35}
+.dash-nav-item>span{display:grid;place-items:center;position:relative;width:22px;height:22px;flex:none}
+.dash-nav-note img{position:absolute;top:1px;right:1px}
+.dash-clinician{display:flex;align-items:center;gap:9px;margin-top:auto;padding:16px}
+.dash-clinician strong,.dash-clinician small{display:block;white-space:nowrap}
+.dash-clinician strong{font-size:12px}.dash-clinician small{margin-top:3px;color:var(--fish-muted);font-size:11px}
+.dash-avatar{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:11px;background:#e7f1ff;color:#2868d4;font-weight:900}
+.dash-avatar.small{width:31px;height:31px;border-radius:50%;background:#e9f4fa;font-size:10px}
+.dash-main-area{min-width:0}
+.dash-content{max-width:1260px;margin:0 auto;padding:32px 28px}
+.dash-profile{display:flex;align-items:center;gap:14px}
+.dash-profile h1{font-size:23px;line-height:1.2}.dash-profile p{margin-top:5px;color:var(--fish-muted);font-size:11px}
+.dash-overview{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:18px}
+.dash-card{background:#fff;border:1px solid #e0e7f0;border-radius:13px}
+.dash-card-heading,.dash-attempts-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.dash-card h2{font-size:15px;line-height:1.3}.dash-card-heading p{margin-top:4px;color:var(--fish-muted);font-size:10px}
+.dash-legend{display:flex;gap:17px;margin-top:19px;color:var(--fish-muted);font-size:11px;flex-wrap:wrap}
+.dash-legend i{display:inline-block;width:12px;margin-right:5px;vertical-align:middle;border-top:3px solid}.dash-legend .blue-line{border-color:#3975ea}
+.dash-pill{padding:6px 9px;border-radius:14px;background:#eaf2ff;color:#2868d4;font-size:10px;font-weight:800;white-space:nowrap}
+.dash-attempts{margin-top:18px;overflow:hidden}
+.dash-attempts-header{align-items:center;padding:17px 20px}.dash-attempts-header>div{display:flex;align-items:baseline;gap:12px}.dash-attempts-header>div span{color:var(--fish-muted);font-size:11px}
+.dash-table-wrap{overflow-x:auto}.dash-attempts table{width:100%;border-collapse:collapse;text-align:left}
+.dash-attempts th{padding:12px 16px;background:#f5f8fa;color:#788b9e;text-transform:uppercase;white-space:nowrap;font-size:10px;letter-spacing:.2px}
+.dash-attempts td{padding:11px 16px;border-bottom:1px solid #edf1f4;font-size:12px;vertical-align:middle}
+.dash-attempts td strong,.dash-attempts td small{display:block}.dash-attempts td small{margin-top:3px;color:var(--fish-muted);font-size:10px}
+.dash-phone{white-space:nowrap;font-family:'Segoe UI',Arial,sans-serif}.dash-differences{min-width:210px;line-height:1.4}
+.dash-play{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1.5px solid var(--fish-blue);border-radius:50%;background:#fff;color:var(--fish-blue);vertical-align:middle}
+.dash-play svg{display:block;width:22px;height:22px;fill:currentColor}
+.dash-play:hover{background:#eaf3ff}
+.dash-load-error,.dash-loading{padding:16px;border-radius:10px;background:#fff;color:var(--fish-muted)}.dash-load-error{color:#9b264a;background:#fff1f4}
+.dash-history-overview{margin:20px 0}.dash-history,.dash-goals,.dash-home-practice,.dash-clinical-notes{padding:20px}
+.dash-history-chart{display:block;width:100%;height:auto;margin-top:18px;overflow:visible}.dash-history-chart text{fill:#7c8fa2;font-size:9px}.dash-history-chart line{stroke:#e4eaf2;stroke-width:1}.dash-legend .green-line{border-color:#4f967c;border-top-style:dashed}
+.dash-goal{padding:16px 0;border-bottom:1px solid #edf1f5}.dash-goal:last-child{border-bottom:0;padding-bottom:0}.dash-goal>div:first-child{display:flex;align-items:center;gap:8px}.dash-goal strong{font-size:12px}.dash-goal p{color:var(--fish-muted);font-size:11px;margin:8px 0}.dash-goal-track{height:5px;border-radius:8px;background:#edf2f8;overflow:hidden}.dash-goal-track i{display:block;height:100%;background:#3975ea;border-radius:8px}.dash-goal small{display:block;margin-top:6px;color:var(--fish-muted);font-size:10px}
+.dash-history-overview>.dash-attempts{margin-top:0}.dash-home-practice p{font-size:12px;color:var(--fish-muted);line-height:1.6}.dash-practice-words{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}.dash-practice-words span{background:#edf3ff;border-radius:7px;padding:7px 10px;color:#326bcb;font-size:12px;font-weight:600}
+.dash-clinical-notes{margin-top:20px}.dash-clinical-notes article{padding:18px 0;border-bottom:1px solid #edf1f5}.dash-clinical-notes article:last-child{padding-bottom:0;border:0}.dash-clinical-notes article>div{display:flex;align-items:center;justify-content:space-between;gap:10px}.dash-clinical-notes strong{font-size:12px}.dash-clinical-notes span{color:var(--fish-muted);font-size:10px}.dash-clinical-notes p{margin-top:8px;color:#607a90;font-size:12px;line-height:1.6}
+.dash-attempts td:first-child{white-space:nowrap}.dash-attempts td:first-child strong,.dash-attempts td:first-child small{display:inline-block}.dash-attempts td:first-child small{margin:0 0 0 9px}
+@media(max-width:950px){.dashboard{grid-template-columns:160px minmax(0,1fr)}.dash-brand{padding:0 8px;font-size:13px}.dash-brand .mascot-small{width:36px;height:33px}.dash-content{padding:22px}.dash-overview{grid-template-columns:1fr}}
+@media(max-width:650px){.dashboard{display:block}.dash-sidebar{height:auto;min-height:0;border-right:0;border-bottom:1px solid var(--fish-line)}.dash-brand{height:52px;padding:0 12px;font-size:15px}.dash-sidebar nav{display:flex;padding:0 10px 8px}.dash-clinician{display:none}.dash-content{padding:14px}.dash-profile h1{font-size:20px}.dash-profile p{font-size:11px}.dash-attempts-header{padding:13px}.dash-attempts-header>div{display:block}}
+.dash-nav-item{color:inherit;text-decoration:none}
+.dash-nav-item:hover{background:#eef5fb}
+.dash-nav-active{background:#e8f2ff;color:#175ebd;font-weight:700}
+.dash-tabs{display:flex;flex-wrap:wrap;gap:22px;margin:24px 0;border-bottom:1px solid var(--fish-line)}
+.dash-tabs a{padding:0 0 10px;color:#506779;text-decoration:none}
+.dash-tabs a:first-child{border-bottom:2px solid var(--fish-blue);color:#175ebd;font-weight:700}
+.dash-session-overview{align-items:start}
+.dash-latest{padding:20px}
+.dash-latest h3{margin:16px 0 4px;font-size:14px}
+.dash-latest time{color:var(--fish-muted);font-size:12px}
+.dash-change-pill{background:#fff0e6;color:#805031}
+.dash-session-score{display:flex;align-items:center;gap:12px;margin-top:16px;padding:13px;border-radius:9px;background:#eaf2ff}
+.dash-session-score strong{font-size:25px;color:#175ebd;white-space:nowrap}
+.dash-session-score small{display:block;color:var(--fish-muted)}
+.dash-home-practice h3{margin:20px 0 6px;font-size:14px}
+.dash-match{color:#356b58}
+.dash-text-button{padding:0;border:0;background:none;color:#0758bf;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:950px){.dashboard{grid-template-columns:190px minmax(0,1fr)}.dash-nav-item{font-size:13px;gap:8px;padding:8px}}
+@media(max-width:650px){.dash-sidebar nav{flex-wrap:wrap}}
