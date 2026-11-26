@@ -283,3 +283,22 @@ TSWLatexianTemp*
 ## Python bytecode from the build scripts
 __pycache__/
 *.pyc
+
+## Generated TalkBank data (data folder)
+
+/data/talkbank_paidologos/
+/data/talkbank_penney/
+/data/talkbank_preston/
+/data/talkbank_cummings/
+
+# Authentication files
+/data/auth/*.json
+/data/auth/*.cookie
+
+# Combined datasets
+/data/combined_dataset*.csv
+
+# Temporary downloads and archives
+/data/**/*.zip
+/data/**/*.part
+/data/**/*.tmp
