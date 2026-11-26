@@ -3,6 +3,8 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{float}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -12,12 +14,20 @@
 }
 \usepackage[round]{natbib}
 
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcommand{\PhonemeAccuracyTarget}{87\%}
+\newcommand{\WordLatencyLimit}{1 second}
+\newcommand{\WordLatencyPercentile}{95th percentile}
+\newcommand{\WordLatencyRuns}{30}
+\newcommand{\ServerResponseLimit}{10 seconds}
+\newcommand{\PracticeItemMinimum}{three}
+
 \input{../Comments.text}
 \input{../Common.text}
 
 \begin{document}
 
-\title{System Verification and Validation Plan for \progname{}} 
+\title{System Verification and Validation Plan for PronouncedFish}
 \author{\authname}
 \date{\today}
 	
@@ -30,451 +40,1152 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+November 2nd, 2026 & 1.0 & Initial Revision of VnV Plan\\
+November 21, 2026 & 1.1 & Aligned verification and validation with the revised scope and review feedback. \\
 \bottomrule
 \end{tabularx}
 
 ~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
-
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
 
 \newpage
 
 \tableofcontents
 
 \listoftables
-\wss{Remove this section if it isn't needed}
-
-\listoffigures
-\wss{Remove this section if it isn't needed}
 
 \newpage
 
 \section{Symbols, Abbreviations, and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
 
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
+\begin{longtable}{l l}
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\
+    \midrule
+    \endfirsthead
 
-\wss{Remove this section if it isn't needed}
+    \toprule
+    \textbf{Symbol} & \textbf{Description} \\
+    \midrule
+    \endhead
+
+    \bottomrule
+    \endfoot
+
+    AC & Audio Capture \\
+    ACCU & Accuracy \\
+    dB & Decibel \\
+    DMR & Progress and Data Management Requirements \\
+    FR & Functional Requirement \\
+    GPL & GNU General Public License \\
+    HA & Hazard Analysis \\
+    IPA & International Phonetic Alphabet \\
+    LAL & Legal and Licensing \\
+    MAI & Maintainability \\
+    MIS & Module Interface Specification \\
+    NFR & Non-Functional Requirement \\
+    PAR & Practice Activities Requirements \\
+    PER & Performance \\
+    PHI & Personal Health Information \\
+    PHIPA & Personal Health Information Protection Act \\
+    POR & Portability \\
+    RDV & Results and Data Visualization \\
+    REL & Reliability \\
+    SA & Speech Analysis \\
+    SAP & Security and Privacy \\
+    SLP & Speech-Language Pathologist \\
+    SM & Session Management \\
+    SRS & Software Requirements Specification \\
+    SSD/SSDs & Speech Sound Disorder(s) \\
+    ST & System Test \\
+    USA & Usability \\
+    UI & User Interface \\
+    UX & User Experience \\
+    VnV & Verification and Validation \\
+\end{longtable}
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+
+This document describes the Verification and Validation Plan for the 
+PronouncedFish software developed by Ghoti. It describes how the team will confirm 
+that PronouncedFish meets the requirements in the SRS and is suitable for its 
+intended users, speech-language pathologists (SLPs) and the children they treat. 
+The plan covers functional correctness, phonemic identification accuracy, 
+responsiveness, usability, portability, and PHIPA compliance. 
+Section 1 defines some acronyms used within this 
+document. Section 2 introduces a summary of the project, its VnV plan, and 
+the custom documents relevant to this project. Section 3 outlines a high 
+level plan to verify the SRS, design, VnV plan and implementation. It also 
+touches on some automated testing tools and ways to validate the final 
+system itself. Section 4 goes in depth on the system tests used for each 
+SRS requirement, and provides a traceability matrix to describe all of these 
+relations. Section 5 covers some unit testing requirements for this project, 
+and will be updated after the MIS document is completed. The remaining appendix sections 
+touch on some symbolic parameters used, the generative AI disclosure, and 
+the reflection for this document. 
 
 \section{General Information}
 
+This section describes the system under test, the objectives of the V\&V
+work, and the project documents that define its scope.
+
 \subsection{Summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+PronouncedFish helps speech-language pathologists (SLPs) run supervised
+guided practice and testing with children aged 4--6. It identifies
+substitutions, omissions, and additions and presents results, recordings,
+and progress to the SLP. Testing uses Goldman--Fristoe items. Guided practice
+uses a separate set of prompts and excludes the test words.
 
 \subsection{Objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+With this VnV Plan, Ghoti aims to discuss how it will validate the correctness, quality, robustness, and efficiency of PronouncedFish. With this comes the objectives that Ghoti wants to achieve for this document. 
 
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
+\subsubsection{Full Functionality of the System}
+System tests cover audio capture and replay, speech analysis, session
+controls and clinician overrides, the practice catalog, patient records and
+progress, and the clinician dashboard. The traceability matrix in
+Section~\ref{sec:system-traceability} identifies the requirement for each test.
 
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+\subsubsection{Personal Health Information Protection Act (PHIPA) Compliance}
+The VnV plan should ensure that each component is within compliance of PHIPA to protect sensitive personal health information (PHI). PHIPA compliance comes with a few categories:
+\begin{itemize}
+    \item Data Encryption: The system should ensure that any PHI that is stored or passed around in the system must be encrypted to prevent sensitive data from being exposed. (NFR-SAP1, NFR-SAP2)
+    \item The system should ensure that any time PHI is accessed, edited, or deleted, an immutable log of when the data was accessed is stored in the system for traceability. (FR-DMR4, FR-DMR5)
+    \item The system should ensure that anywhere PHI is stored, it can only be accessed by authorized users like an SLP. (NFR-USA4, NFR-LAL1)
+\end{itemize}
+
+\subsubsection{Recognition Accuracy}
+Evaluate phoneme identification against independently checked references
+using a target of at least \PhonemeAccuracyTarget{} (NFR-ACU1).
+
+\subsubsection{Responsiveness}
+For single-word attempts, the \WordLatencyPercentile{} end-to-end latency
+shall be at most \WordLatencyLimit{} (NFR-PER1). Measure from the end of
+recording to the result visible to the SLP. Sign-in, sign-out, and record
+operations have their own \ServerResponseLimit{} limit (NFR-REL1).
+
+\subsubsection{Usability}
+Check whether SLPs can complete the session and history workflows
+independently and faster than their usual manual workflow. Verify that
+children can respond to visual cues and stories told by the SLP without
+reading or accessing clinician data.
+
+\subsubsection{Supported Platform}
+Run the supervised workflow in Safari on a physical iPad connected to the
+local analysis server. Record the iPad model and iPadOS and Safari versions
+used for each run (NFR-POR1--3).
+
+\subsection{Out-of-Scope Objectives}
+Expo verification focuses on the supported workflow and release controls.
+The following work is tracked separately.
+
+\subsubsection{Clinical-Release and Long-Term Testing}
+Session-end backup and backup failure alerts (FR-HA2) are tested for
+clinical release. Expo still includes the patch deployment check (NFR-MAI3).
+
+\subsubsection{External Library Functionality Testing}
+Test the application's use of external libraries at integration boundaries.
+Independent verification of the libraries' internal behavior is outside scope.
 
 \subsection{Custom Documents}
 
-\wss{Summarize the CDs (Custom Documents) that were tackled by this project.  CDs 
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  CDs should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your CDs (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+\subsubsection{Wireframe Report}
+
+The \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/CDs/Wireframe/Wireframe.pdf}{Wireframe Report} documents the
+fall custom document and the supervisors' review of the clinician dashboard
+and supervised in-session screens. The review clarified the need for
+separate Goldman--Fristoe testing and guided practice item sets, playback
+of recorded attempts, and a clear distinction between automated results
+and SLP-reviewed results.
+
+These findings inform the V\&V walkthroughs and system tests. ST-F05 and
+ST-F22 check the separation of item sets, ST-F02 checks playback from
+session history, and ST-F14 checks error positions and the display of SLP
+overrides. ST-F24 checks that the supervised practice prompts use clear,
+age-appropriate visual cues.
+
+\subsubsection{Usability Report}
+
+The Usability Report is designed to validate the system's user experience (UX) before the completion of the capstone. After developing a functional prototype, the students of Ghoti's supervisors will be able to experiment with using PronouncedFish. The primary goal of this document is not just feedback collection, but quantifying key performance indicators such as response time and the accuracy of the machine learning model when identifying phonemes. This ensures that the design meets high standards of intuitive functionality, validating our objective to provide a positive user experience critical for clinical adoption. (NFR-USA1, NFR-USA3, NFR-PER1, NFR-ACU1)
 
 \subsection{Relevant Documentation}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
+The following documents define the requirements baseline, safety mitigations, design boundaries,
+and development practices used by this plan.
 
-\citet{SRS}
-
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
+\begin{itemize}
+    \item \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/SRS/SRS.pdf}{Software Requirements Specification} defines the product requirements.
+    \item \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/HazardAnalysis/HazardAnalysis.pdf}{Hazard Analysis} defines mitigations and safety requirements.
+    \item \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/Design/design.pdf}{Module Guide and Module Interface Specification} define module responsibilities and interfaces for design reviews and unit tests.
+    \item \href{https://github.com/lilyporter/Ghoti/blob/main/pdfs/DevelopmentPlan/DevelopmentPlan.pdf}{Development Plan} describes the build workflow and benchmark strategy.
+\end{itemize}
 
 \section{Plan}
 
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+Verification checks that PronouncedFish meets its requirements and design
+specifications. Validation checks that it meets the needs of SLPs and
+children in supervised sessions. This section describes how the team will
+review the requirements, design, V\&V plan, and implementation, run automated
+checks, and validate the workflows with SLP feedback.
 
 \subsection{Verification and Validation Team}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+Table~\ref{tab:tester-assignments} lists the developer and tester assignments.
+
+The Verification and Validation Team will be composed of all team members 
+and supervisors. In general, the software team will be in charge of initial 
+stages of testing, while the supervisors will be brought in near latter stages 
+to reinforce the student validation. Some steps will seek feedback from the 
+assigned peer review group as well. 
+
+The software team will conduct preliminary SRS verification, and make sure the
+functionality matches what is outlined in the SRS. Verified elements will 
+then be passed forward to the supervisors to ensure they truly match what 
+the users need. It is important to note that since the supervisors work very 
+closely with SLPs, requirements were heavily solicited through them. 
+Therefore, this process cross verifies whether the perceived implementation 
+of those requirements are in line with what is needed. 
+
+Furthermore, the software team will be in charge of unit tests, integration 
+tests, system tests, and regression tests for all software. These should be 
+added to the Github CI/CD so that they are checked upon any code changes. 
+These tests should be curated by someone besides the primary developer of 
+those features. 
+
+Any system design decisions will be verified on a rolling basis by another 
+team member. They should be done frequently so as to not hold back development. 
+Mutation testing should also be completed by a different group member to 
+ensure developer bias does not interfere with testing.
+
+The following table outlines the assigned tester for each developer:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Developer} & \textbf{Tester} \\ \hline
+        Hemal Rajput & Gurmanjot Minhas \\ \hline
+        Gurmanjot Minhas & James Araiche \\ \hline
+        James Araiche & Lily Porter \\ \hline
+        Lily Porter & Sarah Dorfman \\ \hline
+        Sarah Dorfman & Hemal Rajput \\ \hline
+    \end{tabular}
+    \caption{Developer and Tester Assignments}\label{tab:tester-assignments}
+\end{table}
 
 \subsection{SRS Verification}
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
+The SRS verification will be done by the project supervisors. The supervisors 
+are interested in using a version of this project for their own teaching, and 
+act as the liaison between the developers and the SLPs. Therefore, they are 
+the ideal representative to validate what is being done is right. 
 
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
+SRS verification will be handled using an agile framework, and touched on 
+during each biweekly meeting. Starting from the core of the system, more 
+features will be fleshed out between each meeting. Prior to development 
+beginning, all related requirements will be touched on and refined with the 
+supervisors to ensure they align with what they had in mind. Following 
+development, a short demonstration will compile the implementations of all 
+those requirements so they may be revalidated. Since each requirement is 
+attributed to one main goal, relevant requirements may be easily split up 
+based on the current focus. This timeline is not concrete and may vary based 
+on the nature of the implemented features and importance of other matters. 
 
-\wss{Maybe create an SRS checklist?}
+The requirement validation portion will be more of an interview process where 
+the supervisors read each requirement and comment on whether it makes sense. 
+The eventual demonstration will start with the software team showing an 
+overview of what has been put in. This will be followed by time for the 
+supervisors to test their own cases and give additional feedback. This will 
+allow for the SRS document or implementation to be revised as needed. The 
+GitHub issue tracker will be used to create issues when needed. 
+
 
 \subsection{Design Verification}
 
-\wss{Plans for design verification}
+Design verification will be conducted by a mixture of the group members, 
+reviewers, and supervisors. 
 
-\wss{The review will include reviews by your classmates}
+The supervisors will be consulted for user interface verification. For each 
+main page and visualization, the supervisors will be shown a Figma 
+(high-fidelity wireframe drawing) to review. Based on this, they will 
+determine if the interface is too complicated, needs more explanation, or has 
+any usability concerns. Since they have direct interaction with SLPs, they 
+have a good idea of their needs, abilities, and day to day, making them the 
+best group to validate this. 
 
-\wss{Create a checklists?}
+Additionally, the supervisors will have to verify all speech processing 
+elements since the software team are not linguistics experts. The plan is 
+for this to be addressed during the scheduled biweekly meetings. Specifically, 
+all the phoneme representations, comparison metrics, and conclusions will need 
+to be verified for relevance and correctness. 
+
+On a grander scheme, the software architecture will go through several 
+iterations of peer review. The software team will break off into several 
+smaller groups and create initial drawings for some interface. The drawings 
+will then be rotated to another sub group and refined. Once the entire team 
+is satisfied with the drawings, they will be presented to a peer review group 
+for further evaluation. They will be looking at these designs with a fresh 
+perspective, so they will likely notice any gaps that were missed by the 
+development team. 
+
+There will also be a checklist created based on the different user interface 
+requirements, functional requirements, and likely changes sections of the SRS. 
+These shall accompany any peer reviews and supervisor reviews as a 
+complementary tool. 
+
 
 \subsection{Verification and Validation Plan Verification}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+The Validation and Verification plan will be verified by a mixture of formal 
+and informal methods. For the SRS VnV plan, the team members will verify that 
+each requirement from the SRS has a traceable verification or validation 
+method assigned to it. All software classes must have a corresponding test 
+suite for unit, integration, system, and regression testing as well. To ensure 
+that this test suite is complete, it must achieve complete test coverage 
+(see 3.6 for a definition of complete), and successfully report failures upon 
+mutation testing. Mutation testing will be conducted by the assigned tester 
+from 3.1. Clear acceptance criteria and metrics for non-functional 
+requirements must be present, and approved by the supervisors. Once this is 
+all done, the peer review team will verify the VnV plan using a checklist 
+outlining the noted elements in detail.
 
 \subsection{Implementation Verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+The implementation will be verified by using tests of varying granularity. At 
+the lowest level, unit tests shall be introduced to test each component in 
+isolation. These tests must cover all branches of execution to make sure the 
+unit is fully covered by using mocks and stubs to abstract out dependencies 
+on other classes. Moving up one level, there must be integration tests to 
+connect each element of the code to make sure they work with each other 
+correctly. For example, if some class is written to take measurements in the 
+imperial system and another in the metric system, then individually their 
+expected outputs will be correct. However, when working with each other, the 
+components will fail. At the highest level, there should be system tests to 
+test the main modules as a whole. The assigned tester will be responsible for 
+writing these tests for their corresponding developer from 3.1. 
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+Beyond the code level, the implementation must also match what is desired by 
+the stakeholders. This overlaps with design verification, but will be done by 
+demonstrating the system to the supervisors and letting them play around with 
+it. This will help them catch any usability mistakes or quality of life 
+enhancements that they expected, but were not reflected by the implementation. 
+Static analysis tools will also be useful to ensure all coding standards and 
+conventions are met. Ruff and Prettier will be used to lint the corresponding 
+Python / JavaScript code. The team will also perform code reviews during the 
+integration stages. This lets the developers of each module iron out any 
+inconsistencies between their code and to ensure it is of an acceptable 
+standard, without making it too frequent. 
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+All code based tests will be run with Github continuous integration to ensure 
+that no component interactions are broken when pushing new code to the main 
+branch.
 
 \subsection{Automated Testing and Verification Tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+The coding standards and linting are mentioned in the Development Plan document. 
+To recall:
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+\begin{itemize}
+  \item Python: PEP 8, enforced with Ruff for Linting
+  \item JavaScript: the Airbnb JavaScript Style Guide, enforced with Prettier
+\end{itemize}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+Unit testing and Integration testing will be done using the Pytest framework. 
+This framework is picked due to its ability to support both unit and 
+integration testing rather than one or the other. These tools will be 
+continuously enforced using Github CI/CD on every pull request. Tests are 
+expected to achieve complete coverage, along with coverage of relevant edge 
+cases and erroneous cases. This will be measured by using the Pytest-Cov 
+coverage frameworks, which provides a report of line, branch, and function 
+coverage. The goal is to achieve 90-100\% statement coverage, and 80\% branch 
+coverage in general. Critical components should achieve 100\% branch coverage. 
+Relevant cases will be verified beforehand during the implementation 
+verification phase. 
+
 
 \subsection{Software Validation}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+For recognition validation, use clips with independently checked phoneme
+references from monolingual North American English speakers aged 4--6.
+Candidate corpora are the \href{https://talkbank.org/phon/access/Eng-NA/Penney.html}{Penney corpus} (DOI 10.21415/T5GH43)
+and \href{https://talkbank.org/phon/access/Eng-NA/PaidoEnglish.html}{Paidologos English} (DOI 10.21415/T5530N) in PhonBank.
+Select only age-eligible clips with usable audio and references. The
+Paidologos corpus contains typical productions. Report its results separately
+from any verified speech sound disorder data and report age coverage.
 
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
+Before running ST-N01, record the corpus release or snapshot, access date,
+eligibility criteria, clip identifiers, speaker and clip counts by corpus
+and age, known training overlap, and the source or SLP review of the
+reference transcriptions. Follow the \href{https://talkbank.org/0share/rules.html}{TalkBank usage rules}
+and each corpus's citation requirements. Keep audio within the approved
+local environment.
 
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
-
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
-
-\wss{This section might reference back to the SRS verification section.}
+Validate the workflow separately in a walkthrough with SLP advisors. Ask
+them to configure guided practice and testing, interpret a flagged result
+and an override, and compare progress across sessions. Record task failures,
+assistance, and feedback on whether results support their decisions.
 
 \section{System Tests}
 
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
+The functional tests use synthetic patient records and controlled inputs
+unless a case identifies recorded speech. Injected recognizer output
+isolates comparison and display behavior. ST-N01 separately tests accuracy
+using recorded child speech.
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
+The subsections below outline all necessary system tests associated with the functional 
+requirements of PronouncedFish.
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
-
-\subsubsection{Area of Testing1}
-
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
-		
-\paragraph{Title for Test}
+\subsubsection{Audio capture}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{ST-F01 Capture audio with consent\\}
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
+Control: Manual
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+Initial State: The SLP is signed in, synthetic patient P01 is selected, and consent has been confirmed for a guided practice session.
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+Input: Record one response for a practice prompt whose word is verified absent from the test set.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Output: Exactly one recording is linked to P01, the session, and its attempt.
 
-How test will be performed: 
+Test Case Derivation: FR-AC1
+
+How test will be performed: Capture the response in Safari and compare the saved recording's identifiers with the active attempt.
+
+\item{ST-F02 Store and replay completed attempts\\}
+
+Control: Manual
+
+Initial State: An authorized SLP has two sessions for P01.
+
+Input: Complete one attempt in each session, using two distinguishable practice prompts verified absent from the test set, then reopen both attempts from history.
+
+Output: Each attempt has its own analysis and encrypted recording. The authorized SLP can replay the correct clip from either session.
+
+Test Case Derivation: FR-AC2; ST-N10 verifies encryption.
+
+How test will be performed: Save two recordings with distinct expected phoneme results. Reopen both attempts in history and compare the recording and analysis with the expected values for each attempt. Fail the test if either attempt uses the other recording in its analysis.
+
+\item{ST-F03 Flag audio quality failures\\}
+
+Control: Automatic
+
+Initial State: The recording checks are active and their validated limits are recorded.
+
+Input: Use one clean clip and variants with noise, clipped peaks, and duration outside the supported limits. For each variant, verify the relevant limit before injection.
+
+Output: The clean clip is not flagged for quality. Each failing recording is flagged to the SLP, who can retry.
+
+Test Case Derivation: FR-AC3 and FR-HA1
+
+How test will be performed: Generate variants from the same clean clip, log the thresholds and measured values, and compare the quality status for each run.
+
+\item{ST-F04 Retry flagged audio\\}
+
+Control: Manual
+
+Initial State: A consented practice session is active.
+
+Input: Submit the clipped fixture from ST-F03, choose Retry, and record clean speech for the same item.
+
+Output: The original quality warning allows a retry. The new recording is analyzed for the same item and receives its own result.
+
+Test Case Derivation: FR-HA1 and FR-AC3
+
+How test will be performed: Verify the warning, retry control, current item, and new result in the clinician view.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Session Management}
 
-...
+\begin{enumerate}
+
+\item{ST-F05 Configure practice and testing sessions\\}
+
+Control: Manual
+
+Initial State: Synthetic patients P01 and P02 and both item sets are available.
+
+Input: Set up guided practice for P01 with a lesson targeting initial /r/ and a practice word verified absent from the test set. Set up testing for P02 and select a permitted Goldman--Fristoe item.
+
+Output: Each session retains the selected patient, mode, targets, and applicable items. Guided practice excludes the test words.
+
+Test Case Derivation: FR-SM1 and FR-PAR4
+
+How test will be performed: Read both saved session records and compare the selections and catalog membership.
+
+\item{ST-F06 Attempt and session controls\\}
+
+Control: Manual
+
+Initial State: A patient session is active.
+
+Input: Attempts are started, repeated, skipped, and ended; the session is ended.
+
+Output: Start begins an attempt; repeat repeats the current attempt; skip advances without recording a valid attempt; end attempt closes 
+the attempt; end session closes the session and prevents further attempts.
+
+Test Case Derivation: \textbf{FR-SM2} requires the system to allow the SLP to start, repeat, skip, and end each attempt, and to end the 
+session.
+
+How test will be performed: Execute each control in order through the session UI. After each action, inspect the UI state and backend 
+attempt/session status to confirm the expected state change.
+
+\item{ST-F07 Record support level per attempt\\}
+
+Control: Manual
+
+Initial State: A patient session is active with three attempts recorded.
+
+Input: The support level for each attempt is recorded as independent, semantic cue, and/or repetition.
+
+Output: Each attempt stores its selected support level and associates it with the correct attempt.
+
+Test Case Derivation: \textbf{FR-SM3} requires the system to record whether the target was produced independently, after a semantic cue, 
+or after repetition.
+
+How test will be performed: Set the support level for each attempt through the UI. Query the attempt records and verify each stored 
+support level matches the attempt it was entered for.
+
+\item{ST-F08 SLP override of classification\\}
+
+Control: Manual
+
+Initial State: An attempt has been classified by the system to contain a speech error.
+
+Input: The classification is overridden to be marked as "correct" instead.
+
+Output: The attempt is stored and displayed as overridden.
+
+Test Case Derivation: \textbf{FR-SM4} requires the system to allow the SLP to override the system's classification of any attempt. 
+The system is meant to be assistive, not diagnostic.
+
+How test will be performed: Use the override control in the UI. Inspect the stored attempt and the result view to confirm the SLP 
+override is applied and the original system classification is still recorded.
+
+\item{ST-F09 Two-factor authentication and password recovery\\}
+
+Control: Manual
+
+Initial State: An SLP account exists with two-factor authentication enrolled and a recovery contact configured.
+
+Input: Log in with the correct password but without the second factor; then provide a valid second factor. Initiate the password 
+recovery flow.
+
+Output: Access is denied before the second factor is provided; access is granted after a valid second factor; the password recovery 
+flow is available and completes successfully.
+
+Test Case Derivation: \textbf{FR-HA6} requires the system to have two-factor authentication and a password recovery system in place.
+
+How test will be performed: Attempt login without the second factor and confirm denial. Complete two-factor authentication and 
+confirm access. Run the password recovery flow with the test account and confirm the password reset completes.
+
+\item{ST-F10 SLP confirms recording consent\\}
+
+Control: Manual
+
+Initial State: An authenticated SLP opens a session for synthetic patient P01.
+
+Input: Try recording before consent confirmation. Confirm consent for P01, record, then start a new session for P02 and try recording again.
+
+Output: Recording is blocked until the SLP confirms valid consent for the selected patient and session. Confirmation from P01 does not authorize P02.
+
+Test Case Derivation: FR-HA8 and FR-AC1
+
+How test will be performed: Check the blocked attempts, confirm one allowed recording, and verify the new session requires its own confirmation.
+
+\end{enumerate}
+
+\subsubsection{Speech Analysis}
+
+\begin{enumerate}
+
+\item{ST-F11 Identify substitution, omission, and addition\\}
+
+Control: Automatic
+
+Initial State: The comparator accepts injected output for the configured target sequences.
+
+Input: For rabbit inject /w/ in place of the initial /r/. For cat omit final /t/. For sun append /t/ after the final /n/.
+
+Output: The comparator reports the expected and produced sounds for the substitution at the beginning, the expected /t/ for the omission at the end, and the extra /t/ after /n/ for the addition.
+
+Test Case Derivation: FR-SA1
+
+How test will be performed: Run the same inputs through the comparison pipeline and assert error type, phonemes, and position or insertion location.
+
+\item{ST-F12 Accept a configured pronunciation variant\\}
+
+Control: Automatic
+
+Initial State: A synthetic item with two approved reference sequences is configured.
+
+Input: Inject an exact match for the approved alternate sequence.
+
+Output: The sequence is accepted and no error is reported.
+
+Test Case Derivation: FR-SA2
+
+How test will be performed: Record the configured default and alternate IPA sequences in the fixture and assert an empty error list for the alternate.
+
+\item{ST-F13 Report confidence and unclassifiable results\\}
+
+Control: Automatic
+
+Initial State: The validated attempt confidence threshold is configured.
+
+Input: Inject recognition outputs that yield the nearest representable attempt scores below and at the threshold, retaining distinct phoneme confidence scores.
+
+Output: Both results show phoneme confidence and an attempt score. The score below the threshold is unclassifiable and the score at it can be classified.
+
+Test Case Derivation: FR-SA3 and FR-HA3
+
+How test will be performed: Record the threshold and scoring function version. Assert the two outcomes and the returned scores.
+
+\end{enumerate}
+
+\subsubsection{Results and Data Visualization}
+
+\begin{enumerate}
+
+\item{ST-F14 Show IPA, errors, and overrides\\}
+
+Control: Manual
+
+Initial State: A clinician has the three comparison fixtures from ST-F11 and the low-confidence result from ST-F13.
+
+Input: Open each attempt. Override the substitution fixture to correct and reopen it.
+
+Output: The SLP sees the expected and recognized IPA side by side, the error positions and gaps, the unclassifiable status where relevant, and the override alongside the original analysis.
+
+Test Case Derivation: FR-RDV1--3, FR-RDV9, FR-SM4
+
+How test will be performed: Compare the rendered rows and labels with the recorded fixture outputs.
+
+\item{ST-F15 Update session counts and heat map\\}
+
+Control: Manual
+
+Initial State: A new guided practice session is active.
+
+Input: Open the summary empty. Add an independent correct attempt, a cued correct attempt, a substitution, and an unresolved unclassifiable attempt. Override the substitution as correct and end the session.
+
+Output: The empty summary has zero counts, no rates, and an empty heat map. Counts update on completion, override, and session end. The heat map shows scored pairs using feature distance, separate from recognition confidence.
+
+Test Case Derivation: FR-RDV4--6
+
+How test will be performed: Check counts after each action and compare heat-map scores with the normalized Manhattan distance defined in the SRS.
+
+\item{ST-F16 Restrict results and label them as assistive\\}
+
+Control: Manual
+
+Initial State: Synthetic patient results are available in an authorized SLP session.
+
+Input: Open results as the authorized SLP, then sign out and request the same patient view.
+
+Output: The signed-in SLP sees the assistive interpretation label. The signed-out browser cannot view errors, progress, or playback.
+
+Test Case Derivation: FR-RDV7, FR-RDV8, FR-HA7 and NFR-USA4
+
+How test will be performed: Compare the signed-in and signed-out views and retain screenshots with synthetic data.
+
+\end{enumerate}
+
+\subsubsection{Progress and Data Management}
+
+\begin{enumerate}
+
+\item{ST-F17 Patient record, session record, and patient association\\}
+
+Control: Manual
+
+Initial State: Two patients exist; a session is run for one of them.
+
+Input: Create and view a patient record; run a session with targets and SLP inputs; view and export the session history.
+
+Output: The patient's identifying information and session history are maintained; the session record includes the date, SLP, target 
+phonemes and words, session results, and SLP inputs; the session results are associated only with the session patient.
+
+Test Case Derivation: \textbf{FR-DMR1} requires a record of identifying information and session history for each patient. 
+\textbf{FR-DMR6} requires each session to record the date, SLP, target phonemes and words, session results, and SLP inputs. 
+\textbf{FR-DMR7} requires session results to be associated only with the session patient.
+
+How test will be performed: Create both patients and run a session for one. Inspect the database and export to verify all required 
+session fields are present and no data from the other patient is linked.
+
+\item{ST-F18 Persist cues and original and overridden results\\}
+
+Control: Manual
+
+Initial State: P01 has three saved attempts with known original results.
+
+Input: Save one attempt at each supported cue level. Change one classification to correct and correct a phoneme in another attempt.
+
+Output: Each support level stays with its own attempt. Both corrections persist with the original analysis after reopening history.
+
+Test Case Derivation: FR-SM3 and FR-SM4
+
+How test will be performed: Reopen each attempt as the authorized SLP and compare the stored support levels, original analyses, and overrides.
+
+\item{ST-F19 Audit activity and retain history after deletion\\}
+
+Control: Manual
+
+Initial State: An authorized auditor and synthetic patient P01 are available.
+
+Input: Create, view, modify, export, and confirm deletion of P01. Retrieve and copy the audit log.
+
+Output: Each operation is logged with action, information type, timestamp, actor, and patient reference. Prior events and the deletion event remain available to the authorized auditor after deletion.
+
+Test Case Derivation: FR-DMR4, FR-DMR5 and FR-HA9
+
+How test will be performed: Compare the captured events with the action sequence and verify retained audit history after the clinical record is removed.
+
+\item{ST-F20 Compare target phonemes across sessions\\}
+
+Control: Manual
+
+Initial State: P01 has an empty history for target /s/.
+
+Input: Check progress with zero and one eligible session. Add a second session. Use equal counts of eligible observations with one correct production in the first session and two in the second, while keeping at least one error in both.
+
+Output: The comparison shows insufficient history before two eligible sessions. With two, it shows a higher correct rate and persistent errors.
+
+Test Case Derivation: FR-DMR8--10
+
+How test will be performed: Calculate the expected rate from the fixture counts and compare it with the chart and trend labels.
+
+\item{ST-F21 Clinical release: session-end backup and failure alert\\}
+
+Control: Automatic
+
+Initial State: A patient session with progress data is active; backup storage is available; a backup failure can be injected.
+
+Input: End the session normally; end a second session with backup failure injected.
+
+Output: All patient progress data and analytics are backed up at the end of the session; if the backup fails, the user is alerted.
+
+Test Case Derivation: \textbf{FR-HA2} requires the system to back up all patient progress data and analytics at the end of each session 
+and to alert the user if the backup fails.
+
+How test will be performed: End a normal session and verify the backup. Inject a backup failure, end another session, and observe the 
+alert to confirm the failure is surfaced.
+
+\end{enumerate}
+
+\subsubsection{Practice Activities}
+
+\begin{enumerate}
+
+\item{ST-F22 Verify practice catalog coverage and item sets\\}
+
+Control: Automatic
+
+Initial State: The supported target phonemes and authorized comparison list of test words are available.
+
+Input: List practice items for each target and word position, and compare normalized practice labels against the test-word list.
+
+Output: Each target and position has at least \PracticeItemMinimum{} items with correct metadata, and guided practice excludes all Goldman--Fristoe test words. Testing uses the designated items.
+
+Test Case Derivation: FR-PAR1, FR-PAR2 and FR-PAR4
+
+How test will be performed: Run the comparison in the authorized environment and record only coverage counts and mismatches, without reproducing the test word list.
+
+\item{ST-F23 Filter by target and position\\}
+
+Control: Manual
+
+Initial State: The practice catalog contains items targeting /s/ at the beginning and end.
+
+Input: Filter for initial /s/, then final /s/.
+
+Output: Each result set contains only items with the chosen target and position.
+
+Test Case Derivation: FR-PAR3
+
+How test will be performed: Compare each returned item's metadata with the active filters.
+
+\item{ST-F24 Verify visual cues and no reading requirement\\}
+
+Control: Manual
+
+Initial State: The SLP has age-appropriate practice prompts and the testing workflow available.
+
+Input: Show the visual cue for the practice item from ST-F05, tell a short story that cues the target, repeat the item, then advance. Inspect one testing item.
+
+Output: The practice cue remains available until the item changes. Neither mode requires the child to read. An SLP advisor confirms that the practice visual is recognizable and appropriate for ages 4--6.
+
+Test Case Derivation: FR-PAR5, FR-PAR5.1, FR-PAR5.2 and FR-PAR7
+
+How test will be performed: Walk through both modes in Safari and record the cue behavior and the advisor's assessment.
+
+\end{enumerate}
+
+\subsubsection{Local Server Connection Loss}
+
+\begin{enumerate}
+
+\item{ST-F25 Block new recording when the server is unreachable\\}
+
+Control: Manual
+
+Initial State: An SLP is signed into an active, consented session on iPad Safari.
+
+Input: Disconnect the iPad from the local server while leaving the session open. Try to start an attempt.
+
+Output: The SLP receives a connection warning, no new attempt starts, and audio is not recorded for later upload.
+
+Test Case Derivation: FR-HA4
+
+How test will be performed: Disconnect the test iPad, verify the warning and blocked recording, then reconnect and verify the controls are available.
+
+\item{ST-F26 Reconcile interrupted attempt after reconnect\\}
+
+Control: Manual
+
+Initial State: Two consented attempts have distinct identifiers.
+
+Input: Interrupt one save before commit. For another, let the server commit but prevent the success response from reaching Safari. Restore the connection.
+
+Output: Both attempts are interrupted until reconciled. The unsaved attempt can be retried by the SLP. The saved attempt is preserved and is not offered for duplicate retry.
+
+Test Case Derivation: FR-HA5 and FR-AC2
+
+How test will be performed: Compare the attempt identifiers, record counts, retry controls, and saved audio before and after reconnect.
+
+\end{enumerate}
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+\subsubsection{Accuracy and responsiveness}
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
+Use a consistent evaluation set so measurements can be compared across
+model changes, as required by the Development Plan.
 
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
-
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
-
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
-
-\subsubsection{Area of Testing1}
-		
-\paragraph{Title for Test}
-
+\paragraph{Measure phoneme detection accuracy}
 \begin{enumerate}
+    \item \textbf{ST-N01}\\
 
-\item{test-id1\\}
+    Type: Dynamic, automatic
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+    Initial State: An evaluation manifest identifies an age-eligible, versioned sample from the candidate corpora described in Software Validation and records SLP review of the phoneme references.
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
+    Input/Condition: Run the fixed clip set through the selected recognizer.
+
+    Output/Result: At least \PhonemeAccuracyTarget{} of reference phonemes are matched in the alignment (NFR-ACU1). Report results by corpus, age, and target phoneme, and report substitutions, omissions, and additions separately.
+
+    How test will be performed: Align recognized IPA to reference IPA and divide correct matches by reference phonemes. Keep the manifest fixed between model versions. Report exclusions and any known overlap with model development data.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\paragraph{Measure processing time from audio capture to phoneme estimation}
+\begin{enumerate}
+    \item \textbf{ST-N02}\\
 
-...
+    Type: Dynamic, automatic measurement
 
-\subsection{Traceability Between Test Cases and Requirements}
+    Initial State: Safari on a physical iPad is connected to the local server. Record the iPad, iPadOS and Safari versions, server setup, and model version.
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+    Input/Condition: Run \WordLatencyRuns{} single-word attempts in each mode on the supported local connection. Time from the end of capture to the rendered result.
+
+    Output/Result: The \WordLatencyPercentile{} is at most \WordLatencyLimit{} in each mode (NFR-PER1). Report median, maximum, timeouts, and recognition time separately. Treat attempts without a result as exceeding the response limit.
+
+    How test will be performed: Use browser timestamps for recording completion and visible result. Include upload, server processing, and rendering. Use the nearest-rank percentile. Also log clip duration and report server processing time divided by clip duration (real-time factor), as described in the Development Plan.
+
+\end{enumerate}
+
+\subsubsection{Usability and patient protection}
+
+Use SLP task observations for navigation and efficiency. Assess the child-facing boundary
+separately from clinician access.
+
+\paragraph{Learn the workflow within one hour}
+\begin{enumerate}
+    \item \textbf{ST-N03}\\
+
+    Type: Dynamic, manual
+
+    Initial State: An SLP unfamiliar with the application has standard onboarding material and synthetic records.
+
+    Input/Condition: Ask the SLP to sign in, select a patient, run one practice and one testing attempt, and find results and playback in history.
+
+    Output/Result: The SLP completes the tasks independently within one hour of first use (NFR-USA1).
+
+    How test will be performed: The UI/UX Lead observes without prompting. Record total time. For each task, log elapsed time, completion, errors, and requests for help. After the timed run, ask the SLP which steps were unclear and record their feedback.
+
+\end{enumerate}
+
+\begin{enumerate}
+    \item \textbf{ST-N04}\\
+
+    Type: Dynamic
+
+    Initial State: Synthetic patient P01 has a completed session and audit events.
+
+    Input/Condition: Request patient deletion, cancel it, then request it again and confirm.
+
+    Output/Result: Cancelling preserves the record. Confirming removes the active patient record, with prior audit events and the deletion event retained (NFR-USA2 and FR-DMR4).
+
+    How test will be performed: Check the existing patient history after cancellation and use ST-F19 to confirm audit retention after deletion.
+
+\end{enumerate}
+
+\paragraph{Compare workflow time with manual tools}
+\begin{enumerate}
+    \item \textbf{ST-N05}\\
+    Type: Dynamic, Manual comparative measurement
+
+    Initial State: An SLP has learned the application and has equivalent paper
+    or spreadsheet tools.
+
+    Input/Condition: Complete matched session and after-session documentation
+    tasks with identical attempts using software and manual tools.
+
+    Output/Result: Total software task time is lower than manual task time,
+    with equivalent completed records (NFR-USA3). Report paired times,
+    corrections and assistance; a faster incomplete record does not pass.
+
+    How test will be performed: The UI/UX Lead checks
+    where multiple participants are available and records session and
+    after-session times separately and together. Report sample size and
+    learning effects. Basis: NFR-USA3 requires less time than equivalent manual
+    tools, including work outside the session.
+\end{enumerate}
+
+\paragraph{Restrict the child-facing experience}
+\begin{enumerate}
+    \item \textbf{ST-N06}\\
+
+    Type: Dynamic, manual
+
+    Initial State: An authenticated SLP can open both session modes for a synthetic patient.
+
+    Input/Condition: Complete a supervised workflow without a child account. Sign out, then open the previously saved result and recording links.
+
+    Output/Result: The SLP can lead both modes without child authentication. The signed-out browser cannot access results, history, or playback (NFR-USA4).
+
+    How test will be performed: Walk through both modes in Safari and verify the access restrictions after sign-out.
+
+\end{enumerate}
+
+\subsubsection{Maintainability and portability}
+
+\paragraph{Review component boundaries}
+ST-N12 is a static design and code inspection. Check whether a clinician
+interface change can be made without modifying speech analysis (NFR-MAI1).
+Check whether adding a speech error type can be made without modifying
+audio capture or patient-record storage (NFR-MAI2). Use the module dependency
+diagram, interface specifications, and source dependencies to trace both
+change scenarios. Record the affected interfaces and any violations.
+
+Checks supported hardware and software environments. Check deployment, patching, and extension.
+
+\begin{enumerate}
+    \item \textbf{ST-N07}\\
+
+    Type: Dynamic performance check
+
+    Initial State: A clean build environment and a prepared patch exist, and
+    the approved build and deployment pipeline is available.
+
+    Input/Condition: Apply a representative patch and run the pipeline from
+    build start to a completed deployment, timing each stage.
+
+    Output/Result: Building and deploying the patch completes successfully in
+    less than 30 minutes (NFR-MAI3).
+
+    How test will be performed: The Development Lead and an independent
+    reviewer time the pipeline run from pipeline logs and repeat it three
+    times. Record durations and any failures; review is blocked if the
+    pipeline is unavailable. Basis: NFR-MAI3.
+\end{enumerate}
+
+\paragraph{Verify platform and browser compatibility}
+\begin{enumerate}
+    \item \textbf{ST-N08}\\
+
+    Type: Dynamic, manual
+
+    Initial State: A physical iPad with Safari and a working microphone is connected to the local server.
+
+    Input/Condition: Run the guided practice and testing workflow, including a microphone permission check, IPA display, history, and playback.
+
+    Output/Result: Both workflows are usable on the tested iPad and Safari setup (NFR-POR1--3 and FR-RDV9).
+
+    How test will be performed: Log the tested versions and device. Inspect touch controls, visible IPA symbols and playback.
+
+\end{enumerate}
+
+\subsubsection{Reliability, security and release review}
+
+These checks address operational hazards, including data loss, and unauthorized access.
+
+\paragraph{Measure server operation latency}
+\begin{enumerate}
+    \item \textbf{ST-N09}\\
+    Type: Dynamic, automatic measurement
+
+    Initial State: The local server is running and an authorized SLP account
+    and synthetic patient record exist.
+
+    Input/Condition: Send requests to sign in, sign out, save a patient record, and
+    retrieve that record in the documented test environment.
+
+    Output/Result: Each response is returned within \ServerResponseLimit{}
+    from receipt of the request (NFR-REL1).
+
+    How test will be performed: Capture server-side request and response
+    timestamps and record the elapsed time for each operation.
+\end{enumerate}
+
+\paragraph{Protect data and secure communications}
+\begin{enumerate}
+    \item \textbf{ST-N10}\\
+
+    Type: Static inspection and Dynamic security checks
+
+    Initial State: The approved PHI inventory and encryption baseline identify
+    every component and storage location.
+
+    Input/Condition: Create and transfer synthetic PHI; inspect browser-to-API,
+    service-to-service and database traffic, persistent stores, logs,
+    temporary files and backups.
+
+    Output/Result: PHI is encrypted from collection through its approved
+    storage lifecycle; intercomponent traffic uses the approved secure
+    protocol (NFR-SAP1, NFR-SAP2; NFR-LAL1). No unintended plaintext PHI
+    appears in inspected storage or traffic. Approved key access and
+    certificate validation controls are active.
+
+    How test will be performed: The Systems Architect/Development Lead and an
+    independent team reviewer inspect configuration, packet traces and
+    synthetic storage samples. Test denial of an untrusted certificate and an
+    insecure endpoint. Record coverage and gaps; review is blocked if the
+    baseline is absent. Basis: NFR-SAP1 and NFR-SAP2 require encryption; exact
+    cryptographic acceptance comes from an approved security baseline, not this
+    plan.
+\end{enumerate}
+
+\subsubsection{Legal and Licensing}
+
+These checks assess the system against the approved PHIPA checklist and verify the project's open-source licensing requirements.
+
+\begin{enumerate}
+    \item \textbf{ST-N11}\\
+
+    Type: Static inspection and Dynamic security checks
+
+    Initial State: The approved PHIPA checklist and deployment region list
+    exist.
+
+    Input/Condition: Process synthetic patient records through storage,
+    transfer and access paths; attempt access with unauthorized roles; review
+    the repository license and dependency manifest.
+
+    Output/Result: Synthetic PHI is stored, transferred and accessed only as
+    the PHIPA checklist permits, and stays in approved residency locations
+    (NFR-LAL1). Unauthorized access is denied. The repository includes the
+    GNU GPL text and all dependencies are GPL-compatible (NFR-LAL2).
+
+    How test will be performed: The Development Lead and an independent
+    reviewer compare configuration, storage locations and access logs against
+    the checklist, and run a dependency license scan and manually review flagged 
+    or unknown licenses for compatibility with the project's chosen GPL version. 
+    Record findings; review is blocked if the checklist is absent. Basis: NFR-LAL1 
+    and NFR-LAL2; legal sign-off is outside this plan.
+\end{enumerate}
+
+\subsection{System Test Traceability}\label{sec:system-traceability}
+
+The following matrix maps system test cases to the requirements
+they support. Inclusion in the matrix indicates planned test
+coverage, not successful execution.
+
+\begin{longtable}{@{}p{0.30\textwidth}p{0.65\textwidth}@{}}
+\caption{Traceability Between System Tests and Requirements}
+\label{tab:system-test-traceability}\\
+
+\toprule
+\textbf{Test Case} & \textbf{Requirement(s)} \\
+\midrule
+\endfirsthead
+
+\multicolumn{2}{l}{\textit{Table continued}}\\
+\toprule
+\textbf{Test Case} & \textbf{Requirement(s)} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{2}{r}{\textit{Continued on next page}}\\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+ST-F01 & FR-AC1 \\
+ST-F02 & FR-AC2 \\
+ST-F03 & FR-AC3 \\
+ST-F04 & FR-AC3, FR-HA1 \\
+ST-F05 & FR-SM1, FR-PAR4 \\
+ST-F06 & FR-SM2 \\
+ST-F07 & FR-SM3 \\
+ST-F08 & FR-SM4 \\
+ST-F09 & FR-HA6 \\
+ST-F10 & FR-AC1, FR-HA8 \\
+ST-F11 & FR-SA1 \\
+ST-F12 & FR-SA2 \\
+ST-F13 & FR-SA3, FR-HA3 \\
+ST-F14 & FR-SM4, FR-RDV1, FR-RDV2, FR-RDV3, FR-RDV9 \\
+ST-F15 & FR-RDV4, FR-RDV5, FR-RDV6 \\
+ST-F16 & FR-RDV7, FR-RDV8, FR-HA7 \\
+ST-F17 & FR-DMR1, FR-DMR6, FR-DMR7 \\
+ST-F18 & FR-SM3, FR-SM4 \\
+ST-F19 & FR-DMR4, FR-DMR5, FR-HA9 \\
+ST-F20 & FR-DMR8, FR-DMR9, FR-DMR10 \\
+ST-F21 (clinical release) & FR-HA2 \\
+ST-F22 & FR-PAR1, FR-PAR2, FR-PAR4 \\
+ST-F23 & FR-PAR3 \\
+ST-F24 & FR-PAR5, FR-PAR5.1, FR-PAR5.2, FR-PAR7 \\
+ST-F25 & FR-HA4 \\
+ST-F26 & FR-AC2, FR-HA5 \\
+
+\midrule
+
+ST-N01 & NFR-ACU1 \\
+ST-N02 & NFR-PER1 \\
+ST-N03 & NFR-USA1 \\
+ST-N04 & FR-DMR4, NFR-USA2 \\
+ST-N05 & NFR-USA3 \\
+ST-N06 & NFR-USA4 \\
+ST-N07 & NFR-MAI3 \\
+ST-N08 & NFR-POR1, NFR-POR2, NFR-POR3, FR-RDV9 \\
+ST-N09 & NFR-REL1 \\
+ST-N10 & NFR-SAP1, NFR-SAP2, NFR-LAL1 \\
+ST-N11 & NFR-LAL1, NFR-LAL2 \\
+ST-N12 & NFR-MAI1, NFR-MAI2 \\
+
+\end{longtable}
 
 \section{Unit Test Description}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
-
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
-
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
-
 \subsection{Unit Testing Scope}
-
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
-
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
-
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-
-\item{...\\}
-    
-\end{enumerate}
-
-\subsubsection{Module 2}
-
-...
-
 \subsection{Tests for Nonfunctional Requirements}
-
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
-
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Module ?}
-
-...
 
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all modules have been considered.}
-				
 \bibliographystyle{plainnat}
 
 \bibliography{../../refs/References}
@@ -483,76 +1194,114 @@ How test will be performed:
 
 \section{Appendix}
 
-This is where you can place additional information.
-
 \subsection{Symbolic Parameters}
 
-The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.
-
-\subsection{Usability Survey Questions?}
-
-\wss{This is a section that would be appropriate for some projects.}
+\begin{description}
+    \item[Phoneme accuracy target] \PhonemeAccuracyTarget{} (ST-N01).
+    \item[Single-word response limit] \WordLatencyLimit{} (ST-N02).
+    \item[Single-word response statistic] \WordLatencyPercentile{} (ST-N02).
+    \item[Single-word trials per mode] \WordLatencyRuns{} (ST-N02).
+    \item[Server operation response limit] \ServerResponseLimit{} (ST-N09).
+    \item[Practice catalog minimum] \PracticeItemMinimum{} items per target phoneme and word position (ST-F22).
+\end{description}
 
 \newpage{}
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+Table~\ref{aiToolsUsed} identifies the tools, and
+Table~\ref{aiToolUsageDetails} records how they were used.
+
+\begin{table}[hp]
+\caption{List of AI Tools Used} \label{aiToolsUsed}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Tool Number} & \textbf{Name} & \textbf{Model} \\
+\midrule
+1 & ChatGPT & GPT 5 Thinking Mini \\
+2 & Claude & Sonnet 5 \\
+3 & ChatGPT & GPT 6 Astra \\
+4 & Google Deepmind & Gemma 4 \\
+5 & ChatGPT & GPT 5.4 mini \\
+8 & Codex & GPT-6.2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+In general, generative AI was used to help with LaTeX formatting and writing assistance in the document. More specific uses may be noted in the table below. 
 
-\wss{For each of the uses, identify which parts of the document were affected.}
-
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+\begin{table}[htbp]
+\caption{Usage Details for All AI Tools Used} \label{aiToolUsageDetails}
+\begin{tabularx}{\textwidth}{@{}p{2cm}p{3cm}L@{}}
+\toprule
+\textbf{Tool Number} & \textbf{Location} & \textbf{Details} \\
+\midrule
+1 & (3) Plan & Explained what the difference between each section was because some sections were slightly confusing (3.4, 3.7). \\
+2 & (3) Plan & Gave the LLM the write-up for 3.4, 3.5, 3.6, and asked if there were any key strategies missed. \\
+3 & (8) Reflection & Gave the AI a rough draft and bullet points for the reflection answers. Asked it to generate it into a nice paragraph, and edited the generated paragraph manually. \\
+4 & (4) System Tests & Used the AI for ideation and brainstorming of system tests given the SRS requirements. This was done to cover a broad scope of testing in addition to the manually brainstormed tests. All generated tests were meticulously edited to match all characteristics desired of PronouncedFish. \\
+5 & (2) General Information & Used for language assistance and writing refinement. This helped to improve the clarity and coherence of the document. \\
+6 & (2) General Information & Used to add requirement references from the SRS. Task was quick to do for the LLM and saved significant time in the writing process. \\
+7 & (1) Symbols, Abbreviations, and Acronyms & Used to extract all acronyms from the document and put them into a LaTeX table. All acronyms were then reviewed and edited for accuracy. \\
+8 & V\&V Plan & Applied review feedback and aligned system tests and traceability with the revised requirements. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Verification of AI-Generated Content}
+Verification of AI content involved a human reviewer for any and all generated 
+content. For LaTeX formatting, as long as it compiled it was fine. For all 
+uses in parts (3) and (4), all generated content was read and taken as 
+brainstorming. Part (3) used it to uncover missing strategies in the current 
+writing. Each suggestion was weighed on if it was adding enough value to the 
+VnV to offset the added complexity. Having more validation is directly 
+correlated with putting in more testing effort. However, at some point 
+putting in more effort becomes infeasible due to timing constraints, 
+so only the most important strategies were used. For part (4), the goal was 
+to get a diverse pool of tests that might have been missed during the team's 
+ideation session. No test was directly transferred to the VnV document without 
+proper verification. Each one was read, and ones that fit with the group's 
+vision and SRS were used as a template. This template had all inputs, outputs, 
+and procedures revised with more precise human wording instead of the generic 
+LLM generated one.
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
-
-\newpage{}
+\clearpage
 
 \section{Appendix --- Reflection}
-
-\wss{This section is not required for CAS 741}
-
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
 
 \input{../Reflection.text}
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
+  \item What went well while writing this deliverable? \newline
+  Many of our requirements were specific and measurable, which made it straightforward to derive test cases for both our functional and non-functional requirements.
+  Our usability requirements in particular came with concrete, verifiable targets.
+  For example, one requirement states that a speech-language pathologist (SLP) should be able to fully learn the system within an hour. Because each requirement had a clear pass/fail criterion, we could map requirements to tests with very little ambiguity or debate. This also gave us confidence that our test plan covers what the system is actually supposed to do, and it will make it easier to show traceability from requirements to tests later in the project.
   \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
+    did you resolve them? \newline
+    Writing a test plan requires at least a basic understanding of the whole system in order to anticipate which tests will be needed, and it was difficult to hold the entire system in our heads at once.
+    This made it easy to overlook interactions between components or to focus too heavily on one area. To address this, we drew diagrams of the system and walked through them together.
+    The diagrams gave us a shared view of how the pieces fit together and helped us identify specific points of contention, meaning the places where components interact or where failures are most likely, so we could direct our testing effort there.
   \item What knowledge and skills will the team collectively need to acquire to
   successfully complete the verification and validation of your project?
   Examples of possible knowledge and skills include dynamic testing knowledge,
   static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
+  identify at least one item for each team member. \newline
+  To successfully complete verification and validation, our team will need to learn \textbf{pytest}, \textbf{usability testing methods}, and \textbf{CI/CD automation}.
+    \item \textbf{pytest} will be our main tool for automating functional tests, so we will need to learn how to structure test suites, write clear test cases, and use features such as fixtures and parametrization.
+    \item \textbf{Usability testing methods} are needed to validate requirements that depend on real users, such as the SLP learning the system within an hour. We will need to understand how to design test sessions, define tasks, and collect meaningful results.
+    \item \textbf{CI/CD automation} will let our tests run automatically on every change. We already have a CI/CD pipeline, but we will need to expand it. To do that, we first need to understand how the current pipeline works, including its stages, configuration, and triggers, so that we can extend it to run our tests reliably without breaking existing behaviour.
   \item For each of the knowledge areas and skills identified in the previous
   question, what are at least two approaches to acquiring the knowledge or
   mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
+  member pursue, and why did they make this choice? \newline
+    \item \textbf{pytest:} We can find examples online of well-written pytest suites and use them as a reference for our own tests. Studying how others organize their tests, name them, and use fixtures will help us adopt good practices from the start rather than discovering them through trial and error.
+    \item \textbf{CI/CD automation:} We can write documentation for our CI/CD pipeline as we learn it. Documenting how each stage works forces us to understand it properly, and it leaves the whole team with a shared reference that makes future changes easier and safer.
+    \item \textbf{Usability testing methods:} We can review lecture material from our HCI course, which already covers the methods and principles we need. This lets us build on content we have seen, and apply it directly to validating our usability requirements.
+  
 \end{enumerate}
 
 \end{document}

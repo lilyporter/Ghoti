@@ -3,6 +3,10 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{tabularray}
+\usepackage{float}
+\usepackage{pdflscape}
+\UseTblrLibrary{booktabs}
 
 \hypersetup{
     colorlinks=true,       % false: boxed links; true: colored links
@@ -12,7 +16,7 @@
     urlcolor=cyan           % color of external links
 }
 
-\title{Hazard Analysis\\\progname}
+\title{Hazard Analysis\\PronouncedFish}
 
 \author{\authname}
 
@@ -36,9 +40,8 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+10/19/2026 & Ghoti & First submission\\
+11/18/2026 & Hemal Rajput & Aligned safety requirements, mitigations, and FMEA traceability with the SRS.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -46,112 +49,388 @@ Date2 & Name(s) & Description of changes\\
 ~\newpage
 
 \tableofcontents
+\listoftables
 
 ~\newpage
 
 \pagenumbering{arabic}
 
-\wss{You are free to modify this template.}
-
 \section{Introduction}
 
-\wss{You can include your definition of what a hazard is here.}
+This document covers the hazard analysis for PronouncedFish, a web-based
+assistant for speech-language pathologists (SLPs) during supervised guided
+practice and testing. The system captures and analyzes a child's speech
+during the session and flags substitutions, omissions, and additions. It
+presents results and visualizations through the SLP dashboard. Testing uses
+Goldman--Fristoe items, and guided practice uses separate items that exclude
+the test words. The system assists the SLP in exercising professional judgment.
+This document defines hazard as a property or condition in the system together with a condition in the environment that has the 
+potential to cause harm or loss. 
+The purpose of this document is to identify the hazards of the system, so mitigation strategies and safety requirements can be 
+derived. 
 
 \section{Scope and Purpose of Hazard Analysis}
 
-\wss{You should say what \textbf{loss} could be incurred because of the
-hazards.}
+This hazard analysis addresses the major hazards that could negatively impact PronouncedFish. This includes hazards with 
+speech/audio capture, speech analysis, and interfaces. The analysis will cover the various risks such as with patient data handling, 
+data privacy, accuracy, and performance. The losses that could result from the hazards include violations of the Personal Health Information Protection Act (PHIPA), privacy breaches, inaccurate analysis of speech and presentation of data, and loss of stakeholder trust.
+The purpose of this hazard analysis is early identification of any risks that could affect the key components of the system. 
+Identifying these risks will inform the creation of mitigation strategies and proper safety and security requirements. 
+Doing this will minimize risk and potential loss from unaddressed hazards. 
 
+\clearpage
 \section{System Boundaries and Components}
 
-\wss{Dividing the system into components will help you brainstorm the hazards.
-You shouldn't do a full design of the components, just get a feel for the major
-ones.  For projects that involve hardware, the components will typically include
-each individual piece of hardware.  If your software will have a database, or an
-important library, these are also potential components.}
+\begin{longtblr}[
+    caption = {System Components and Boundaries},
+    label = {tab:system-components},
+]{
+    width = \linewidth,
+    colspec = {X[1,l] X[2.5,l] X[1,l]},
+    rowhead = 1,
+    hline{1,2,Z} = {0.5pt},
+}
+\textbf{Component} & \textbf{Description} & \textbf{Boundary} \\
+\midrule
+
+Microphone and Browser &
+Provides microphone input and runs the web interface in Safari on iPad. &
+Environment (hardware and software outside system control) \\
+
+Audio Capture &
+Captures each attempt after the SLP confirms recording authorization for the selected patient and session, and sends the audio to the local server over an encrypted connection. &
+System (client-side) \\
+
+Speech Model &
+Converts the recorded audio of an attempt into a sequence of phonemes, each with an associated confidence value. &
+System \\
+
+Comparison Engine &
+Compares recognized phonemes with the expected pronunciation and acceptable variants, identifies substitutions, omissions, and additions, and classifies the attempt. &
+System \\
+
+Backend API &
+Runs on the local server, coordinates speech processing, enforces access rules, and provides results to the dashboard. &
+System \\
+
+Database &
+The self-hosted database stores patient records, session history, SLP inputs, and audit logs. It stores personal health information encrypted at rest. Each completed attempt's recording is linked to that attempt, with retention governed by clinic policy. Patient identity and clinical data remain separate. &
+System (configuration and schema) \\
+
+In-session interface &
+Presents visual cues in Safari during guided practice and testing. The SLP supervises the child and can tell a story to elicit a guided practice response. Neither mode requires the child to read. &
+System (client-side) \\
+
+SLP Dashboard &
+Allows authorized SLPs to create practice lessons, configure and control guided practice or testing, enter overrides, view results and progress, and replay completed attempts from prior sessions. &
+System (client-side) \\
+
+Authentication &
+Verifies SLP accounts with two-factor authentication, supports password recovery, and restricts clinician functions and patient data by permission. Children participate without an account. &
+System (configuration) \\
+
+\end{longtblr}
 
 \section{Critical Assumptions}
 
-\wss{These assumptions that are made about the software or system.  You should
-minimize the number of assumptions that remove potential hazards.  For instance,
-you could assume a part will never fail, but it is generally better to include
-this potential failure mode.}
+\begin{itemize}
+    \item The child attempts the requested speech prompt during the supervised session.
+    \item A trained SLP supervises the child and operates the clinician functions.
+    \item The SLP uses Safari on an iPad with a microphone and access to the local server.
+    \item The system is intended for use in Ontario.
+    \item The SLP is familiar with web-based software.
+    \item The SLP uses professional judgment to interpret the system's findings.
+\end{itemize}
 
-\section{Failure Mode and Effect Analysis}
+\section{Failure Mode and Effects Analysis} \label{sec:fmea}
 
-\wss{Include your FMEA table here. This is the most important part of this document.}
-\wss{The safety requirements in the table do not have to have the prefix SR.
-The most important thing is to show traceability to your SRS. You might trace to
-requirements you have already written, or you might need to add new
-requirements.}
-\wss{If no safety requirement can be devised, other mitigation strategies can be
-entered in the table, including strategies involving providing additional
-documentation, and/or test cases.}
+Table~\ref{tab:fmea} uses qualitative ratings. Severity is \textbf{Low} for a
+minor, reversible inconvenience, \textbf{Medium} for loss of work or
+interruption of a session, and \textbf{High} for exposure of patient
+information, loss of clinical records, or an error that could affect care.
+Likelihood is \textbf{Low} when the failure requires unusual conditions,
+\textbf{Medium} when it is plausible in routine use, and \textbf{High} when
+it is expected to recur during routine sessions. These are initial qualitative estimates based on the
+failure causes and effects in each row. Requirement IDs beginning with
+FR-HA refer to this document. The other IDs refer to the SRS.
+
+\begin{landscape}
+\fontsize{8}{10}\selectfont
+\begin{longtblr}[
+    caption = {Failure Mode and Effects Analysis},
+    label = {tab:fmea},
+]{
+    width = \linewidth, 
+    colspec = {X[1.24,l] X[0.90,l] X[0.86,l] X[1.00,l] X[1.34,l] X[0.82,l]},
+    row{1}  = {font=\bfseries},
+    hline{1,Z} = {0.8pt},
+    hline{2} = {0.5pt},
+    rowhead = 1, % Automatically repeats the header row on every new page
+}
+Failure Mode and Components &
+Causes &
+Effects &
+Detection &
+Recommendations &
+Requirements \\
+\textbf{H1} \newline
+Speech analysis misclassifies the child's production \newline
+Audio Capture, Speech Model, Comparison Engine \newline
+Severity: High \newline Likelihood: Medium &
+• Background noise, clipping, or a microphone issue degrades the recording \newline
+• The recognizer misidentifies a child's speech \newline
+• A model update reduces recognition accuracy &
+• Incorrect results misrepresent the child's performance and may affect the SLP's decisions &
+• Check recording quality for noise, clipping, and duration \newline
+• Check microphone input at the beginning of the session \newline
+• Use confidence scores and clinician review to identify uncertain results \newline
+• Verify recognition against reference recordings from children in the supported age range &
+• Flag recordings that fail quality checks and offer the SLP a retry \newline
+• Mark low-confidence results as unclassifiable \newline
+• Let the SLP override the result while preserving the original analysis &
+\hyperlink{ha:FR-HA1}{FR-HA1}, \hyperlink{ha:FR-HA3}{FR-HA3},
+FR-AC3, FR-SA3, FR-SM4, FR-DMR3.1, NFR-ACU1 \\
+\textbf{H2} \newline
+Performance too slow for a live session \newline
+Speech Model, Backend API \newline
+Severity: Medium \newline Likelihood: Medium &
+• Other workloads compete for local server resources \newline
+• Wi-Fi/connection issues like an unstable connection or congested network can cause high latency \newline
+• The local server may have insufficient processing capacity &
+• Valuable time lost in session waiting for a response from the application \newline
+• Frustration from SLP and patient for extending a session and wasting time &
+• Measure from the end of the recording to the display of the result. Compare with NFR-PER1, which requires a result in under 10 seconds for a short sentence. &
+• Use the latency measurements to identify and address processing or network bottlenecks &
+NFR-PER1, NFR-REL1 \\
+\textbf{H3} \newline
+Connection to the local server is lost \newline
+Audio Capture, Backend API \newline
+Severity: Medium \newline Likelihood: Medium &
+• The iPad loses network access or the local server stops responding &
+• The attempt may be interrupted before it is saved \newline
+• The SLP cannot continue recording &
+• The application fails to reach the server during a connection check or a request &
+• Notify the SLP and block new recordings while the server is unreachable \newline
+• Reconcile the attempt with saved records after reconnecting and let the SLP retry an unsaved attempt &
+\hyperlink{ha:FR-HA4}{FR-HA4}, \hyperlink{ha:FR-HA5}{FR-HA5}, FR-AC2 \\
+\textbf{H4} \newline
+Unauthorized collection or disclosure exposes patient information \newline
+Audio Capture, Authentication, Backend API, Database \newline
+Severity: High \newline Likelihood: Medium &
+• Recording starts before the SLP confirms valid consent \newline
+• An account is compromised or access controls allow an unauthorized request \newline
+• Stored or transmitted patient data is exposed &
+• Patient recordings or clinical records are collected or disclosed without authorization &
+• Check for consent confirmation before recording and enforce permissions on access requests \newline
+• Review patient-record audit events to investigate suspected unauthorized access &
+• Require consent confirmation for the selected patient and session \newline
+• Restrict access to authorized users and require SLP two-factor authentication \newline
+• Encrypt stored patient information and communications \newline
+• Record patient-record activity in the audit trail &
+\hyperlink{ha:FR-HA6}{FR-HA6}, \hyperlink{ha:FR-HA8}{FR-HA8},
+\hyperlink{ha:FR-HA9}{FR-HA9}, FR-AC1, FR-DMR4, FR-DMR5,
+NFR-USA4, NFR-SAP1, NFR-SAP2 \\
+\textbf{H5} \newline
+Session data is recorded against the wrong patient or overwritten \newline
+SLP Dashboard, Backend API, Database \newline
+Severity: High \newline Likelihood: Low &
+• The SLP selects the wrong patient when starting the session \newline
+• A save is associated with a different patient from the one selected for the session \newline
+• Conflicting saves overwrite information &
+• Results may appear in another patient's history or misrepresent progress &
+• Make the selected patient visible to the SLP during session setup \newline
+• Check the patient association and report conflicts or failed saves &
+• Associate each session and its results with exactly one patient, the patient selected for the session \newline
+• Reject conflicting saves that would overwrite an existing session &
+FR-SM1, FR-DMR6, FR-DMR7 \\
+\textbf{H6} \newline
+An authorized SLP cannot sign in \newline
+Authentication, Backend API \newline
+Severity: Medium \newline Likelihood: Medium &
+• The SLP forgets the password or cannot complete two-factor authentication \newline
+• The sign-in service is unavailable &
+• The SLP cannot start or resume the supervised session &
+• Distinguish sign-in errors from service outages &
+• Offer password recovery to authorized SLPs \newline
+• Keep patient data access restricted until sign-in succeeds &
+\hyperlink{ha:FR-HA6}{FR-HA6}, NFR-USA4 \\
+\textbf{H7} \newline
+Patient data is corrupted, lost, or accidentally deleted \newline
+Backend API, Database, SLP Dashboard \newline
+Severity: High \newline Likelihood: Low &
+• Storage or software failure damages saved records \newline
+• An SLP accidentally requests deletion of a patient record &
+• Session history, recordings, or progress data become unavailable &
+• Report failed saves or inaccessible records \newline
+• Report backup failures when clinical-release backups are enabled &
+• Require confirmation before deleting the patient record and preserve the audit trail \newline
+• Preserve completed attempts on reconnect \newline
+• Back up patient progress data and analytics at session end for clinical release &
+\hyperlink{ha:FR-HA2}{FR-HA2}, \hyperlink{ha:FR-HA5}{FR-HA5},
+\hyperlink{ha:FR-HA9}{FR-HA9}, FR-AC2, FR-DMR1, FR-DMR4, NFR-USA2 \\
+\textbf{H8} \newline
+Over-reliance on automated results \newline
+SLP Dashboard, Speech Model \newline
+Severity: High \newline Likelihood: Low &
+• The SLP accepts an automated result without reviewing it \newline
+• The SLP misinterprets a confidence score or the heat map &
+• An incorrect result influences the SLP's interpretation of progress or choice of practice targets &
+• The SLP reviews the recording, phoneme comparison, and available confidence information &
+• Identify automated results as assistive and subject to SLP review \newline
+• Distinguish the SLP's override from the original classification &
+\hyperlink{ha:FR-HA3}{FR-HA3}, \hyperlink{ha:FR-HA7}{FR-HA7},
+FR-AC2, FR-SM4, FR-RDV1, FR-RDV7 \\
+\textbf{H9} \newline
+The child becomes frustrated during guided practice \newline
+In-session interface \newline
+Severity: Medium \newline Likelihood: Medium &
+• The child struggles with an item or loses interest &
+• The child disengages, and the SLP may need to interrupt the activity &
+• The SLP observes discomfort, disengagement, or a refusal to continue &
+• Use age-appropriate visual cues and let the SLP tell a story to elicit a response \newline
+• Let the SLP repeat or skip an item or end the activity &
+FR-SM2, FR-PAR5, FR-PAR5.2, FR-PAR6, FR-PAR7 \\
+\end{longtblr}
+\end{landscape}
+
 
 \section{Safety and Security Requirements}
 
-\wss{Newly discovered requirements.  These should also be added to the SRS.  (A
-rationale design process how and why to fake it.)}
+The following security, safety, and reliability requirements address the
+failure modes identified in Section~\ref{sec:fmea}.
+
+\begin{itemize}
+\item \hypertarget{ha:FR-HA1}{\textbf{FR-HA1}}: When a recording fails the usability checks for noise, clipping, or duration
+(SRS FR-AC3), the system shall flag it to the SLP and offer a retry. \\
+\textbf{Rationale:} The SLP can address the recording issue and request
+another attempt. Addresses H1.
+
+\item \hypertarget{ha:FR-HA2}{\textbf{FR-HA2}}: For clinical release, the system shall back up patient progress data and
+analytics at the end of each session and alert the SLP if the backup fails. \\
+\textbf{Rationale:} Backups support recovery from storage failure or
+corruption. Failure alerts identify when a backup is unavailable. Addresses H7.
+
+\item \hypertarget{ha:FR-HA3}{\textbf{FR-HA3}}: The system shall report phoneme confidence and an attempt-level confidence
+score to the SLP. It shall mark attempts below the threshold established in
+the validation study as unclassifiable (SRS FR-SA3). \\
+\textbf{Rationale:} The SLP can identify results that need additional review,
+and the system avoids forcing a classification below the threshold.
+Addresses H1 and H8.
+
+\item \hypertarget{ha:FR-HA4}{\textbf{FR-HA4}}: When a connection check or recording request shows
+that the local server is unreachable, the system shall notify the SLP and
+prevent new recording attempts until the connection is restored.\\
+\textbf{Rationale:} The SLP can tell that recording is unavailable, and
+the system avoids storing offline recordings on the iPad. Addresses H3.
+
+\item \hypertarget{ha:FR-HA5}{\textbf{FR-HA5}}: If the connection is lost before an attempt is
+confirmed saved, the system shall mark the attempt interrupted. When the
+connection returns, the system shall check whether the attempt was saved on
+the server. Completed attempts already saved shall be preserved. If the
+interrupted attempt was unsaved, the system shall allow the SLP to retry it.\\
+\textbf{Rationale:} Checking the server before a retry prevents the same
+attempt from being recorded twice and protects already saved results. Addresses H3 and H7.
+
+\item \hypertarget{ha:FR-HA6}{\textbf{FR-HA6}}: The system shall require authorized SLPs to sign in with two-factor authentication before they can access the clinician dashboard, patient records, or stored recordings. The system shall provide password recovery for SLP accounts.\\
+\textbf{Rationale:} Two-factor authentication reduces the risk of unauthorized patient data access if a password is compromised. Password recovery lets authorized SLPs regain access to their accounts. Addresses H4, H6.
+
+\item \hypertarget{ha:FR-HA7}{\textbf{FR-HA7}}: The clinician dashboard shall identify automated results and visualizations
+as assistive and subject to the SLP's professional interpretation (SRS FR-RDV7). \\
+\textbf{Rationale:} An automated result may be incorrect and should be
+reviewed by the SLP before it informs care. Addresses H8.
+
+\item \hypertarget{ha:FR-HA8}{\textbf{FR-HA8}}: The system shall prevent recording until the
+authenticated SLP confirms that valid consent covers recording, retention,
+and later playback for the selected patient and session.\\
+\textbf{Rationale:} The clinic documents consent through its existing process.
+The SLP confirms that it applies before the application captures audio. Addresses H4.
+
+\item \hypertarget{ha:FR-HA9}{\textbf{FR-HA9}}: The system shall audit each view, creation, modification, export, and
+deletion of a patient record. Each event shall identify the action, type of
+information, date and time, user, and patient reference. The system shall
+retain the deletion event and earlier events after the patient record is
+deleted, and make the audit log available to authorized users (SRS FR-DMR4
+and FR-DMR5). \\
+\textbf{Rationale:} Authorized users can investigate patient-record access
+and changes after a record is deleted. Addresses H4 and H7.
+
+\end{itemize}
 
 \section{Roadmap}
 
-\wss{Which safety requirements will be implemented as part of the capstone timeline?
-Which requirements will be implemented in the future?}
+The Expo release includes recording-quality feedback (FR-HA1), confidence
+reporting (FR-HA3), connection-loss handling and retry (FR-HA4 and FR-HA5),
+SLP authentication and password recovery (FR-HA6), assistive interpretation
+guidance (FR-HA7), and SLP confirmation of recording consent (FR-HA8).
+Expo also includes patient-record auditing (FR-HA9), deletion confirmation,
+and retention of the audit trail after deletion (SRS NFR-USA2 and FR-DMR4).
+These controls support supervised sessions and restrict access to patient
+data.
+
+Session-end backup and failure alerts (FR-HA2) are addressed for clinical
+release.
 
 \newpage{}
 
 \section{Appendix --- Generative AI Use Disclosure}
 
-\wss{ChatGPT (version 5) was used to brainstorm ideas for the template for this disclose section.}
-
 \subsection{AI Tools Used}
 
-\wss{Give the name of the AI tool(s) used and the version.}
+ChatGPT (version 5), GPT 6-Sol, Claude Sonnet 5.5, and Codex (GPT-6.2) were used.
 
 \subsection{How and Where Used}
 
-\wss{Explain what the tool(s) were used for.  Examples include: brainstorming,
-explaining a technical concept, reviewing the document, generating or modifying
-text, generating or modifying diagrams, identifying errors or omissions or
-inconsistencies.}
+ChatGPT (version 5) helped brainstorm the template for this disclosure section. Claude Sonnet 5.5 was used for brainstorming and ideation during the hazard analysis. GPT 6-Sol was used to format this document and restore its section layout after a merge.
 
-\wss{For each of the uses, identify which parts of the document were affected.}
-
-\wss{You do not need to report every interaction, but you should disclose the 
-uses that materially contributed to your work}
+Codex (GPT-6.2) helped apply GitHub issue feedback to the FMEA and update the
+safety requirements for recording quality, confidence, consent, account access,
+connection loss, and patient-record auditing.
 
 \subsection{Verification of AI-Generated Content}
 
-\wss{\begin{itemize}
-    \item Describe how the team checked AI-generated or AI-assisted material
-    before including it in the document.
-    \item In particular, verify factual claims, technical assertions,
-    requirements, calculations, references, and other information for which an
-    AI system may produce incorrect or fabricated results.
-    \item \textbf{The team is responsible for the accuracy, completeness,
-consistency, and appropriateness of the submitted document, regardless of
-whether material was generated by a human or an AI system.}
-\end{itemize}}
+The formatting changes were checked against the prior text to confirm that the wording was preserved, and the document was compiled. The updated safety requirements were checked against the agreed project
+decisions and the SRS, and the hazard-to-requirement links were verified.
+The team remains responsible for reviewing brainstormed ideas and verifying
+any factual claims or requirements before submission.
 
 \newpage{}
 
 \section{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
-
 \input{../Reflection.text}
 
 \begin{enumerate}
-    \item What went well while writing this deliverable? 
+    \item What went well while writing this deliverable?
+    We went into this deliverable with a general idea of the expected hazards.
+    In many of our prior discussions (both as a group and with our supervisors), we discussed many of the potential failure modes.
+    As a result, we spent more time expanding on the failure modes we have previously identified rather than ideating from scratch.
+    Our supervisors also gave us many jumping off points to identify failures and provided us with related reading material.
     \item What pain points did you experience during this deliverable, and how
     did you resolve them?
+    We struggled with differentiating on what is a failure mode and what is actually a cause of the failure mode.
+    For instance, we identified the potential issue of unique vocal patterns or accents causing an incorrect phoneme to be identified.
+    However, we realized that the unmet requirement was that an incorrect phoneme was identified (accuracy).
+    This meant that it was ultimately a redundancy in the failure mode: Phonemic identification model misclassifies patient speech.
+    To resolve this, we started rooting out the specific requirements that were not met in our ideas.
+    We then separated the cause of failure out of this statement to reorganize our thoughts.
     \item Which of your listed risks had your team thought of before this
     deliverable, and which did you think of while doing this deliverable? For
     the latter ones (ones you thought of while doing the Hazard Analysis), how
     did they come about?
+    We have had many discussions about risks associated with phonemic identification both in terms of accuracy and performance.
+    We also had general discussions about sensitive patient data being lost or accessed by an actor who should not be able to access it.
+    However, during the actual identification of the failure modes, we separated the data loss and incorrect access into more subtypes, such as a data breach or authentication failure.
+    We then identified two additional risks, which were replacement of a clinician's judgement and patient frustration.
+    We came up with these during analysis of our non-functional requirements, specifically medical requirements for the clinician's judgement and usability requirements for patient frustration.
     \item Other than the risk of physical harm (some projects may not have any
     appreciable risks of this form), list at least 2 other types of risk in
     software products. Why are they important to consider?
+    One type of risk is the spread of misinformation. Many software products are used to provide people with media access.
+    If the information shared by that media is incorrect or exaggerated, it can lead to people making drastic decisions that are not in their best interest or are unsafe.
+    Another type of risk is a data breach. Software products are frequently entrusted with people's data.
+    If that data is a vulnerability for them, it can be used to take advantage of the person, or exposes something that puts them into danger.
+    For instance, if an app has information about banking information, the exposure of that information can lead to someone accessing their finances.
+
 \end{enumerate}
 
 \end{document}
