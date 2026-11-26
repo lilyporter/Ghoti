@@ -1,0 +1,4 @@
+pandas
+playwright
+eng-to-ipa
+requests
