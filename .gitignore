@@ -1,3 +1,6 @@
+## audio files
+*.wav
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
