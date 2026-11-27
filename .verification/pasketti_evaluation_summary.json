@@ -1,0 +1,14 @@
+{
+  "total_rows": 4825,
+  "counts": {
+    "assessed": 4760,
+    "unassessable_model": 52,
+    "ambiguous_reference": 12,
+    "invalid_audio": 1
+  },
+  "mean_clip_phone_error_rate": 0.3791284013605442,
+  "phone_error_rate": 0.38539533976796336,
+  "overall_phone_accuracy": 0.6208715986394557,
+  "token_level_accuracy": 0.6146046602320366,
+  "exact_match_rate": 0.20441176470588235
+}
