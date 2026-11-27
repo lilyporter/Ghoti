@@ -6,11 +6,55 @@ from typing import Optional, Union
 
 from .assets import MODEL_VERSION, verify_model
 from .audio import MAX_DURATION_SECONDS, SAMPLE_RATE_HZ
-from .phonetics import tokenize_pasketti
-from .recognition import AudioInput, RecognitionResult
+from .recognition import AudioInput, PhonemeRecognizer, RecognitionResult
 
 
-class PaskettiRecognizer:
+BASE_SYMBOLS = frozenset("bcdefghijklmnoprstuvwxzæçðŋɐɑɔəɚɛɟɪɫɬɹɾʁʃʊʌʒʔʝʤʧθχ")
+MODIFIERS = frozenset({"ː", "\u0303"})
+TIE_BAR = "\u0361"
+
+
+def tokenize_pasketti(transcription: str) -> list[str]:
+    """Attach length/nasal marks and join explicitly tied sounds.
+
+    Whitespace separates words and is retained in the raw transcription, not as
+    a phone. Untied vowels remain separate. Dangling or unknown symbols fail
+    explicitly rather than being silently dropped or mapped to expected phones.
+    """
+    phones: list[str] = []
+    boundary = True
+    pending_tie = False
+    for symbol in transcription:
+        if symbol.isspace():
+            if pending_tie:
+                raise ValueError("A tie bar cannot end a word.")
+            boundary = True
+        elif symbol == TIE_BAR:
+            if boundary or pending_tie:
+                raise ValueError("A tie bar must connect two sounds.")
+            phones[-1] += symbol
+            pending_tie = True
+        elif symbol in MODIFIERS:
+            if boundary or pending_tie:
+                raise ValueError("A modifier must follow a sound.")
+            if phones[-1].endswith(symbol):
+                raise ValueError("Repeated IPA modifier.")
+            phones[-1] += symbol
+        elif symbol in BASE_SYMBOLS:
+            if pending_tie:
+                phones[-1] += symbol
+                pending_tie = False
+            else:
+                phones.append(symbol)
+            boundary = False
+        else:
+            raise ValueError("Decoded symbol is outside the Pasketti inventory.")
+    if pending_tie:
+        raise ValueError("A tie bar must connect two sounds.")
+    return phones
+
+
+class PaskettiRecognizer(PhonemeRecognizer):
     """Load a pinned local snapshot once, then recognize one utterance at a time.
 
     Construction verifies weights and never downloads. All inference uses FP32;
@@ -69,21 +113,8 @@ class PaskettiRecognizer:
 
     def recognize(self, audio: AudioInput) -> RecognitionResult:
         """Run local acoustic inference without target words or language correction."""
-        return self._run(audio, keep_evidence=False).recognition
-
-    def recognize_with_evidence(self, audio: AudioInput):
-        """One forward pass returning recognition plus internal CTC evidence."""
-        return self._run(audio, keep_evidence=True)
-
-    def _run(self, audio: AudioInput, *, keep_evidence: bool):
-        from .assessment import CTCEvidence, RecognitionRun
-        from .phonetics import BASE_SYMBOLS
-
         import numpy as np
         import torch
-
-        def unassessable(phones, text, time_ms, reason):
-            return RecognitionRun(self._result(phones, text, time_ms, reason), None)
 
         if audio.sample_rate_hz != self.sample_rate_hz:
             raise ValueError("Expected 16000 Hz mono PCM; use load_audio for resampling.")
@@ -96,11 +127,11 @@ class PaskettiRecognizer:
             raise ValueError("PCM samples must lie in [-1, 1].")
         # The convolutional encoder requires at least 400 samples (25 ms).
         if samples.size < 400:
-            return unassessable([], "", None, "Audio is too short for the encoder.")
+            return self._result([], "", None, "Audio is too short for the encoder.")
         if samples.size > MAX_DURATION_SECONDS * self.sample_rate_hz:
-            return unassessable([], "", None, "Audio exceeds the 30-second baseline limit.")
+            return self._result([], "", None, "Audio exceeds the 30-second baseline limit.")
         if float(np.sqrt(np.mean(samples.astype(np.float64) ** 2))) < 1e-5:
-            return unassessable([], "", None, "Audio is silent or nearly silent.")
+            return self._result([], "", None, "Audio is silent or nearly silent.")
         inputs = self._processor(
             samples, sampling_rate=self.sample_rate_hz, return_tensors="pt",
             # One unpadded utterance has no masked frames. Omitting this redundant
@@ -117,29 +148,17 @@ class PaskettiRecognizer:
             torch.cuda.synchronize(self._device)
         time_ms = (perf_counter() - started) * 1000
         if not torch.isfinite(logits).all().item():
-            return unassessable([], "", time_ms, "Model produced non-finite logits.")
+            return self._result([], "", time_ms, "Model produced non-finite logits.")
         # HF handles CTC repeat collapse, blank removal, and word delimiters.
         frame_ids = logits.argmax(dim=-1).cpu()
         transcription = self._processor.batch_decode(frame_ids)[0].strip()
         try:
             phones = tokenize_pasketti(transcription)
         except ValueError:
-            return unassessable(
+            return self._result(
                 [], transcription, time_ms,
                 "Decoded IPA has unsupported or malformed marks; review raw transcription.",
             )
         if not phones:
-            return unassessable([], transcription, time_ms, "Model decoded no phones.")
-        result = self._result(phones, transcription, time_ms)
-        evidence = None
-        if keep_evidence:
-            vocabulary = self._processor.tokenizer.get_vocab()
-            classes = logits.shape[-1]
-            evidence = CTCEvidence(
-                log_probs=logits[0].detach().float().log_softmax(dim=-1).cpu(),
-                phone_token_ids={p: i for p, i in vocabulary.items() if p in BASE_SYMBOLS and i < classes},
-                blank_id=self._processor.tokenizer.pad_token_id,
-                ignored_token_ids=tuple(i for p, i in vocabulary.items() if p == "|" and i < classes),
-                model_version=result["model_version"],
-            )
-        return RecognitionRun(result, evidence)
+            return self._result([], transcription, time_ms, "Model decoded no phones.")
+        return self._result(phones, transcription, time_ms)

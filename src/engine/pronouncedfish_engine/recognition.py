@@ -1,5 +1,6 @@
 """Audio input and result shapes used by the recognizer and CLI."""
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Literal, Optional, Sequence, TypedDict
 
@@ -32,3 +33,11 @@ class RecognitionResult(TypedDict):
     confidence_status: Literal["unavailable", "uncalibrated", "calibrated"]
     requires_review: bool
     review_reason: Optional[str]
+
+
+class PhonemeRecognizer(ABC):
+    """Recognize phones from prepared audio independently of practice targets."""
+
+    @abstractmethod
+    def recognize(self, audio: AudioInput) -> RecognitionResult:
+        """Return phone tokens and recognition metadata."""
